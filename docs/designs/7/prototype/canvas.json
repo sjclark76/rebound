@@ -28,22 +28,30 @@
   "02-list-view.dc.html": {
    "x": 0,
    "y": 1541,
-   "w": 924,
+   "w": 1800,
    "h": 2837,
    "title": "02-list-view"
   },
   "02-list-view-desktop.dc.html": {
-   "x": 1004,
+   "x": 1880,
    "y": 1541,
    "w": 1280,
    "h": 1367,
    "title": "02-list-view-desktop",
    "expand": "fill"
   },
+  "02-list-view-desktop-other-set.dc.html": {
+   "x": 3240,
+   "y": 1541,
+   "w": 1280,
+   "h": 1579,
+   "title": "02-list-view-desktop-other-set",
+   "expand": "fill"
+  },
   "03-set-input-variants.dc.html": {
    "x": 0,
    "y": 4498,
-   "w": 2676,
+   "w": 3552,
    "h": 1421,
    "title": "03-set-input-variants"
   },
@@ -57,7 +65,7 @@
   "05-resume-banner.dc.html": {
    "x": 0,
    "y": 7665,
-   "w": 1362,
+   "w": 2238,
    "h": 1406,
    "title": "05-resume-banner"
   },
@@ -80,8 +88,23 @@
    "x": 0,
    "y": 10670,
    "w": 924,
-   "h": 1292,
+   "h": 1190,
    "title": "07-today-complete"
+  },
+  "08-completed-exercise.dc.html": {
+   "x": 0,
+   "y": 11980,
+   "w": 1800,
+   "h": 1133,
+   "title": "08-completed-exercise"
+  },
+  "08-completed-exercise-desktop.dc.html": {
+   "x": 1880,
+   "y": 11980,
+   "w": 1280,
+   "h": 854,
+   "title": "08-completed-exercise-desktop",
+   "expand": "fill"
   }
  },
  "order": [
@@ -89,12 +112,15 @@
   "01-focused-logging-desktop.dc.html",
   "02-list-view.dc.html",
   "02-list-view-desktop.dc.html",
+  "02-list-view-desktop-other-set.dc.html",
   "03-set-input-variants.dc.html",
   "04-set-actions.dc.html",
   "05-resume-banner.dc.html",
   "06-finish-summary.dc.html",
   "06-finish-summary-desktop.dc.html",
-  "07-today-complete.dc.html"
+  "07-today-complete.dc.html",
+  "08-completed-exercise.dc.html",
+  "08-completed-exercise-desktop.dc.html"
  ],
  "notes": {
   "n01": {
@@ -106,17 +132,17 @@
    "fill": "teal"
   },
   "n02": {
-   "x": 2364,
+   "x": 4600,
    "y": 1581,
-   "text": "List view: every exercise on one page. Only the next set of the current exercise is open for input; tap any To do row to log it. Planned values are pre-filled the same way as Focused.",
+   "text": "List view: every exercise on one page. Only the next set of the current exercise is open for input; tap any To do row to log it. Planned values are pre-filled the same way as Focused.\n\nAny exercise's next set can be logged at any time. Tapping a set in another exercise opens it and collapses the open one back to a row; its pre-filled values are kept. The Now marker stays on the last logged set.",
    "w": 380,
    "size": "m",
    "fill": "teal"
   },
   "n03": {
-   "x": 2756,
+   "x": 3632,
    "y": 4538,
-   "text": "Pre-fill rule: the same set number from last time; if there is none, copy the previous set from today.\n\nWeighted: kg + reps (2.5 kg steps). Bodyweight: reps only. Timed hold: seconds (5 s steps). No timer.",
+   "text": "Pre-fill rule: the same set number from last time; if there is none, copy the previous set from today.\n\nWeighted: kg + reps (2.5 kg steps). Bodyweight: reps only. Timed hold: seconds (5 s steps). No timer.\n\nNever logged before (weighted): the weight is pre-filled with a starting weight, labelled \"Starting weight\", not left blank.",
    "w": 380,
    "size": "m",
    "fill": "teal"
@@ -130,9 +156,9 @@
    "fill": "teal"
   },
   "n05": {
-   "x": 1442,
+   "x": 2318,
    "y": 7705,
-   "text": "The workout saves on the phone after every set. Reopening the app shows Today with this banner; Resume reopens the last view. Discard deletes the in-progress workout after a confirm.",
+   "text": "The workout saves on the phone after every set. Reopening the app shows Today with this banner; Resume reopens the last view. Discard deletes the in-progress workout after a confirm.\n\nA workout left open more than 24 hours is closed and saved as finished. Today shows a one-time notice about it; Dismiss hides it for good.",
    "w": 380,
    "size": "m",
    "fill": "teal"
@@ -148,10 +174,18 @@
   "n07": {
    "x": 1004,
    "y": 10710,
-   "text": "Today after Finish: the Start button is gone, the session shows what was done, and the recovering chip joins the injury chips.",
+   "text": "Today after Finish: the Start button is gone, and the pre-workout reason paragraph is removed. The status chips and the completed summary stay. The core finisher counts as an exercise (5 exercises).",
    "w": 380,
    "size": "m",
    "fill": "teal"
+  },
+  "n08": {
+   "text": "After the last planned set, the input card is replaced by Exercise complete and the bottom button becomes \"Next: <next exercise>\". On the final exercise it becomes Finish workout. Add a set and the edit pencils stay available.",
+   "w": 380,
+   "size": "m",
+   "fill": "teal",
+   "x": 3240,
+   "y": 12020
   }
  },
  "designSystems": [
