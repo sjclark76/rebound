@@ -40,4 +40,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 !.env.example
+!.envrc
 .neon
+
+# Claude local settings
+.claude/settings.local.json
