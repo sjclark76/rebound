@@ -23,6 +23,23 @@ Next.js 16 (App Router, TypeScript) · Tailwind + shadcn/ui · Neon Postgres + D
 
 Import the GitHub repo in Vercel, add the same env vars (with `BETTER_AUTH_URL` set to the Vercel URL), and add `https://<your-app>.vercel.app/api/auth/callback/google` to the Google OAuth redirect URIs. On your phone, open the site and use "Add to Home Screen".
 
+## Ways of working
+
+Spec first: nothing is built until the story has been specced and agreed. Work is tracked as GitHub issues in milestones, on the [Rebound project board](https://github.com/users/sjclark76/projects/3). Feature branches go to `develop` by PR; a release is a `develop` to `main` PR, because deploys are rationed (see `CLAUDE.md`).
+
+Each story moves through four phases, with a human gate between them. Claude Design is a manual step: it can't run this repo's skills, so the skills prepare what goes in and process what comes out.
+
+| Phase | Where | What happens | Gate |
+|---|---|---|---|
+| 1. Spec | Claude Code: `/spec-story` | One-question-at-a-time interview; the spec and a **design brief** (a copy-paste Claude Design prompt) are posted to the issue. | Spec approved |
+| 2. Design | Claude Design | Paste the brief, iterate, export the handoff bundle. | Screens agreed |
+| 3. Attach and review | Claude Code: `/attach-designs` | Commits the bundle to `docs/designs/<issue>/`, embeds the screenshots in the issue, and checks them against the spec. Gaps produce a **revision prompt** to paste back into Claude Design, repeated until the designs match. | Designs approved, story `ready` |
+| 4. Build | Claude Code: `/build-story` | Refuses unless `ready`. Tests first, builds to the spec and designs, verifies against the designs, opens a PR into `develop`. | PR reviewed and merged |
+
+**Story state** lives in issue labels (`needs-spec`, `needs-design`, `ready`, `in-progress`, `in-review`) and is mirrored to the board's Stage column by `scripts/story-state.sh <issue> <state>`.
+
+**Not yet verified:** what the Claude Design handoff bundle contains, and whether `/design` exists in Claude Code. The first story run through this process (#7) will test both; the notes here and the skills in `.claude/skills/` should be adjusted from what we learn. Planned: revision-prompt output in `/attach-designs`, bundle support, and a short `DESIGN.md` describing the look for Claude Design's repo import.
+
 ## Scripts
 
 | Script | Purpose |
