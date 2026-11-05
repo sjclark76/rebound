@@ -52,6 +52,7 @@ Each story moves through four phases, with a human gate between them. Claude Des
 | `npm run db:seed` | Refresh the exercise catalogue |
 | `npm run db:seed:equipment -- <email> <equipment...>` | Replace a user's owned equipment (dev data) |
 | `npm run db:seed:injuries -- <email> add\|resolve\|list ...` | Add, resolve or list a user's injuries (dev data) |
+| `npm run db:seed:weights -- <email>` | Give a user starting weights for weighted exercises (dev data; replaced later by the strength assessment) |
 
 ## Layout
 

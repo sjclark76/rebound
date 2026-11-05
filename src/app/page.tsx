@@ -10,6 +10,10 @@ import { Button } from "@/components/ui/button";
 import { type Split, SPLIT_NAMES, SPLITS } from "@/lib/generator";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion, optionsQuery, parseOptions, type SuggestionOptions } from "@/lib/suggestion";
+import { startWorkout } from "@/app/workout/actions";
+import { AutoClosedNotice } from "@/components/workout/today-client";
+import { CompletedToday, InProgressToday } from "@/components/workout/today-states";
+import { getActiveWorkout, getAutoClosedNotice, getCompletedToday, getInjuryChips } from "@/lib/workout-data";
 
 const capitalise = (s: string) => s[0].toUpperCase() + s.slice(1);
 const list = (items: string[]) =>
@@ -44,9 +48,40 @@ export default function Home({ searchParams }: PageProps<"/">) {
 
 async function Today({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
   const { user } = await requireSession();
+  const today = new Date();
+  // An open workout takes over today's page; so does one finished today. Stale ones are closed first.
+  const active = await getActiveWorkout(user.id);
+  const [completed, closed] = await Promise.all([active ? null : getCompletedToday(user.id, today), getAutoClosedNotice(user.id)]);
+  const notice = closed && (
+    <AutoClosedNotice
+      workoutId={closed.id}
+      text={`${closed.startedAt.toLocaleDateString("en-GB", { weekday: "long" })}'s workout was left open, so we saved it as finished (${closed.sets} sets).`}
+    />
+  );
+  if (active || completed) {
+    const w = (active ?? completed)!;
+    const kicker = (
+      <p className="text-[15px] leading-5 font-bold text-muted-foreground">
+        {today.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })} · Today&apos;s workout
+      </p>
+    );
+    const base = await getInjuryChips(user.id);
+    if (active) return <>{notice}<InProgressToday w={w} kicker={kicker} chips={base} /></>;
+    const { recovering } = await loadSuggestion(user.id, today);
+    return <>{notice}<CompletedToday w={w} kicker={kicker} chips={{ ...base, recovering }} /></>;
+  }
+  return (
+    <>
+      {notice}
+      <Suggestion searchParams={searchParams} userId={user.id} today={today} />
+    </>
+  );
+}
+
+async function Suggestion({ searchParams, userId, today }: Pick<PageProps<"/">, "searchParams"> & { userId: string; today: Date }) {
+  const user = { id: userId };
   const params = await searchParams;
   const options = parseOptions(params);
-  const today = new Date();
   const { suggestion, injuries, hasEquipment } = await loadSuggestion(user.id, today, options);
   const date = (weekday: "short" | "long", month: "short" | "long") =>
     today.toLocaleDateString("en-GB", { weekday, day: "numeric", month });
@@ -162,17 +197,18 @@ async function Today({ searchParams }: Pick<PageProps<"/">, "searchParams">) {
           onDetail,
         )}
       >
-        <Button disabled className="h-16 w-full rounded-xl font-heading text-xl font-bold">
-          <PlayIcon className="size-5.5 fill-current" aria-hidden />
-          Start workout
-        </Button>
-        <p className="mt-2 text-center text-sm text-muted-foreground">Set logging is coming next.</p>
+        <form action={startWorkout.bind(null, Object.fromEntries(new URLSearchParams(optionsQuery(options))))}>
+          <Button type="submit" className="h-16 w-full rounded-xl font-heading text-xl font-bold">
+            <PlayIcon className="size-5.5 fill-current" aria-hidden />
+            Start workout
+          </Button>
+        </form>
       </div>
 
       <div className={cn("lg:col-start-3 lg:row-span-4 lg:row-start-1", !selected && "max-lg:hidden")}>
         <ExerciseDetail
           exercise={detail.exercise}
-          dose={`${detail.sets} × ${detail.reps}`}
+          dose={`${detail.sets} × ${detail.reps}${detail.exercise.force === "static" ? " s" : ""}`}
           context={
             detailIndex >= 0
               ? `Exercise ${detailIndex + 1} of ${main.length} · ${name}`
@@ -210,7 +246,7 @@ function Chips({
   );
 }
 
-type Item = { exercise: { name: string; equipment: string | null }; sets: number; reps: string };
+type Item = { exercise: { name: string; equipment: string | null; force: string | null }; sets: number; reps: string };
 
 function ExerciseRow({ href, number, item, current }: { href: string; number?: number; item: Item; current: boolean }) {
   return (
@@ -227,7 +263,7 @@ function ExerciseRow({ href, number, item, current }: { href: string; number?: n
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-lg leading-6 font-bold">{item.exercise.name}</span>
         <span className="text-[15px] leading-5 text-muted-foreground tabular-nums">
-          {item.sets} × {item.reps} · {capitalise(item.exercise.equipment ?? "body only")}
+          {item.sets} × {item.reps}{item.exercise.force === "static" ? " s" : ""} · {capitalise(item.exercise.equipment ?? "body only")}
         </span>
       </span>
       <ChevronRightIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden />

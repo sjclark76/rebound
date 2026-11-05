@@ -2,7 +2,7 @@ import { and, eq, gte, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { exercise, injury, userEquipment, workout, workoutSet } from "@/db/schema";
 import type { Muscle } from "@/db/vocab";
-import { type Split, SPLITS, suggestWorkout } from "./generator";
+import { recoveringMuscles, type Split, SPLITS, suggestWorkout } from "./generator";
 
 const LOOKBACK_MS = 7 * 86_400_000;
 
@@ -42,13 +42,14 @@ export async function loadSuggestion(userId: string, today: Date, options: Sugge
     db.select().from(exercise).where(eq(exercise.category, "strength")),
   ]);
 
+  const recent = recentSets.flatMap((s) => s.muscles.map((muscle) => ({ muscle, trainedAt: s.trainedAt })));
   const suggestion = suggestWorkout({
     exercises,
     equipment: options.bodyweightOnly ? [] : owned.map((o) => o.equipment),
     injuries: injuries.map((i) => ({ muscle: i.muscle as Muscle, mode: i.mode })),
-    recent: recentSets.flatMap((s) => s.muscles.map((muscle) => ({ muscle, trainedAt: s.trainedAt }))),
+    recent,
     today,
     split: options.split,
   });
-  return { suggestion, injuries, hasEquipment: owned.length > 0 };
+  return { suggestion, injuries, hasEquipment: owned.length > 0, recovering: recoveringMuscles(recent, today) };
 }

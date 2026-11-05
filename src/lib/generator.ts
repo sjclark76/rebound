@@ -8,6 +8,8 @@ export type CatalogueExercise = {
   category: string;
   level: string;
   mechanic: string | null;
+  /** push, pull or static; static holds are prescribed in seconds. */
+  force?: string | null;
   primaryMuscles: string[];
   secondaryMuscles: string[];
 };
@@ -61,6 +63,16 @@ const MIN_EXERCISES = 3;
 /** Each day rotates among this many of the best-ranked candidates, for variety. */
 const VARIETY = 3;
 
+/** Muscles worked as a primary mover within the recovery window, sorted. */
+export function recoveringMuscles(recent: TrainedMuscle[], today: Date): string[] {
+  const last = new Map<string, number>();
+  for (const { muscle, trainedAt } of recent) last.set(muscle, Math.max(last.get(muscle) ?? 0, trainedAt.getTime()));
+  return [...last]
+    .filter(([, at]) => today.getTime() - at < RECOVERY_MS)
+    .map(([m]) => m)
+    .sort();
+}
+
 const LEVEL_RANK: Record<string, number> = { beginner: 0, intermediate: 1 };
 
 function rank(a: CatalogueExercise, b: CatalogueExercise) {
@@ -69,6 +81,7 @@ function rank(a: CatalogueExercise, b: CatalogueExercise) {
 }
 
 function prescribe<E extends CatalogueExercise>(exercise: E, core = false): SuggestedExercise<E> {
+  if (exercise.force === "static") return { exercise, sets: 3, reps: "30–45" };
   if (core) return { exercise, sets: 3, reps: "12–15" };
   return exercise.mechanic === "compound"
     ? { exercise, sets: 3, reps: "8–10" }
@@ -106,10 +119,7 @@ export function suggestWorkout<E extends CatalogueExercise>(
   for (const { muscle, trainedAt } of recent) {
     lastTrained.set(muscle, Math.max(lastTrained.get(muscle) ?? 0, trainedAt.getTime()));
   }
-  const recovering = [...lastTrained]
-    .filter(([, at]) => today.getTime() - at < RECOVERY_MS)
-    .map(([m]) => m)
-    .sort();
+  const recovering = recoveringMuscles(recent, today);
   const isFree = (m: string) => !recovering.includes(m) && !blockedPrimary.has(m as Muscle);
 
   const pick = (muscle: string, mechanic: string | null, taken: Set<string>) => {
