@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home header · phone · light</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="rebound-ui.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rb t-light" style="width: 390px; min-height: 300px">
+<header class="hdr">
+<div class="hdr-in">
+<span class="brand"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect class="tile" width="64" height="64" rx="16"/><path class="curve" d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke-width="6" stroke-linecap="round"/><circle class="ball" cx="48" cy="17" r="6.5"/></svg>rebound</span>
+<nav class="acts" aria-label="Account">
+<a class="ghost sq" href="Settings-phone-light.dc.html" aria-label="Settings"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></a>
+<button type="button" class="ghost">Sign out</button>
+</nav>
+</div>
+</header>
+<main class="today">
+<p class="kick">Fri 6 Nov · Today's workout</p>
+<h1 class="hd big">Push</h1>
+<p class="muted" style="font-size: 16px; line-height: 24px">Last trained 4 days ago</p>
+<p style="font-size: 18px; line-height: 26px; margin-top: 20px">Push muscles are the most rested.</p>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":300}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
