@@ -11,4 +11,9 @@ Canvas: https://claude.ai/artifact/VK9gJXVGzaAPVyzu5Y27K2
 - The Focused/List view choice is remembered. The workout saves after every set and resumes from the banner on Today.
 - Delete set, Skip and Discard each ask for confirmation first. Red (destructive) is used only for Delete set and Discard.
 - Volume counts weighted sets only (kg × reps). Recovering lists the muscles trained today.
-- Every state shows an icon and a word: Done, Now, To do, Skipped, Extra set.
+- Every state shows an icon and a word: Done, Now, To do, Skipped, Extra set, Exercise complete.
+- After the last planned set the bottom button becomes "Next: <exercise>", or "Finish workout" on the final exercise (08).
+- A weighted exercise that has never been logged is pre-filled with a starting weight, labelled "Starting weight".
+- In List view, any exercise's next set can be opened. Opening one collapses the set that was open, and the Now marker stays on the last logged set.
+- A workout left open more than 24 hours is saved as finished, and Today shows a one-time notice that can be dismissed.
+- The core finisher counts as an exercise everywhere (5 exercises).
