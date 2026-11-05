@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sets a story's state: swaps the state label on the issue and mirrors it onto the
-# Rebound project board's "Stage" column. Labels are the source of truth.
+# Rebound project board's "Status" column. Labels are the source of truth.
 # Usage: scripts/story-state.sh <issue-number> <needs-spec|needs-design|ready|in-progress|in-review|done>
 set -euo pipefail
 
@@ -28,9 +28,9 @@ for l in needs-spec needs-design ready in-progress in-review; do
 done
 [ "$STATE" = "done" ] || gh issue edit "$ISSUE" -R "$REPO" --add-label "$STATE" >/dev/null
 
-# Board: find the project, the Stage field and option, and the issue's item.
+# Board: find the project, the Status field and option, and the issue's item.
 PROJECT_ID=$(gh project view "$PROJECT" --owner "$OWNER" --format json --jq .id)
-FIELD=$(gh project field-list "$PROJECT" --owner "$OWNER" --format json --jq '.fields[]|select(.name=="Stage")')
+FIELD=$(gh project field-list "$PROJECT" --owner "$OWNER" --format json --jq '.fields[]|select(.name=="Status")')
 FIELD_ID=$(jq -r .id <<<"$FIELD")
 OPTION_ID=$(jq -r --arg s "$STAGE" '.options[]|select(.name==$s)|.id' <<<"$FIELD")
 ITEM_ID=$(gh project item-list "$PROJECT" --owner "$OWNER" --limit 200 --format json \
