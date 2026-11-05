@@ -23,4 +23,5 @@ Personal strength-training planner: suggests workouts from owned equipment, work
 ## GitHub
 
 - This repo is owned by `sjclark76`. `.envrc` (direnv) sets `GH_TOKEN` for that account, so `gh` works here without switching your global account. If `gh` shows the wrong account, run `direnv allow` or use `direnv exec . gh ...`.
-- Work happens on branches with PRs into `main`; features are tracked as GitHub issues.
+- Features are tracked as GitHub issues, grouped by milestone on the Rebound project board.
+- Branching: feature branches -> PR into `develop` (the default branch). `main` is production; a release is a `develop` -> `main` PR merged with a merge commit (not squashed). Netlify builds only `main`, so keep deploys rare (free tier: 15 credits per deploy of 300/month).
