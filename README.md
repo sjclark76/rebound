@@ -33,6 +33,7 @@ Import the GitHub repo in Vercel, add the same env vars (with `BETTER_AUTH_URL` 
 | `npm run db:migrate` | Apply migrations |
 | `npm run db:studio` | Browse the database |
 | `npm run db:seed` | Refresh the exercise catalogue |
+| `npm run db:seed:equipment -- <email> <equipment...>` | Replace a user's owned equipment (dev data) |
 
 ## Layout
 
