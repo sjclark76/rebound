@@ -18,9 +18,10 @@ Argument: an issue number, or "new" (create the issue first with `gh issue creat
 5. **Post to the issue** (`gh issue edit <n> --body ...`) using this structure:
    - **Story**, **Behaviour** (numbered), **Out of scope** (with links to split-out issues), **Screens to design** (numbered list), **Data** (tables touched, migrations), **Acceptance criteria**, and **Status** (`Spec agreed. Waiting on screen designs.`).
 6. **Create issues for split-out ideas** as backlog items with only their intent, then run `scripts/story-state.sh <n> needs-spec` for each.
-7. **Hand off to design.** Write a ready-to-paste Claude Design prompt: app context, the story, each screen from the list (phone 390px, plus desktop where relevant), states to cover (empty, loading, error, injured/rest/rehab), and the existing design system (palette and fonts are in `src/app/globals.css` and `src/app/layout.tsx`). Output it in a code block.
-8. **Set the state:** `scripts/story-state.sh <n> needs-design`.
-9. Tell the user the next step: take the prompt to Claude Design, then run `/attach-designs <n>`.
+7. **Write the design brief.** Claude Design cannot run this repo's skills, so the brief is a self-contained, ready-to-paste prompt: app context, the story, each screen from the list (phone 390px, plus desktop where relevant), the states to cover (empty, loading, error, injured/rest/rehab), and the existing look (tokens and fonts live in `src/app/globals.css` and `src/app/layout.tsx`; it can import the design system from the repo). End it by asking for the handoff export (screenshots of every screen and state, plus the design files).
+8. **Post the brief to the issue** in a collapsed `<details><summary>Design brief (Claude Design prompt)</summary>` block, so it is versioned with the story, and also print it in a code block for the user to copy.
+9. **Set the state:** `scripts/story-state.sh <n> needs-design`.
+10. Tell the user the next step: paste the brief into Claude Design, export the handoff bundle, then run `/attach-designs <n>` with the bundle's path.
 
 ## Rules
 

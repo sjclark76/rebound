@@ -15,7 +15,7 @@ Run `gh issue view <n> --json labels,body`. If the issue does not have the `read
 
 ## Process
 
-1. **Read** the issue spec, the committed designs in `docs/designs/<n>/`, `CLAUDE.md`, `AGENTS.md` (Next.js here differs from your training data: read the relevant guide in `node_modules/next/dist/docs/` before writing Next.js code), and the code the story touches.
+1. **Read** the issue spec, the committed designs in `docs/designs/<n>/` (screenshots, the `prototype/` files and `handoff-README.md` are the reference for every screen and state), `CLAUDE.md`, `AGENTS.md` (Next.js here differs from your training data: read the relevant guide in `node_modules/next/dist/docs/` before writing Next.js code), and the code the story touches.
 2. **Plan briefly** in chat: the files you will change and any technical decision the user might care about (data model, route structure, new dependencies). Ask before anything surprising. Then set the state: `scripts/story-state.sh <n> in-progress`.
 3. **Branch** `feature/<short-name>` from an up-to-date `develop`.
 4. **Logic first.** Write failing unit tests for non-trivial logic (rules, prefill, lifecycle), then implement. Keep pure logic separate from UI so it is testable.
