@@ -30,7 +30,7 @@ Each story moves through three skills, with a human gate between them:
 2. `/attach-designs <issue>`: commit designs to `docs/designs/<issue>/`, embed them in the issue, check them against the spec. Label `ready` once the user approves.
 3. `/build-story <issue>`: refuses unless `ready`. Tests first, build to the spec and designs, verify, PR into `develop`. Labels `in-progress` then `in-review`.
 
-State lives in issue labels (`needs-spec`, `needs-design`, `ready`, `in-progress`, `in-review`) and is mirrored to the board's Stage column by `scripts/story-state.sh <issue> <state>`. Anything not in the agreed spec is raised with the user, not added.
+State lives in issue labels (`needs-spec`, `needs-design`, `ready`, `in-progress`, `in-review`) and is mirrored to the board's Status column by `scripts/story-state.sh <issue> <state>`. Anything not in the agreed spec is raised with the user, not added.
 
 ## GitHub
 
