@@ -1,0 +1,166 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-06T09:00:00Z"
+ },
+ "title": "Rebound — Set logging",
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "boards": {
+  "01-focused-logging.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1362,
+   "h": 1421,
+   "title": "01-focused-logging"
+  },
+  "01-focused-logging-desktop.dc.html": {
+   "x": 1442,
+   "y": 0,
+   "w": 1280,
+   "h": 1122,
+   "title": "01-focused-logging-desktop",
+   "expand": "fill"
+  },
+  "02-list-view.dc.html": {
+   "x": 0,
+   "y": 1541,
+   "w": 924,
+   "h": 2837,
+   "title": "02-list-view"
+  },
+  "02-list-view-desktop.dc.html": {
+   "x": 1004,
+   "y": 1541,
+   "w": 1280,
+   "h": 1367,
+   "title": "02-list-view-desktop",
+   "expand": "fill"
+  },
+  "03-set-input-variants.dc.html": {
+   "x": 0,
+   "y": 4498,
+   "w": 2676,
+   "h": 1421,
+   "title": "03-set-input-variants"
+  },
+  "04-set-actions.dc.html": {
+   "x": 0,
+   "y": 6039,
+   "w": 3114,
+   "h": 1506,
+   "title": "04-set-actions"
+  },
+  "05-resume-banner.dc.html": {
+   "x": 0,
+   "y": 7665,
+   "w": 1362,
+   "h": 1406,
+   "title": "05-resume-banner"
+  },
+  "06-finish-summary.dc.html": {
+   "x": 0,
+   "y": 9191,
+   "w": 1362,
+   "h": 1359,
+   "title": "06-finish-summary"
+  },
+  "06-finish-summary-desktop.dc.html": {
+   "x": 1442,
+   "y": 9191,
+   "w": 1280,
+   "h": 1253,
+   "title": "06-finish-summary-desktop",
+   "expand": "fill"
+  },
+  "07-today-complete.dc.html": {
+   "x": 0,
+   "y": 10670,
+   "w": 924,
+   "h": 1292,
+   "title": "07-today-complete"
+  }
+ },
+ "order": [
+  "01-focused-logging.dc.html",
+  "01-focused-logging-desktop.dc.html",
+  "02-list-view.dc.html",
+  "02-list-view-desktop.dc.html",
+  "03-set-input-variants.dc.html",
+  "04-set-actions.dc.html",
+  "05-resume-banner.dc.html",
+  "06-finish-summary.dc.html",
+  "06-finish-summary-desktop.dc.html",
+  "07-today-complete.dc.html"
+ ],
+ "notes": {
+  "n01": {
+   "x": 2802,
+   "y": 40,
+   "text": "Start workout starts the workout and opens Focused view. Focused is the default; whichever view was used last is remembered.\n\nThe dashed box under the set's source line is reserved for a future suggested weight. It stays empty for now and holds its height so the layout won't jump later.",
+   "w": 380,
+   "size": "m",
+   "fill": "teal"
+  },
+  "n02": {
+   "x": 2364,
+   "y": 1581,
+   "text": "List view: every exercise on one page. Only the next set of the current exercise is open for input; tap any To do row to log it. Planned values are pre-filled the same way as Focused.",
+   "w": 380,
+   "size": "m",
+   "fill": "teal"
+  },
+  "n03": {
+   "x": 2756,
+   "y": 4538,
+   "text": "Pre-fill rule: the same set number from last time; if there is none, copy the previous set from today.\n\nWeighted: kg + reps (2.5 kg steps). Bodyweight: reps only. Timed hold: seconds (5 s steps). No timer.",
+   "w": 380,
+   "size": "m",
+   "fill": "teal"
+  },
+  "n04": {
+   "x": 3194,
+   "y": 6079,
+   "text": "Tap the pencil on a logged set to edit or delete it. Delete and Skip both confirm first. Extra sets copy the previous set. Skipped exercises can still be logged before Finish.",
+   "w": 380,
+   "size": "m",
+   "fill": "teal"
+  },
+  "n05": {
+   "x": 1442,
+   "y": 7705,
+   "text": "The workout saves on the phone after every set. Reopening the app shows Today with this banner; Resume reopens the last view. Discard deletes the in-progress workout after a confirm.",
+   "w": 380,
+   "size": "m",
+   "fill": "teal"
+  },
+  "n06": {
+   "x": 2802,
+   "y": 9231,
+   "text": "Volume = weight × reps over weighted sets only; bodyweight and timed sets are not counted. Recovering lists the muscles trained today. Done returns to Today.",
+   "w": 380,
+   "size": "m",
+   "fill": "teal"
+  },
+  "n07": {
+   "x": 1004,
+   "y": 10710,
+   "text": "Today after Finish: the Start button is gone, the session shows what was done, and the recovering chip joins the injury chips.",
+   "w": 380,
+   "size": "m",
+   "fill": "teal"
+  }
+ },
+ "designSystems": [
+  {
+   "title": "Rebound",
+   "namespace": "rebound",
+   "artifact": "https://claude.ai/code/artifact/b1121b33-8e57-4476-86f5-747dddd6dea0",
+   "version": "1793846780-31b3",
+   "copiedAt": "2026-11-06T09:00:00Z"
+  }
+ ]
+}
