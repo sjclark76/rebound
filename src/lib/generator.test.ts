@@ -133,4 +133,10 @@ describe("suggestWorkout", () => {
     expect(ids(s)).not.toContain("Expert");
     expect(s.exercises.every((e) => e.exercise.category === "strength")).toBe(true);
   });
+
+  it("prescribes seconds, not reps, for static holds", () => {
+    const hold = ex("abdominals", { id: "plank", force: "static", equipment: "body only", mechanic: null });
+    const r = suggestWorkout({ ...base, exercises: [...catalogue.filter((e) => e.primaryMuscles[0] !== "abdominals"), hold] });
+    expect(r?.exercises.at(-1)).toMatchObject({ exercise: { id: "plank" }, reps: "30–45" });
+  });
 });

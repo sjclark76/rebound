@@ -63,7 +63,46 @@ export const workout = pgTable("workout", {
     .references(() => user.id, { onDelete: "cascade" }),
   startedAt: timestamp("started_at").notNull().defaultNow(),
   completedAt: timestamp("completed_at"),
+  /** The split the workout was started as (push, pull or legs). */
+  split: text("split"),
+  /** Set when the workout was left open for more than 24 hours and closed for the user. */
+  autoClosedAt: timestamp("auto_closed_at"),
+  /** Set when the user dismisses the "we closed your workout" notice. */
+  noticeDismissedAt: timestamp("notice_dismissed_at"),
 });
+
+/** The exercises a workout started with: the plan is saved so it can't shift as sets are logged. */
+export const workoutExercise = pgTable(
+  "workout_exercise",
+  {
+    workoutId: integer("workout_id")
+      .notNull()
+      .references(() => workout.id, { onDelete: "cascade" }),
+    exerciseId: text("exercise_id")
+      .notNull()
+      .references(() => exercise.id),
+    position: integer("position").notNull(),
+    plannedSets: integer("planned_sets").notNull(),
+    reps: text("reps").notNull(), // planned range, e.g. "8–10"
+    skippedAt: timestamp("skipped_at"),
+  },
+  (t) => [primaryKey({ columns: [t.workoutId, t.exerciseId] })],
+);
+
+/** Seeded starting weight for an exercise the user has never logged. Replaced by the strength assessment later. */
+export const startingWeight = pgTable(
+  "starting_weight",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    exerciseId: text("exercise_id")
+      .notNull()
+      .references(() => exercise.id),
+    weightKg: real("weight_kg").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.exerciseId] })],
+);
 
 export const workoutSet = pgTable("workout_set", {
   id: serial("id").primaryKey(),

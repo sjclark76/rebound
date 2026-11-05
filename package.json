@@ -14,7 +14,8 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx scripts/seed-exercises.ts",
     "db:seed:equipment": "tsx scripts/seed-equipment.ts",
-    "db:seed:injuries": "tsx scripts/seed-injuries.ts"
+    "db:seed:injuries": "tsx scripts/seed-injuries.ts",
+    "db:seed:weights": "tsx scripts/seed-starting-weights.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
