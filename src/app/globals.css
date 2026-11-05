@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (@media (prefers-color-scheme: dark));
 
 @theme inline {
   --color-background: var(--background);
@@ -105,49 +105,51 @@
   --sidebar-ring: #1d6b56;
 }
 
-.dark {
-  --background: #0f1513;
-  --foreground: #e8ede9;
-  --card: #18211e;
-  --card-foreground: #e8ede9;
-  --popover: #1c2622;
-  --popover-foreground: #e8ede9;
-  --primary: #5ec4a4;
-  --primary-foreground: #06231b;
-  --secondary: #22302b;
-  --secondary-foreground: #e8ede9;
-  --muted: #1d2723;
-  --muted-foreground: #9eaba5;
-  --accent: #3a2a1f;
-  --accent-foreground: #f6c9a5;
-  --destructive: #f2766b;
-  --destructive-foreground: #2b0907;
-  --border: #2c3934;
-  --input: #6b7a74;
-  --ring: #5ec4a4;
-  --chart-1: #5ec4a4;
-  --chart-2: #f09a62;
-  --chart-3: #82aae2;
-  --chart-4: #e3c35a;
-  --chart-5: #c99ac4;
-  --ready: #7fb0ea;
-  --ready-muted: #172638;
-  --ready-foreground: #a9cbf3;
-  --rehab: #e9b44c;
-  --rehab-muted: #2e2410;
-  --rehab-foreground: #f3cd7c;
-  --rest: #ee8aa8;
-  --rest-muted: #36161f;
-  --rest-foreground: #f6b3c6;
-  --brand-apricot: #f09a62;
-  --sidebar: #18211e;
-  --sidebar-foreground: #e8ede9;
-  --sidebar-primary: #5ec4a4;
-  --sidebar-primary-foreground: #06231b;
-  --sidebar-accent: #3a2a1f;
-  --sidebar-accent-foreground: #f6c9a5;
-  --sidebar-border: #2c3934;
-  --sidebar-ring: #5ec4a4;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f1513;
+    --foreground: #e8ede9;
+    --card: #18211e;
+    --card-foreground: #e8ede9;
+    --popover: #1c2622;
+    --popover-foreground: #e8ede9;
+    --primary: #5ec4a4;
+    --primary-foreground: #06231b;
+    --secondary: #22302b;
+    --secondary-foreground: #e8ede9;
+    --muted: #1d2723;
+    --muted-foreground: #9eaba5;
+    --accent: #3a2a1f;
+    --accent-foreground: #f6c9a5;
+    --destructive: #f2766b;
+    --destructive-foreground: #2b0907;
+    --border: #2c3934;
+    --input: #6b7a74;
+    --ring: #5ec4a4;
+    --chart-1: #5ec4a4;
+    --chart-2: #f09a62;
+    --chart-3: #82aae2;
+    --chart-4: #e3c35a;
+    --chart-5: #c99ac4;
+    --ready: #7fb0ea;
+    --ready-muted: #172638;
+    --ready-foreground: #a9cbf3;
+    --rehab: #e9b44c;
+    --rehab-muted: #2e2410;
+    --rehab-foreground: #f3cd7c;
+    --rest: #ee8aa8;
+    --rest-muted: #36161f;
+    --rest-foreground: #f6b3c6;
+    --brand-apricot: #f09a62;
+    --sidebar: #18211e;
+    --sidebar-foreground: #e8ede9;
+    --sidebar-primary: #5ec4a4;
+    --sidebar-primary-foreground: #06231b;
+    --sidebar-accent: #3a2a1f;
+    --sidebar-accent-foreground: #f6c9a5;
+    --sidebar-border: #2c3934;
+    --sidebar-ring: #5ec4a4;
+  }
 }
 
 @layer base {

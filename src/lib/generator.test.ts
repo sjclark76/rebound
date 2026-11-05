@@ -93,7 +93,22 @@ describe("suggestWorkout", () => {
       ],
     })!;
     expect(s.split).toBe("legs");
+    expect(s.lastTrainedDays).toBe(5);
     expect(s.recovering).toEqual([...SPLITS.push].sort());
+  });
+
+  it("uses a chosen split even when it was trained recently", () => {
+    const s = suggestWorkout({
+      ...base,
+      split: "push",
+      recent: SPLITS.push.map((muscle) => ({ muscle, trainedAt: daysAgo(3) })),
+    })!;
+    expect(s.split).toBe("push");
+    expect(s.lastTrainedDays).toBe(3);
+  });
+
+  it("reports no last-trained day without history", () => {
+    expect(suggestWorkout(base)!.lastTrainedDays).toBeNull();
   });
 
   it("falls through to another split when one has too few safe exercises", () => {

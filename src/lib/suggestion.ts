@@ -2,12 +2,29 @@ import { and, eq, gte, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { exercise, injury, userEquipment, workout, workoutSet } from "@/db/schema";
 import type { Muscle } from "@/db/vocab";
-import { suggestWorkout } from "./generator";
+import { type Split, SPLITS, suggestWorkout } from "./generator";
 
 const LOOKBACK_MS = 7 * 86_400_000;
 
+export type SuggestionOptions = { split?: Split; bodyweightOnly?: boolean };
+
+/** Reads the options the home and exercise pages pass in their query string. */
+export function parseOptions(params: Record<string, string | string[] | undefined>): SuggestionOptions {
+  const split = typeof params.split === "string" && params.split in SPLITS ? (params.split as Split) : undefined;
+  return { split, bodyweightOnly: params.equipment === "none" };
+}
+
+/** The query string that keeps the same options across pages. */
+export function optionsQuery({ split, bodyweightOnly }: SuggestionOptions) {
+  const q = new URLSearchParams();
+  if (split) q.set("split", split);
+  if (bodyweightOnly) q.set("equipment", "none");
+  const s = q.toString();
+  return s ? `?${s}` : "";
+}
+
 /** Loads a user's equipment, injuries and recent training, and suggests today's workout. */
-export async function loadSuggestion(userId: string, today: Date) {
+export async function loadSuggestion(userId: string, today: Date, options: SuggestionOptions = {}) {
   const [owned, injuries, recentSets, exercises] = await Promise.all([
     db.select({ equipment: userEquipment.equipment }).from(userEquipment).where(eq(userEquipment.userId, userId)),
     db
@@ -27,10 +44,11 @@ export async function loadSuggestion(userId: string, today: Date) {
 
   const suggestion = suggestWorkout({
     exercises,
-    equipment: owned.map((o) => o.equipment),
+    equipment: options.bodyweightOnly ? [] : owned.map((o) => o.equipment),
     injuries: injuries.map((i) => ({ muscle: i.muscle as Muscle, mode: i.mode })),
     recent: recentSets.flatMap((s) => s.muscles.map((muscle) => ({ muscle, trainedAt: s.trainedAt }))),
     today,
+    split: options.split,
   });
   return { suggestion, injuries, hasEquipment: owned.length > 0 };
 }
