@@ -23,6 +23,8 @@ export type GeneratorInput = {
   injuries: ActiveInjury[];
   recent: TrainedMuscle[];
   today: Date;
+  /** Use this split instead of the most rested one. */
+  split?: Split;
 };
 
 export type Split = "push" | "pull" | "legs";
@@ -40,6 +42,8 @@ export type Suggestion<E extends CatalogueExercise = CatalogueExercise> = {
   resting: Muscle[];
   /** Muscles trained within the recovery window, left out of today's focus. */
   recovering: string[];
+  /** Whole days since any of the split's muscles was trained; null if not in `recent`. */
+  lastTrainedDays: number | null;
 };
 
 export const SPLITS: Record<Split, Muscle[]> = {
@@ -47,6 +51,7 @@ export const SPLITS: Record<Split, Muscle[]> = {
   pull: ["lats", "middle back", "biceps", "traps"],
   legs: ["quadriceps", "hamstrings", "glutes", "calves"],
 };
+export const SPLIT_NAMES: Record<Split, string> = { push: "Push", pull: "Pull", legs: "Legs" };
 const SPLIT_ORDER: Split[] = ["push", "pull", "legs"];
 
 const DAY_MS = 86_400_000;
@@ -78,7 +83,7 @@ function prescribe<E extends CatalogueExercise>(exercise: E, core = false): Sugg
 export function suggestWorkout<E extends CatalogueExercise>(
   input: Omit<GeneratorInput, "exercises"> & { exercises: E[] },
 ): Suggestion<E> | null {
-  const { equipment, injuries, recent, today } = input;
+  const { equipment, injuries, recent, today, split: chosen } = input;
   const day = Math.floor(today.getTime() / DAY_MS);
 
   // Rest mode keeps any load off the muscle; rehab mode only avoids it as a primary mover.
@@ -142,15 +147,18 @@ export function suggestWorkout<E extends CatalogueExercise>(
     .sort((a, b) => restedFor(b.s) - restedFor(a.s) || a.i - b.i)
     .map(({ s }) => s);
 
-  for (const split of order) {
-    const chosen = build(split);
-    if (chosen.length < MIN_EXERCISES) continue;
-    const exercises = chosen.map((e) => prescribe(e));
+  // A chosen split is honoured even when short, as long as something is safe.
+  for (const split of chosen ? [chosen] : order) {
+    const picked = build(split);
+    if (picked.length < (chosen ? 1 : MIN_EXERCISES)) continue;
+    const exercises = picked.map((e) => prescribe(e));
     if (isFree("abdominals")) {
-      const core = pick("abdominals", null, new Set(chosen.map((e) => e.id)));
+      const core = pick("abdominals", null, new Set(picked.map((e) => e.id)));
       if (core) exercises.push(prescribe(core, true));
     }
-    return { split, exercises, resting: [...blockedAny].sort(), recovering };
+    const last = Math.max(...SPLITS[split].map((m) => lastTrained.get(m) ?? -Infinity));
+    const lastTrainedDays = last === -Infinity ? null : Math.floor((today.getTime() - last) / DAY_MS);
+    return { split, exercises, resting: [...blockedAny].sort(), recovering, lastTrainedDays };
   }
   return null;
 }
