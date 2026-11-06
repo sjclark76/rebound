@@ -67,24 +67,46 @@ export const UNITS = ["kg", "lb"] as const;
 export type Unit = (typeof UNITS)[number];
 export const isUnit = (u: unknown): u is Unit => (UNITS as readonly unknown[]).includes(u);
 
-/** The one item with a unit setting of its own: the Bowflex has no weight list, so its unit is a toggle on its row. Everything else keeps a unit on each weight, or has no weight at all. */
-export const hasUnit = (e: string) => e === "bowflex xtreme 2 se";
+const every = (from: number, to: number, step: number) => Array.from({ length: Math.round((to - from) / step) + 1 }, (_, i) => from + i * step);
 
-/** Fixed gear: you tick the weights you own, from tiles in either unit. */
+/** Fixed gear: you tick the weights you own, from tiles in either unit. `noun` and `plural` name one and several of them in sentences; `exercises` names their exercises. `defaults` are ticked when the item is first switched on. */
 export const FIXED_EQUIPMENT = {
   dumbbell: {
     noun: "dumbbell",
-    presets: { kg: [20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 45], lb: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60] },
+    title: "Dumbbell weights",
+    exercises: "Dumbbell",
+    plural: "dumbbells",
+    presets: { kg: [20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 45], lb: every(5, 60, 5) },
+    defaults: [],
   },
   kettlebells: {
     noun: "kettlebell",
+    title: "Kettlebell weights",
+    exercises: "Kettlebell",
+    plural: "kettlebells",
     presets: { kg: [4, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 40, 48], lb: [10, 15, 20, 25, 30, 35, 45, 55, 65, 70, 90, 105] },
+    defaults: [],
   },
   "medicine ball": {
     noun: "medicine ball",
+    title: "Medicine ball weights",
+    exercises: "Medicine ball",
+    plural: "medicine balls",
     presets: { kg: [1, 2, 3, 4, 5, 6, 8, 10, 12], lb: [2, 4, 6, 8, 10, 12, 15, 20, 25] },
+    defaults: [],
   },
-} as const satisfies Partial<Record<Equipment, { noun: string; presets: Record<Unit, readonly number[]> }>>;
+  // The standard 210 lb of Power Rods is 5 to 105 lb per side in 5 lb steps (owner's manual); the 310 and 410 lb upgrades add heavier ones.
+  "bowflex xtreme 2 se": {
+    noun: "Bowflex weight",
+    title: "Bowflex weights",
+    exercises: "Bowflex",
+    plural: "Bowflex weights",
+    presets: { kg: every(2.5, 50, 2.5), lb: every(5, 105, 5) },
+    defaults: every(5, 105, 5).map((value) => ({ value, unit: "lb" as Unit })),
+  },
+} as const satisfies Partial<
+  Record<Equipment, { noun: string; title: string; exercises: string; plural: string; presets: Record<Unit, readonly number[]>; defaults: readonly { value: number; unit: Unit }[] }>
+>;
 export type FixedEquipment = keyof typeof FIXED_EQUIPMENT;
 export const isFixed = (e: string): e is FixedEquipment => e in FIXED_EQUIPMENT;
 
@@ -113,6 +135,11 @@ export const WEIGHT_BOUNDS: Record<Unit, { min: number; max: number }> = { kg: {
 export const equipmentSlug = (e: string) => e.replaceAll(" ", "-");
 export const weightsItemFromSlug = (slug: string): FixedEquipment | AdjustableEquipment | null =>
   ([...Object.keys(FIXED_EQUIPMENT), ...Object.keys(ADJUSTABLE_EQUIPMENT)] as (FixedEquipment | AdjustableEquipment)[]).find((e) => equipmentSlug(e) === slug) ?? null;
+
+/** Fixed items switched on that have no weight yet, so their exercises can't be suggested. An adjustable twin that is on counts, since its range gives the item weights. `counts` is how many weights each fixed item has. */
+export function gearWithoutWeights(owned: readonly string[], counts: Readonly<Record<string, number>>): string[] {
+  return owned.filter((e) => isFixed(e) && !(counts[e] > 0) && !poolItems(e).some((t) => t !== e && owned.includes(t)));
+}
 
 /** What the generator treats as owned: every switched-on item, plus the fixed item each adjustable one stands in for. */
 export const suggestionEquipment = (owned: readonly string[]): string[] => [...new Set([...owned, ...owned.flatMap((e) => countsAs(e) ?? [])])];

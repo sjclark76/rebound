@@ -2,11 +2,10 @@ import { and, desc, eq, inArray, isNotNull, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { exercise, injury, startingWeight, workout, workoutExercise, workoutSet } from "@/db/schema";
 import type { Unit } from "@/db/vocab";
-import { getOwnedEquipment, getOwnedWeights, getRanges } from "./equipment-data";
-import { getUnits, unitOf } from "./settings-data";
-import { exerciseKind, isStale, type Kind, type LoggedSet, type Starting } from "./workout";
-import { poolItems } from "@/db/vocab";
-import { weightPool, type Weight } from "./weights";
+import { getGear } from "./equipment-data";
+import { exerciseKind, isStale, prefill, type Kind, type LoggedSet, type Starting } from "./workout";
+import { equipmentLabel, FIXED_EQUIPMENT, isAdjustable, isFixed, poolItems, type Equipment, type FixedEquipment } from "@/db/vocab";
+import { poolFor, type Weight } from "./weights";
 
 /** Closes workouts left open for more than 24 hours; empty ones are simply removed. */
 export async function closeStaleWorkouts(userId: string, now = new Date()) {
@@ -38,10 +37,14 @@ export type PlanRow = {
   name: string;
   equipment: string | null;
   kind: Kind;
-  /** The unit to start in when there is nothing to copy: that of the lightest weight the equipment has, or the Bowflex's unit, else kg. */
+  /** The unit to start in when there is nothing to copy: that of the lightest weight the equipment has, else kg. */
   unit: Unit;
   /** The real weights the equipment has (ticked weights plus an adjustable range), lightest to heaviest. - and + step through them. */
   options: Weight[];
+  /** The fixed item a typed weight the user doesn't own can be added to (their dumbbells, for a dumbbell exercise), if it is switched on. */
+  addTo: { item: FixedEquipment; noun: string; plural: string } | null;
+  /** When there is nothing to add to but an adjustable item gives the weights: its name, for the line that says a typed weight was snapped. */
+  snapLabel: string | null;
   position: number;
   plannedSets: number;
   reps: string;
@@ -65,11 +68,8 @@ export async function loadWorkout(userId: string, workoutId: number): Promise<Lo
   const [w] = await db.select().from(workout).where(and(eq(workout.id, workoutId), eq(workout.userId, userId)));
   if (!w) return null;
 
-  const [units, owned, weights, ranges, planRows, sets] = await Promise.all([
-    getUnits(userId),
-    getOwnedEquipment(userId),
-    getOwnedWeights(userId),
-    getRanges(userId),
+  const [gear, planRows, sets] = await Promise.all([
+    getGear(userId),
     db
       .select({ p: workoutExercise, e: exercise })
       .from(workoutExercise)
@@ -79,11 +79,6 @@ export async function loadWorkout(userId: string, workoutId: number): Promise<Lo
     db.select().from(workoutSet).where(eq(workoutSet.workoutId, w.id)).orderBy(workoutSet.setNumber),
   ]);
   const ids = planRows.map((r) => r.e.id);
-  const optionsFor = (equipment: string | null): Weight[] => {
-    const items = equipment ? poolItems(equipment).filter((i) => owned.includes(i)) : [];
-    return weightPool(items.flatMap((i) => weights[i] ?? []), items.flatMap((i) => (ranges[i] ? [ranges[i]] : [])));
-  };
-
   const [starts, history] = ids.length
     ? await Promise.all([
         db
@@ -121,14 +116,16 @@ export async function loadWorkout(userId: string, workoutId: number): Promise<Lo
     completedAt: w.completedAt,
     sets,
     plan: planRows.map(({ p, e }) => {
-      const options = optionsFor(e.equipment);
+      const options = poolFor(e.equipment, gear);
       return {
       exerciseId: e.id,
       name: e.name,
       equipment: e.equipment,
       kind: exerciseKind(e),
-      unit: options[0]?.unit ?? unitOf(units, e.equipment),
+      unit: options[0]?.unit ?? "kg",
       options,
+      addTo: addToFor(e.equipment, gear.owned),
+      snapLabel: addToFor(e.equipment, gear.owned) || options.length === 0 ? null : snapLabelFor(e.equipment, gear.owned),
       position: p.position,
       plannedSets: p.plannedSets,
       reps: p.reps,
@@ -191,4 +188,45 @@ export async function getInjuryChips(userId: string) {
     resting: rows.filter((r) => r.mode === "rest").map((r) => r.muscle),
     rehab: rows.filter((r) => r.mode === "rehab").map((r) => r.muscle),
   };
+}
+
+function addToFor(equipment: string | null, owned: string[]): PlanRow["addTo"] {
+  if (!equipment || !isFixed(equipment) || !owned.includes(equipment)) return null;
+  const { noun, plural } = FIXED_EQUIPMENT[equipment];
+  return { item: equipment, noun, plural };
+}
+
+function snapLabelFor(equipment: string | null, owned: string[]): string | null {
+  const twin = equipment ? poolItems(equipment).find((i) => isAdjustable(i) && owned.includes(i)) : undefined;
+  return twin ? equipmentLabel(twin as Equipment).toLowerCase() : null;
+}
+
+type Suggested = { id: string; equipment: string | null; force: string | null; reps: string };
+
+/** The weight each suggested weighted exercise starts at: what logging's first set would be prefilled with (last time's first set, else the starting weight), moved to a weight the user owns. Exercises with no weight are left out. */
+export async function suggestedWeights(userId: string, exercises: Suggested[]): Promise<Record<string, Weight>> {
+  const ids = exercises.map((e) => e.id);
+  if (ids.length === 0) return {};
+  const [gear, starts, history] = await Promise.all([
+    getGear(userId),
+    db.select().from(startingWeight).where(and(eq(startingWeight.userId, userId), inArray(startingWeight.exerciseId, ids))),
+    db
+      .select({ s: workoutSet })
+      .from(workoutSet)
+      .innerJoin(workout, eq(workoutSet.workoutId, workout.id))
+      .where(and(eq(workout.userId, userId), isNotNull(workout.completedAt), inArray(workoutSet.exerciseId, ids)))
+      .orderBy(desc(workout.startedAt), workoutSet.setNumber),
+  ]);
+  const out: Record<string, Weight> = {};
+  for (const e of exercises) {
+    const kind = exerciseKind(e);
+    if (kind !== "weighted") continue;
+    const options = poolFor(e.equipment, gear);
+    if (options.length === 0) continue;
+    const s = starts.find((x) => x.exerciseId === e.id);
+    const first = history.find((h) => h.s.exerciseId === e.id)?.s;
+    const pf = prefill({ kind, setNumber: 1, plannedReps: e.reps, starting: s ? { weight: s.weight, unit: s.unit } : null, defaultUnit: "kg", options, lastTime: first ? [first] : [], thisWorkout: [] });
+    if (pf.weight !== null) out[e.id] = { value: pf.weight, unit: pf.unit };
+  }
+  return out;
 }

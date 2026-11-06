@@ -3,8 +3,8 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { equipmentRange, equipmentUnit, equipmentWeight, userEquipment } from "@/db/schema";
-import { ADJUSTABLE_EQUIPMENT, EQUIPMENT, equipmentSlug, hasUnit, isAdjustable, isFixed, isUnit, WEIGHT_BOUNDS, type Unit } from "@/db/vocab";
+import { equipmentRange, equipmentWeight, userEquipment } from "@/db/schema";
+import { ADJUSTABLE_EQUIPMENT, EQUIPMENT, FIXED_EQUIPMENT, equipmentSlug, isAdjustable, isFixed, isUnit, WEIGHT_BOUNDS, type Unit } from "@/db/vocab";
 import { requireSession } from "@/lib/session";
 import { cleanRange, type AdjustableRange } from "@/lib/weights";
 
@@ -14,12 +14,18 @@ const refresh = (equipment?: string) => {
   if (equipment) revalidatePath(`/settings/equipment/${equipmentSlug(equipment)}`, "layout");
 };
 
-/** Switches an equipment item on or off. Off keeps its weights. Switching an adjustable item on gives it its default range if it has none. "body only" is always allowed, so it isn't stored. */
+/** Switches an equipment item on or off. Off keeps its weights. Switching an adjustable item on gives it its default range if it has none, and a fixed item with default weights (the Bowflex) gets them ticked the first time. "body only" is always allowed, so it isn't stored. */
 export async function setEquipment(equipment: string, on: boolean) {
   const { user } = await requireSession();
   if (!(EQUIPMENT as readonly string[]).includes(equipment) || equipment === "body only") throw new Error("Unknown equipment");
   if (on) {
     await db.insert(userEquipment).values({ userId: user.id, equipment }).onConflictDoNothing();
+    if (isFixed(equipment)) {
+      // First time on: tick the item's default weights (the Bowflex's 5 to 105 lb). Not again if it already has weights.
+      const [has] = await db.select({ w: equipmentWeight.weight }).from(equipmentWeight).where(and(eq(equipmentWeight.userId, user.id), eq(equipmentWeight.equipment, equipment))).limit(1);
+      const defaults = FIXED_EQUIPMENT[equipment].defaults;
+      if (!has && defaults.length > 0) await db.insert(equipmentWeight).values(defaults.map((d) => ({ userId: user.id, equipment, weight: d.value, unit: d.unit }))).onConflictDoNothing();
+    }
     if (isAdjustable(equipment)) await db.insert(equipmentRange).values({ userId: user.id, equipment, unit: "kg", ...ADJUSTABLE_EQUIPMENT[equipment].range.kg }).onConflictDoNothing();
   } else await db.delete(userEquipment).where(and(eq(userEquipment.userId, user.id), eq(userEquipment.equipment, equipment)));
   refresh(equipment);
@@ -47,16 +53,5 @@ export async function saveRange(equipment: string, input: AdjustableRange) {
     .insert(equipmentRange)
     .values({ userId: user.id, equipment, ...range })
     .onConflictDoUpdate({ target: [equipmentRange.userId, equipmentRange.equipment], set: range });
-  refresh(equipment);
-}
-
-/** Sets the Bowflex's unit. Converts nothing, because every saved weight carries its own unit. */
-export async function setEquipmentUnit(equipment: string, unit: Unit) {
-  const { user } = await requireSession();
-  if (!isUnit(unit) || !hasUnit(equipment)) throw new Error("Can't set a unit for that");
-  await db
-    .insert(equipmentUnit)
-    .values({ userId: user.id, equipment, unit })
-    .onConflictDoUpdate({ target: [equipmentUnit.userId, equipmentUnit.equipment], set: { unit } });
   refresh(equipment);
 }

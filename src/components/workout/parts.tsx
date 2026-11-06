@@ -13,6 +13,7 @@ export function Stepper({
   step,
   onBump,
   decimal = false,
+  onCommit,
 }: {
   label: string;
   unit?: string;
@@ -22,6 +23,8 @@ export function Stepper({
   /** Replaces the default +/- step (for example to move through a list of real weights). */
   onBump?: (direction: 1 | -1) => void;
   decimal?: boolean;
+  /** Called when the user leaves the box (tab or tap away) or presses Enter. */
+  onCommit?: () => void;
 }) {
   const id = `stepper-${label}`;
   const bump = (d: number) => (onBump ? onBump(d < 0 ? -1 : 1) : onChange(Math.max(0, Math.round(((value ?? 0) + d) * 100) / 100)));
@@ -46,6 +49,8 @@ export function Stepper({
               const n = Number(t);
               if (!Number.isNaN(n) && n >= 0) onChange(n);
             }}
+            onBlur={onCommit}
+            onKeyDown={onCommit ? (e) => e.key === "Enter" && (e.preventDefault(), e.currentTarget.blur()) : undefined}
             aria-describedby={unit ? `${id}-unit` : undefined}
             className="h-[52px] w-full rounded-xl border-[1.5px] border-input bg-card text-center font-heading text-[32px] font-bold tabular-nums outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           />

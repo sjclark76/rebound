@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   adjustRange,
+  aOrAn,
   cleanRange,
   describeOwned,
   expandRange,
   formatWeight,
   parseWeight,
   previewWeights,
+  snapToOptions,
   relabelRange,
   stepWeight,
   summariseOwned,
@@ -65,6 +67,20 @@ describe("summaries", () => {
     expect(summariseOwned([w(8), w(12)])).toBe("8, 12 kg");
   });
   it("is null with no weights", () => expect(summariseOwned([])).toBeNull());
+  it("shortens an even run of three or more weights", () => {
+    const fives = Array.from({ length: 21 }, (_, i) => w(5 + i * 5, "lb"));
+    expect(summariseOwned(fives)).toBe("5–105 lb every 5");
+    expect(summariseOwned([w(20), w(24), w(28)])).toBe("20–28 kg every 4");
+    expect(summariseOwned([...fives, w(11), w(20)])).toContain("11");
+  });
+  it("keeps two weights, or an uneven list, in full", () => {
+    expect(summariseOwned([w(20), w(24)])).toBe("20, 24 kg");
+    expect(summariseOwned([w(8), w(12), w(16), w(24)])).toBe("8, 12, 16, 24 kg");
+  });
+  it("spells an even run out for screen readers", () => {
+    const fives = Array.from({ length: 21 }, (_, i) => w(5 + i * 5, "lb"));
+    expect(describeOwned(fives)).toBe("5 to 105 lb, every 5 lb");
+  });
   it("spells out for screen readers", () => expect(describeOwned([w(20), w(24), w(45, "lb"), w(50, "lb")])).toBe("20 and 24 kg, 45 and 50 lb"));
   it("summarises a range", () => expect(summariseRange(r(5, 2.5, 50, "lb"))).toBe("5–50 lb"));
 });
@@ -143,5 +159,34 @@ describe("toggleOwned", () => {
     expect(toggleOwned([w(20)], w(24))).toEqual([w(20), w(24)]);
     expect(toggleOwned([w(20), w(24)], w(20))).toEqual([w(24)]);
     expect(toggleOwned([w(20)], w(20, "lb"))).toEqual([w(20), w(20, "lb")]);
+  });
+});
+
+describe("snapToOptions", () => {
+  const opts = weightPool([], [r(5, 2.5, 50, "lb")]);
+  it("keeps a weight that is already there", () => expect(snapToOptions(opts, w(20, "lb"))).toEqual({ weight: w(20, "lb"), how: "same" }));
+  it("snaps above the top and below the bottom, and says which", () => {
+    expect(snapToOptions(opts, w(55, "lb"))).toEqual({ weight: w(50, "lb"), how: "above" });
+    expect(snapToOptions(opts, w(1, "lb"))).toEqual({ weight: w(5, "lb"), how: "below" });
+  });
+  it("snaps a weight between steps to the nearest, the lighter one on a tie", () => {
+    expect(snapToOptions(opts, w(46, "lb"))).toEqual({ weight: w(45, "lb"), how: "between" });
+    expect(snapToOptions(opts, w(46.25, "lb"))?.weight).toEqual(w(45, "lb"));
+    expect(snapToOptions(opts, w(47, "lb"))?.weight).toEqual(w(47.5, "lb"));
+  });
+  it("compares across units by true weight", () => {
+    const mixed = weightPool([w(8), w(12)], [r(40, 5, 50, "lb")]); // 40 lb = 18.1 kg, 12 kg, 8 kg ...
+    expect(snapToOptions(mixed, w(10))?.weight).toEqual(w(8)); // 8 and 12 are equally near: the lighter
+    expect(snapToOptions(mixed, w(17))?.weight).toEqual(w(40, "lb"));
+  });
+  it("is null with nothing to snap to", () => expect(snapToOptions([], w(10))).toBeNull());
+});
+
+describe("aOrAn", () => {
+  it("says an before weights that start with a vowel sound", () => {
+    for (const n of [8, 11, 18, 80, 85, 11.5]) expect(aOrAn(n)).toBe("an");
+  });
+  it("says a otherwise", () => {
+    for (const n of [5, 10, 12, 20, 45, 110, 180]) expect(aOrAn(n)).toBe("a");
   });
 });

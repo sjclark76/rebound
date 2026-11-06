@@ -11,9 +11,10 @@ import { UnitControl } from "./unit-control";
 type Change = { weight: Weight; owned: boolean };
 
 /** Tick the weights you own on a fixed item. The kg | lb switch only picks which unit's tiles show and which unit Add uses; ticked weights stay selected across both. Every change saves straight away; a failed save reverts and says so. */
-export function FixedWeights({ item, initial }: { item: FixedEquipment; initial: Weight[] }) {
+export function FixedWeights({ item, initial, note }: { item: FixedEquipment; initial: Weight[]; note?: string }) {
   const [owned, setOwned] = useState(initial);
-  const [view, setView] = useState<Unit>("kg");
+  // Open on the unit most of the weights are in (kg when it is a tie), so the ticked tiles are in view.
+  const [view, setView] = useState<Unit>(() => (initial.filter((o) => o.unit === "lb").length > initial.filter((o) => o.unit === "kg").length ? "lb" : "kg"));
   const [failed, setFailed] = useState<Change | null>(null);
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   const [another, setAnother] = useState("");
@@ -89,6 +90,7 @@ export function FixedWeights({ item, initial }: { item: FixedEquipment; initial:
           <h2 id="pick-h" className="text-lg leading-6 font-bold">Tap the weights you own</h2>
           <span className="text-[15px] leading-5 font-bold whitespace-nowrap text-muted-foreground">{inView} in {view}</span>
         </div>
+        {note && <p className="px-1 text-base leading-6 text-muted-foreground">{note}</p>}
         <div className="grid grid-cols-4 gap-2">
           {tiles.map((value) => {
             const weight = { value, unit: view };
