@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Logging · weight box · phone</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="rebound-ui.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rb {{theme}}" style="width: 390px; min-height: 1320px">
+<header class="lhdr">
+<a class="back" href="#" aria-label="Back to Today" style="padding: 0 4px"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a>
+<div class="ttl"><b>Push</b><span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>18 min · saved</span></div>
+<button type="button" class="finish"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>Finish</button>
+</header>
+<main class="page" style="gap: 16px; padding-bottom: 0">
+<fieldset class="seg">
+<legend class="sr">View</legend>
+<label class="sel"><input type="radio" name="view" checked><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Focused</label>
+<label><input type="radio" name="view">List</label>
+</fieldset>
+<div class="exnav"><p class="kick">Exercise 1 of 5 · Push</p><div class="nav"><button type="button" class="sq48" aria-label="Previous exercise"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><button type="button" class="sq48" aria-label="Next exercise"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div></div>
+<div class="ex-h"><h1 class="hd ex-t">Dumbbell bench press</h1><p class="muted" style="font-size: 17px">3 × 8–10 · {{suggested}} · {{gear}}</p></div>
+<section class="card sets" aria-labelledby="sets-h">
+<div class="sh"><h2 class="hd" id="sets-h">Sets</h2><span style="font-size: 15px; font-weight: 700; color: var(--muted-fg)">1 of 3 done</span></div>
+<ul>
+<li class="set"><span class="dot done" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><span class="tx"><span class="m"><small>Set 1</small><b>{{suggested}} × 10</b></span><span class="s">Last time {{suggested}} × 10</span></span><button type="button" class="pen" aria-label="Edit set 1"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/></svg></button></li>
+<li class="set now"><span class="dot now" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span><span class="tx"><span class="m"><small>Set 2</small><b>{{set2}} × 9</b></span><span class="s">Last time {{suggested}} × 9</span></span><span class="tag">Now</span></li>
+<li class="set"><span class="dot todo" aria-hidden="true"></span><span class="tx"><span class="m"><small>Set 3</small><b>{{suggested}} × 8</b></span><span class="s">Last time {{suggested}} × 8</span></span><span class="tag todo">To do</span></li>
+</ul>
+</section>
+<section class="editor" aria-labelledby="ed-h">
+<h3 class="hd" id="ed-h">Set 2</h3>
+<p class="src"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span>Pre-filled from last time, set 2: {{suggested}} × 9 (Mon 3 Nov)</span></p>
+<div class="lstp"><label class="l" for="w">Weight</label><div class="r"><button type="button" class="b52" aria-label="Decrease weight"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button><span class="inp"><input id="w" class="{{inputClass}}" inputmode="decimal" value="{{value}}" aria-describedby="w-u"><span class="u" id="w-u">{{unit}}</span></span><button type="button" class="b52" aria-label="Increase weight"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+<sc-if value="{{isPrompt}}" hint-placeholder-val="{{true}}">
+<div class="ask" role="group" aria-labelledby="ask-q">
+<p class="q" id="ask-q">Add 11 kg to your dumbbells?</p>
+<p class="sub">You don't have an 11 kg dumbbell yet. Adding it saves it to your equipment.</p>
+<div class="pair"><button type="button" class="btn2">Cancel</button><button type="button" class="btnp"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Add</button></div>
+</div>
+</sc-if>
+<sc-if value="{{isAdded}}" hint-placeholder-val="{{false}}">
+<p class="okmsg" role="status"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>11 kg added to your dumbbells.</p>
+</sc-if>
+<sc-if value="{{isSnapped}}" hint-placeholder-val="{{false}}">
+<p class="okmsg" role="status"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="color: var(--muted-fg)"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>Set to 50 lb, the top of your adjustable dumbbells' range.</span></p>
+</sc-if>
+<div class="lstp"><label class="l" for="r">Reps</label><div class="r"><button type="button" class="b52" aria-label="Decrease reps"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button><span class="inp"><input id="r" inputmode="numeric" value="9"></span><button type="button" class="b52" aria-label="Increase reps"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></div></div>
+</section>
+<div class="pair">
+<button type="button" class="btn2"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Add a set</button>
+<button type="button" class="btn2"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 4 10 8-10 8z"/><path d="M19 5v14"/></svg>Skip exercise</button>
+</div>
+<div class="footbar"><button type="button" class="btn1" disabled="{{completeDisabled}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Complete set 2</button></div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["t-light","t-dark"],"default":"t-light"},"state":{"editor":"enum","options":["prompt","added","cancelled","snapTyped","snapped"],"default":"prompt"},"$preview":{"width":390,"height":1320}}'>
+class Component extends DCLogic {
+renderVals() {
+const s = this.props.state ?? 'prompt';
+const adj = s === 'snapTyped' || s === 'snapped';
+const unit = adj ? 'lb' : 'kg';
+const suggested = adj ? '45 lb' : '20 kg';
+const value = { prompt: '11', added: '11', cancelled: '20', snapTyped: '55', snapped: '50' }[s];
+const typing = s === 'prompt' || s === 'snapTyped';
+const set2 = typing ? suggested : value + ' ' + unit;
+return {
+theme: this.props.theme ?? 't-light',
+unit, suggested, value, set2,
+gear: adj ? 'Adjustable dumbbells' : 'Dumbbells',
+inputClass: typing ? 'typing' : '',
+isPrompt: s === 'prompt',
+isAdded: s === 'added',
+isSnapped: s === 'snapped',
+completeDisabled: s === 'prompt'
+};
+}
+}
+</script>
+</body>
+</html>
