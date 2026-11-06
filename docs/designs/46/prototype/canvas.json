@@ -1,0 +1,256 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-07T09:00:00Z"
+ },
+ "title": "Rebound \u2014 Choose workout type (start any time)",
+ "launch": {
+  "view": "canvas"
+ },
+ "pages": [],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1 \u00b7 Home \u00b7 Recommended",
+   "is_interactive": true
+  },
+  "PhoneLightDone.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "1b \u00b7 Home \u00b7 After finishing"
+  },
+  "Choose.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 1400,
+   "title": "3a \u00b7 Choose \u00b7 Recommended selected",
+   "is_interactive": true
+  },
+  "PhoneLightUpper.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 1400,
+   "title": "3b \u00b7 Choose \u00b7 Upper body tapped"
+  },
+  "PhoneLightRecovering.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 1400,
+   "title": "3c \u00b7 Choose \u00b7 Recovering note (Legs)"
+  },
+  "PhoneLightCore.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 1400,
+   "title": "3d \u00b7 Choose \u00b7 Core selected"
+  },
+  "PhoneDark.dc.html": {
+   "x": 0,
+   "y": 1780,
+   "w": 390,
+   "h": 844,
+   "title": "1 \u00b7 Home \u00b7 Recommended"
+  },
+  "PhoneDarkDone.dc.html": {
+   "x": 470,
+   "y": 1780,
+   "w": 390,
+   "h": 844,
+   "title": "1b \u00b7 Home \u00b7 After finishing"
+  },
+  "PhoneDarkChoose.dc.html": {
+   "x": 1410,
+   "y": 1780,
+   "w": 390,
+   "h": 1400,
+   "title": "3a \u00b7 Choose \u00b7 Recommended selected"
+  },
+  "PhoneDarkUpper.dc.html": {
+   "x": 1880,
+   "y": 1780,
+   "w": 390,
+   "h": 1400,
+   "title": "3b \u00b7 Choose \u00b7 Upper body tapped"
+  },
+  "PhoneDarkRecovering.dc.html": {
+   "x": 2350,
+   "y": 1780,
+   "w": 390,
+   "h": 1400,
+   "title": "3c \u00b7 Choose \u00b7 Recovering note (Legs)"
+  },
+  "PhoneDarkCore.dc.html": {
+   "x": 2820,
+   "y": 1780,
+   "w": 390,
+   "h": 1400,
+   "title": "3d \u00b7 Choose \u00b7 Core selected"
+  },
+  "DesktopHome.dc.html": {
+   "x": 0,
+   "y": 3560,
+   "w": 1280,
+   "h": 800,
+   "title": "1 \u00b7 Home \u00b7 Recommended",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "DesktopLightDone.dc.html": {
+   "x": 1360,
+   "y": 3560,
+   "w": 1280,
+   "h": 800,
+   "title": "1b \u00b7 Home \u00b7 After finishing",
+   "expand": "fill"
+  },
+  "Desktop.dc.html": {
+   "x": 4080,
+   "y": 3560,
+   "w": 1280,
+   "h": 1000,
+   "title": "3 \u00b7 Choose \u00b7 Recommended selected",
+   "expand": "fill",
+   "is_interactive": true
+  },
+  "DesktopHomeDark.dc.html": {
+   "x": 0,
+   "y": 4940,
+   "w": 1280,
+   "h": 800,
+   "title": "1 \u00b7 Home \u00b7 Recommended",
+   "expand": "fill"
+  },
+  "DesktopDarkDone.dc.html": {
+   "x": 1360,
+   "y": 4940,
+   "w": 1280,
+   "h": 800,
+   "title": "1b \u00b7 Home \u00b7 After finishing",
+   "expand": "fill"
+  },
+  "DesktopDark.dc.html": {
+   "x": 4080,
+   "y": 4940,
+   "w": 1280,
+   "h": 1000,
+   "title": "3 \u00b7 Choose \u00b7 Recommended selected",
+   "expand": "fill"
+  },
+  "PhonePreview.dc.html": {
+   "w": 390,
+   "h": 1250,
+   "title": "2 \u00b7 Today's workout \u00b7 Exercises before starting",
+   "is_interactive": true,
+   "x": 940,
+   "y": 0
+  },
+  "PhoneDarkPreview.dc.html": {
+   "w": 390,
+   "h": 1250,
+   "title": "2 \u00b7 Today's workout \u00b7 Exercises before starting",
+   "x": 940,
+   "y": 1780
+  },
+  "DesktopPreview.dc.html": {
+   "w": 1280,
+   "h": 1000,
+   "title": "2 \u00b7 Today's workout \u00b7 Exercises before starting",
+   "expand": "fill",
+   "x": 2720,
+   "y": 3560
+  },
+  "DesktopDarkPreview.dc.html": {
+   "w": 1280,
+   "h": 1000,
+   "title": "2 \u00b7 Today's workout \u00b7 Exercises before starting",
+   "expand": "fill",
+   "x": 2720,
+   "y": 4940
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "PhoneLightDone.dc.html",
+  "PhonePreview.dc.html",
+  "Choose.dc.html",
+  "PhoneLightUpper.dc.html",
+  "PhoneLightRecovering.dc.html",
+  "PhoneLightCore.dc.html",
+  "PhoneDark.dc.html",
+  "PhoneDarkDone.dc.html",
+  "PhoneDarkPreview.dc.html",
+  "PhoneDarkChoose.dc.html",
+  "PhoneDarkUpper.dc.html",
+  "PhoneDarkRecovering.dc.html",
+  "PhoneDarkCore.dc.html",
+  "DesktopHome.dc.html",
+  "DesktopLightDone.dc.html",
+  "DesktopPreview.dc.html",
+  "Desktop.dc.html",
+  "DesktopHomeDark.dc.html",
+  "DesktopDarkDone.dc.html",
+  "DesktopDarkPreview.dc.html",
+  "DesktopDark.dc.html"
+ ],
+ "notes": {
+  "t0": {
+   "x": 0,
+   "y": -260,
+   "text": "Phone \u00b7 light",
+   "kind": "title1",
+   "maxW": 3200
+  },
+  "t1": {
+   "x": 0,
+   "y": 1520,
+   "text": "Phone \u00b7 dark",
+   "kind": "title1",
+   "maxW": 3200
+  },
+  "t2": {
+   "x": 0,
+   "y": 3300,
+   "text": "Desktop \u00b7 light",
+   "kind": "title1",
+   "maxW": 4000
+  },
+  "t3": {
+   "x": 0,
+   "y": 4680,
+   "text": "Desktop \u00b7 dark",
+   "kind": "title1",
+   "maxW": 4000
+  },
+  "n1": {
+   "x": 3330,
+   "y": 0,
+   "w": 360,
+   "text": "Home is just the recommendation and two choices. \"See pull workout\" opens today's workout: the exercises and Start, no type picker. \"Choose a workout\" opens the type picker screen."
+  },
+  "n2": {
+   "x": 3330,
+   "y": 540,
+   "w": 360,
+   "text": "Choose screen: the recommended type is preselected. Picking another type swaps the exercises and shows \"Back to Pull\". The recovering note sits under the type row. Play the Home and Choose artboards to click through."
+  }
+ },
+ "designSystems": [
+  {
+   "title": "Rebound",
+   "namespace": "rebound",
+   "artifact": "https://claude.ai/code/artifact/b1121b33-8e57-4476-86f5-747dddd6dea0",
+   "version": null,
+   "copiedAt": "2026-11-07T09:00:00Z"
+  }
+ ]
+}
