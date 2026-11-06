@@ -4,7 +4,7 @@ import { exercise, injury, workout, workoutSet } from "@/db/schema";
 import { gearWithoutWeights, suggestionEquipment, type Muscle } from "@/db/vocab";
 import { getGear } from "./equipment-data";
 import { suggestedWeights } from "./workout-data";
-import { recoveringMuscles, type Split, SPLITS, suggestWorkout } from "./generator";
+import { isSplit, recoveringMuscles, type Split, suggestWorkout } from "./generator";
 
 const LOOKBACK_MS = 7 * 86_400_000;
 
@@ -12,7 +12,7 @@ export type SuggestionOptions = { split?: Split; bodyweightOnly?: boolean };
 
 /** Reads the options the home and exercise pages pass in their query string. */
 export function parseOptions(params: Record<string, string | string[] | undefined>): SuggestionOptions {
-  const split = typeof params.split === "string" && params.split in SPLITS ? (params.split as Split) : undefined;
+  const split = isSplit(params.split) ? params.split : undefined;
   return { split, bodyweightOnly: params.equipment === "none" };
 }
 

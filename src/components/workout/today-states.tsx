@@ -3,7 +3,6 @@ import { CheckIcon, ClockIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
 import { cn } from "cn";
 import { StatusChip } from "@/components/status-chip";
 import { SPLIT_NAMES, type Split } from "@/lib/generator";
-import { summarise } from "@/lib/workout";
 import type { LoadedWorkout, PlanRow } from "@/lib/workout-data";
 import { DiscardButton } from "./today-client";
 
@@ -137,39 +136,6 @@ export function InProgressToday({ w, kicker, chips }: { w: LoadedWorkout; kicker
           )}
         </ul>
         <DiscardButton workoutId={w.id} sets={w.sets.length} />
-      </section>
-      <PlanList w={w} />
-    </Shell>
-  );
-}
-
-export function CompletedToday({ w, kicker, chips }: { w: LoadedWorkout; kicker: React.ReactNode; chips: Chips }) {
-  const s = summarise(w.plan, w.sets, w.startedAt, w.completedAt!);
-  const stat = (label: string, value: string) => (
-    <div className="flex flex-col gap-0.5">
-      <span className="text-[15px] font-bold text-muted-foreground">{label}</span>
-      <span className="font-heading text-3xl leading-9 font-bold tabular-nums">{value}</span>
-    </div>
-  );
-  return (
-    <Shell kicker={kicker}>
-      <Title split={w.split} sub="Done today" />
-      <ChipRow {...chips} />
-      <section aria-label="Workout complete" className="flex flex-col gap-4 rounded-2xl bg-card p-4 ring-1 ring-border">
-        <div className="flex items-center gap-3">
-          <span className="grid size-12 shrink-0 place-items-center rounded-full bg-secondary">
-            <CheckIcon className="size-6 text-primary" aria-hidden />
-          </span>
-          <div className="flex flex-col">
-            <h2 className="font-heading text-2xl leading-7 font-bold">Workout complete</h2>
-            <p className="text-base text-muted-foreground">Finished {time(w.completedAt!)}</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-3 border-t pt-4">
-          {stat("Sets", String(s.sets))}
-          {stat("Volume", `${Math.round(s.volume).toLocaleString("en-GB")} kg`)}
-          {stat("Duration", `${s.minutes} min`)}
-        </div>
       </section>
       <PlanList w={w} />
     </Shell>

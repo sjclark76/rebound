@@ -31,8 +31,6 @@ export type GeneratorInput = {
   split?: Split;
 };
 
-export type Split = "push" | "pull" | "legs";
-
 export type SuggestedExercise<E extends CatalogueExercise = CatalogueExercise> = {
   exercise: E;
   sets: number;
@@ -44,23 +42,49 @@ export type Suggestion<E extends CatalogueExercise = CatalogueExercise> = {
   exercises: SuggestedExercise<E>[];
   /** Injured muscles in rest mode: nothing that loads them is suggested. */
   resting: Muscle[];
-  /** Muscles trained within the recovery window, left out of today's focus. */
+  /** Muscles trained within the recovery window. A recommendation leaves them out; a type the user chose includes them. */
   recovering: string[];
-  /** Whole days since any of the split's muscles was trained; null if not in `recent`. */
+  /** Whole days since any of the type's muscles was trained; null if not in `recent`. */
   lastTrainedDays: number | null;
 };
 
+/** The types of workout. Only push, pull and legs are ever recommended; the rest are chosen. */
+export type Split = "push" | "pull" | "legs" | "upper" | "full" | "core";
+
+/** The muscles each type works, in the order exercises are picked for them. */
 export const SPLITS: Record<Split, Muscle[]> = {
   push: ["chest", "shoulders", "triceps"],
   pull: ["lats", "middle back", "biceps", "traps"],
   legs: ["quadriceps", "hamstrings", "glutes", "calves"],
+  upper: ["chest", "lats", "shoulders", "middle back", "triceps", "biceps", "traps"],
+  full: ["quadriceps", "chest", "lats", "shoulders", "hamstrings", "glutes"],
+  core: ["abdominals", "lower back"],
 };
-export const SPLIT_NAMES: Record<Split, string> = { push: "Push", pull: "Pull", legs: "Legs" };
+export const SPLIT_NAMES: Record<Split, string> = {
+  push: "Push",
+  pull: "Pull",
+  legs: "Legs",
+  upper: "Upper body",
+  full: "Full body",
+  core: "Core",
+};
+/** How a type is built: the most exercises, how many times round the muscles it goes, and whether a core finisher follows. */
+const SHAPE: Record<Split, { max: number; rounds: number; finisher: boolean }> = {
+  push: { max: 5, rounds: 1, finisher: true },
+  pull: { max: 5, rounds: 1, finisher: true },
+  legs: { max: 5, rounds: 1, finisher: true },
+  upper: { max: 6, rounds: 1, finisher: true },
+  full: { max: 6, rounds: 1, finisher: true },
+  core: { max: 5, rounds: 3, finisher: false },
+};
+/** The order the picker shows the types in. */
+export const TYPE_ORDER: Split[] = ["full", "upper", "push", "pull", "legs", "core"];
+export const isSplit = (s: unknown): s is Split => typeof s === "string" && s in SPLITS;
 const SPLIT_ORDER: Split[] = ["push", "pull", "legs"];
 
 const DAY_MS = 86_400_000;
-const RECOVERY_MS = 2 * DAY_MS;
-const MAX_EXERCISES = 5;
+export const RECOVERY_DAYS = 2;
+const RECOVERY_MS = RECOVERY_DAYS * DAY_MS;
 const MIN_EXERCISES = 3;
 /** Each day rotates among this many of the best-ranked candidates, for variety. */
 const VARIETY = 3;
@@ -123,7 +147,8 @@ export function suggestWorkout<E extends CatalogueExercise>(
     lastTrained.set(muscle, Math.max(lastTrained.get(muscle) ?? 0, trainedAt.getTime()));
   }
   const recovering = recoveringMuscles(recent, today);
-  const isFree = (m: string) => !recovering.includes(m) && !blockedPrimary.has(m as Muscle);
+  // A recommendation steers clear of muscles still recovering. A type the user chose is built anyway; injuries are always avoided.
+  const isFree = (m: string) => (chosen !== undefined || !recovering.includes(m)) && !blockedPrimary.has(m as Muscle);
 
   const pick = (muscle: string, mechanic: string | null, taken: Set<string>) => {
     const options = safe.filter(
@@ -136,21 +161,25 @@ export function suggestWorkout<E extends CatalogueExercise>(
   };
 
   function build(split: Split) {
+    const { max, rounds } = SHAPE[split];
     const muscles = SPLITS[split].filter(isFree);
     const taken = new Set<string>();
-    const chosen: E[] = [];
-    // A compound per muscle first, then isolations, until the session is full.
-    for (const mechanic of ["compound", "isolation"]) {
-      for (const muscle of muscles) {
-        if (chosen.length >= MAX_EXERCISES) break;
-        const e = pick(muscle, mechanic, taken);
-        if (e) {
-          taken.add(e.id);
-          chosen.push(e);
+    const picked: E[] = [];
+    // A compound per muscle first, then isolations, until the session is full. Core has no compound/isolation split, so it just goes round the muscles.
+    const mechanics = split === "core" ? [null] : ["compound", "isolation"];
+    for (let r = 0; r < rounds; r++) {
+      for (const mechanic of mechanics) {
+        for (const muscle of muscles) {
+          if (picked.length >= max) break;
+          const e = pick(muscle, mechanic, taken);
+          if (e) {
+            taken.add(e.id);
+            picked.push(e);
+          }
         }
       }
     }
-    return chosen;
+    return picked;
   }
 
   // Most rested split first; ties (e.g. no history yet) rotate by day.
@@ -164,8 +193,8 @@ export function suggestWorkout<E extends CatalogueExercise>(
   for (const split of chosen ? [chosen] : order) {
     const picked = build(split);
     if (picked.length < (chosen ? 1 : MIN_EXERCISES)) continue;
-    const exercises = picked.map((e) => prescribe(e));
-    if (isFree("abdominals")) {
+    const exercises = picked.map((e) => prescribe(e, split === "core"));
+    if (SHAPE[split].finisher && isFree("abdominals")) {
       const core = pick("abdominals", null, new Set(picked.map((e) => e.id)));
       if (core) exercises.push(prescribe(core, true));
     }
@@ -174,4 +203,18 @@ export function suggestWorkout<E extends CatalogueExercise>(
     return { split, exercises, resting: [...blockedAny].sort(), recovering, lastTrainedDays };
   }
   return null;
+}
+
+/** The note shown when a chosen type was trained within the recovery window ("Legs were trained yesterday."), else null. */
+export function recoveryNote(split: Split, daysAgo: number | null): string | null {
+  if (daysAgo === null || daysAgo >= RECOVERY_DAYS) return null;
+  const who: Record<Split, string> = {
+    push: "Push muscles were",
+    pull: "Pull muscles were",
+    legs: "Legs were",
+    upper: "Upper body was",
+    full: "Full body was",
+    core: "Core was",
+  };
+  return `${who[split]} trained ${daysAgo === 0 ? "today" : "yesterday"}.`;
 }

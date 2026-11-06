@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type CatalogueExercise, type GeneratorInput, SPLITS, suggestWorkout } from "./generator";
+import { type CatalogueExercise, type GeneratorInput, recoveryNote, SPLITS, type Split, suggestWorkout, TYPE_ORDER } from "./generator";
 
 let n = 0;
 function ex(
@@ -21,7 +21,7 @@ function ex(
 }
 
 // Two compounds and an isolation for every split muscle, plus core.
-const catalogue: CatalogueExercise[] = [...Object.values(SPLITS).flat(), "abdominals"].flatMap(
+const catalogue: CatalogueExercise[] = [...new Set(Object.values(SPLITS).flat()), "abdominals"].flatMap(
   (m) => [ex(m), ex(m), ex(m, { mechanic: "isolation" })],
 );
 
@@ -156,5 +156,65 @@ describe("gear with no weights", () => {
     const body = catalogue.map((e) => ({ ...e, id: `body_${e.id}`, equipment: "body only" }));
     const s = suggestWorkout({ ...base, exercises: body, equipment: ["kettlebells"], withoutWeights: ["kettlebells"] });
     expect(s!.exercises.length).toBeGreaterThan(0);
+  });
+});
+
+describe("workout types", () => {
+  const primary = (s: ReturnType<typeof suggestWorkout>) => s!.exercises.map((e) => e.exercise.primaryMuscles[0]);
+  const choose = (split: Split, extra: Partial<GeneratorInput> = {}) => suggestWorkout({ ...base, split, ...extra });
+
+  it("offers six types, in the order the picker shows them", () => expect(TYPE_ORDER).toEqual(["full", "upper", "push", "pull", "legs", "core"]));
+
+  it("upper body works the push and pull muscles together", () => {
+    const s = choose("upper");
+    expect(s!.split).toBe("upper");
+    const muscles = new Set(primary(s).filter((m) => m !== "abdominals"));
+    expect([...muscles].every((m) => [...SPLITS.push, ...SPLITS.pull].includes(m as never))).toBe(true);
+    expect(muscles.size).toBeGreaterThan(3);
+    expect(s!.exercises.at(-1)!.exercise.primaryMuscles[0]).toBe("abdominals"); // core finisher
+  });
+
+  it("full body covers chest, back, shoulders and legs, with a core finisher", () => {
+    const s = choose("full");
+    const muscles = new Set(primary(s));
+    for (const m of ["chest", "lats", "shoulders", "quadriceps"]) expect(muscles.has(m)).toBe(true);
+    expect(muscles.has("abdominals")).toBe(true);
+    expect(s!.exercises.length).toBeLessThanOrEqual(7);
+  });
+
+  it("core is abdominals and lower back only, with no separate finisher", () => {
+    const s = choose("core");
+    expect(s!.exercises.length).toBe(5);
+    expect(primary(s).every((m) => m === "abdominals" || m === "lower back")).toBe(true);
+  });
+
+  it("honours a chosen type even when its muscles are still recovering", () => {
+    const recent = [{ muscle: "quadriceps", trainedAt: daysAgo(1) }, { muscle: "hamstrings", trainedAt: daysAgo(1) }];
+    const s = choose("legs", { recent });
+    expect(primary(s).some((m) => ["quadriceps", "hamstrings", "glutes", "calves"].includes(m))).toBe(true);
+    expect(s!.lastTrainedDays).toBe(1);
+  });
+
+  it("still avoids injured muscles in a chosen type", () => {
+    const s = choose("core", { injuries: [{ muscle: "lower back", mode: "rest" }] });
+    expect(primary(s).every((m) => m === "abdominals")).toBe(true);
+  });
+
+  it("never recommends upper, full or core on its own", () => {
+    for (let d = 0; d < 6; d++) expect(["push", "pull", "legs"]).toContain(suggestWorkout({ ...base, today: daysAgo(-d) })!.split);
+  });
+});
+
+describe("recoveryNote", () => {
+  it("says when a chosen type was trained within the recovery window", () => {
+    expect(recoveryNote("legs", 1)).toBe("Legs were trained yesterday.");
+    expect(recoveryNote("push", 0)).toBe("Push muscles were trained today.");
+    expect(recoveryNote("core", 1)).toBe("Core was trained yesterday.");
+    expect(recoveryNote("upper", 1)).toBe("Upper body was trained yesterday.");
+    expect(recoveryNote("full", 0)).toBe("Full body was trained today.");
+  });
+  it("is null once rested, or when never trained", () => {
+    expect(recoveryNote("legs", 2)).toBeNull();
+    expect(recoveryNote("legs", null)).toBeNull();
   });
 });
