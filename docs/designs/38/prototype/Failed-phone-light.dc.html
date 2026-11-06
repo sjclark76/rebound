@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Unit save failed · phone · light</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="rebound-ui.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rb t-light crop" style="width: 390px; height: 844px">
+<header class="hdr line">
+<div class="hdr-in" style="padding-left: 8px; justify-content: flex-start">
+<a class="back" href="#"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Today</a>
+</div>
+</header>
+<main class="page">
+<h1 class="hd title">Settings</h1>
+<section class="sec" aria-labelledby="un-h">
+<div class="sec-head">
+<h2 class="hd" id="un-h">Units</h2>
+<p class="lede">Weights are shown and logged in this unit.</p>
+</div>
+<div class="card ucard uerr">
+<fieldset>
+<legend>Weight unit</legend>
+<div class="seg u">
+<label class="sel"><input type="radio" name="unit" value="kg" checked aria-describedby="unit-err"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Kilograms <span class="ab">(kg)</span></label>
+<label><input type="radio" name="unit" value="lb" aria-describedby="unit-err">Pounds <span class="ab">(lb)</span></label>
+</div>
+</fieldset>
+<div class="err">
+<p class="err-msg" id="unit-err" role="alert"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg><span><b>Couldn't switch to lb.</b> Nothing was changed: your weights are still in kg. Check your connection and try again.</span></p>
+<button type="button" class="btn2"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>Try again</button>
+</div>
+</div>
+</section>
+<section class="sec" aria-labelledby="eq-h">
+<div class="sec-head">
+<h2 class="hd" id="eq-h">Equipment</h2>
+<p class="lede">Switch on what you own. Changes save as you go and apply from your next suggested workout.</p>
+</div>
+<div class="grp">
+<div class="grp-h"><h3 class="hd">Free weights</h3><span class="count">2 of 4 on</span></div>
+<ul class="card">
+<li><label class="row"><span class="name">Dumbbell</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Dumbbell"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label>
+<a class="wts" href="#"><span class="lab">Weights</span><span class="val">2–24 kg + 26, 28, 30 kg</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+</ul>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Switch unit · confirm · desktop · dark</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="rebound-ui.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rb t-dark crop" style="width: 1280px; height: 800px">
+<div aria-hidden="true">
+<header class="hdr wide line">
+<div class="hdr-in">
+<span class="brand"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect class="tile" width="64" height="64" rx="16"/><path class="curve" d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke-width="6" stroke-linecap="round"/><circle class="ball" cx="48" cy="17" r="6.5"/></svg>rebound</span>
+<span class="acts"><span class="ghost current">Settings</span><span class="ghost">Sign out</span></span>
+</div>
+</header>
+<div class="page wide">
+<p class="hd title">Settings</p>
+<div class="sec">
+<div class="sec-head">
+<p class="hd" style="font-size: 22px; line-height: 28px">Units</p>
+<p class="lede">Weights are shown and logged in this unit.</p>
+</div>
+<div class="card ucard">
+<p style="font-size: 15px; line-height: 20px; font-weight: 700; padding: 0 4px">Weight unit</p>
+<div class="seg u">
+<span style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 56px; border-radius: 12px; font-size: 17px; font-weight: 700; background: var(--card); box-shadow: 0 0 0 1px var(--border)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Kilograms (kg)</span>
+<span style="display: flex; align-items: center; justify-content: center; min-height: 56px; font-size: 17px; font-weight: 700; color: var(--muted-fg)">Pounds (lb)</span>
+</div>
+</div>
+</div>
+<div class="sec-head">
+<p class="hd" style="font-size: 22px; line-height: 28px">Equipment</p>
+<p class="lede">Switch on what you own. Changes save as you go and apply from your next suggested workout.</p>
+</div>
+</div>
+</div>
+<div class="scrim"></div>
+<section class="dlg" role="dialog" aria-modal="true" aria-labelledby="cf-t" aria-describedby="cf-d">
+<h2 class="hd dlg-t" id="cf-t">Switch to pounds?</h2>
+<p class="dlg-p" id="cf-d">Rebound will convert every weight you've saved from kg to lb and save it again:</p>
+<ul class="conv">
+<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>Logged sets</li>
+<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>Starting weights</li>
+<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6v12"/><path d="M18 6v12"/><path d="M3 9v6"/><path d="M21 9v6"/><path d="M6 12h12"/></svg>Dumbbell and kettlebell weights</li>
+</ul>
+<p class="dlg-p muted">After that, weights show and are logged in lb. You can switch back the same way.</p>
+<div class="dlg-acts">
+<button type="button" class="btn1">Switch to lb</button>
+<button type="button" class="btn2">Keep kg</button>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
