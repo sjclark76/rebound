@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ChevronRightIcon, DumbbellIcon, PauseIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
+import { ChevronRightIcon, DumbbellIcon, PauseIcon, PlayIcon, RotateCcwIcon, SettingsIcon } from "lucide-react";
 import { cn } from "cn";
 import { ExerciseDetail } from "@/components/exercise-detail";
 import { LogoMark } from "@/components/logo-mark";
@@ -36,7 +36,17 @@ export default function Home({ searchParams }: PageProps<"/">) {
             <LogoMark className="size-7 lg:size-8" />
             <span className="font-heading text-[22px] font-bold tracking-tight lg:text-2xl">rebound</span>
           </span>
-          <SignOutButton />
+          <div className="flex items-center gap-1">
+            <Link
+              href="/settings"
+              aria-label="Settings"
+              className="inline-flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-xl px-3 text-[15px] font-bold outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <SettingsIcon className="size-6" aria-hidden />
+              <span className="hidden lg:inline">Settings</span>
+            </Link>
+            <SignOutButton />
+          </div>
         </div>
       </header>
       <Suspense fallback={<div className="m-4 h-96 animate-pulse rounded-2xl bg-muted" />}>
@@ -100,8 +110,13 @@ async function Suggestion({ searchParams, userId, today }: Pick<PageProps<"/">, 
         kicker={kicker}
         icon={<DumbbellIcon className="size-8 text-primary" aria-hidden />}
         title="Add your equipment to get a workout"
-        body="Rebound builds each session from what you own. Equipment setup is coming soon; until then you can train with bodyweight."
-        actions={<BigLink href={homeHref({ ...options, bodyweightOnly: true })}>Bodyweight only for today</BigLink>}
+        body="Rebound builds each session from what you own. Switch on your equipment in settings, or train with bodyweight for today."
+        actions={
+          <div className="flex flex-col gap-3 lg:flex-1 lg:flex-row">
+            <BigLink href="/settings">Set up equipment</BigLink>
+            <BigLink href={homeHref({ ...options, bodyweightOnly: true })}>Bodyweight only for today</BigLink>
+          </div>
+        }
       />
     );
   }

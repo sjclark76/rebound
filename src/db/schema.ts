@@ -1,4 +1,5 @@
 import {
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -9,11 +10,12 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
-import { INJURY_MODES } from "./vocab";
+import { INJURY_MODES, WEIGHT_GROUP_TYPES } from "./vocab";
 
 export * from "./auth-schema";
 
 export const injuryMode = pgEnum("injury_mode", INJURY_MODES);
+export const weightGroupType = pgEnum("weight_group_type", WEIGHT_GROUP_TYPES);
 
 /** Exercise catalogue, seeded from free-exercise-db. */
 export const exercise = pgTable("exercise", {
@@ -40,6 +42,25 @@ export const userEquipment = pgTable(
     equipment: text("equipment").notNull(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.equipment] })],
+);
+
+/** A saved batch of weights for one of a user's equipment items: a range (start, step, top) or picked weights. Kept when the item is switched off. */
+export const equipmentWeightGroup = pgTable(
+  "equipment_weight_group",
+  {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    equipment: text("equipment").notNull(),
+    name: text("name"),
+    type: weightGroupType("type").notNull(),
+    start: real("start"), // range only, kg
+    step: real("step"),
+    top: real("top"),
+    weights: real("weights").array().notNull().default([]), // picked only, kg
+  },
+  (t) => [index("equipment_weight_group_user_equipment_idx").on(t.userId, t.equipment)],
 );
 
 /** Active or past injuries, expressed against the muscle vocabulary. */
