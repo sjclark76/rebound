@@ -9,7 +9,7 @@ export function SignOutButton() {
   return (
     <Button
       variant="ghost"
-      size="sm"
+      className="h-12 rounded-xl px-3 text-[15px] font-bold"
       onClick={() => authClient.signOut().then(() => router.push("/login"))}
     >
       Sign out
