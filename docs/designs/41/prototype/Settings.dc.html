@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings · Equipment</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="rebound-ui.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rb {{theme}}" style="width: {{rootW}}; min-height: {{rootH}}">
+<sc-if value="{{wide}}" hint-placeholder-val="{{false}}">
+<header class="hdr wide line">
+<div class="hdr-in">
+<span class="brand"><svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect class="tile" width="64" height="64" rx="16"/><path class="curve" d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke-width="6" stroke-linecap="round"/><circle class="ball" cx="48" cy="17" r="6.5"/></svg>rebound</span>
+<div class="acts"><a class="ghost" href="#">Today</a><a class="ghost current" href="#">Settings</a></div>
+</div>
+</header>
+</sc-if>
+<sc-if value="{{narrow}}" hint-placeholder-val="{{true}}">
+<header class="hdr line">
+<div class="hdr-in" style="padding-left: 8px; justify-content: flex-start">
+<a class="back" href="#"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Today</a>
+</div>
+</header>
+</sc-if>
+<main class="{{pageClass}}">
+<h1 class="hd title">Settings</h1>
+<section class="sec" aria-labelledby="eq-h">
+<div class="sec-head">
+<h2 class="hd" id="eq-h">Equipment</h2>
+<p class="lede">Switch on what you own. Changes save as you go and apply from your next suggested workout.</p>
+</div>
+<div class="groups">
+<div class="grp">
+<div class="grp-h"><h3 class="hd">Free weights</h3><span class="count">3 of 4 on</span></div>
+<ul class="card">
+<li><label class="row"><span class="name">Dumbbells</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Dumbbells"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label>
+<a class="wts" href="#" aria-label="Dumbbell weights: 11, 20 and 24 kg, 45 and 50 lb"><span class="lab">Weights</span><span class="val">11, 20, 24 kg + 45, 50 lb</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+<li><label class="row"><span class="name">Adjustable dumbbells</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Adjustable dumbbells"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label>
+<a class="wts" href="#" aria-label="Adjustable dumbbell range: 5 to 50 lb, every 2.5 lb"><span class="lab">Range</span><span class="val">5–50 lb</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+<li><label class="row"><span class="name">Kettlebells</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Kettlebells"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label>
+<a class="wts add-w" href="#" aria-label="Add kettlebell weights" aria-describedby="kb-wait-{{idSfx}}"><span class="val">Add weights</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+<p class="waiting" id="kb-wait-{{idSfx}}"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Kettlebell exercises are left out of your workouts until you add a weight.</p></li>
+<li><label class="row"><span class="name">Adjustable kettlebells</span><span class="st" aria-hidden="true">Off</span><span class="sw"><input type="checkbox" role="switch" aria-label="Adjustable kettlebells"><span class="th"></span></span></label></li>
+</ul>
+</div>
+<div class="grp">
+<div class="grp-h"><h3 class="hd">Machines &amp; cables</h3><span class="count">1 of 1 on</span></div>
+<ul class="card">
+<li><label class="row"><span class="name">Bowflex Xtreme 2 SE</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Bowflex Xtreme 2 SE"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label>
+<a class="wts" href="#" aria-label="Bowflex weights: 5 to 105 lb, every 5 lb"><span class="lab">Weights</span><span class="val">5–105 lb every 5</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+</ul>
+</div>
+<div class="grp">
+<div class="grp-h"><h3 class="hd">Accessories</h3><span class="count">4 of 7 on</span></div>
+<ul class="card">
+<li><label class="row"><span class="name">Bands</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Bands"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label></li>
+<li><label class="row"><span class="name">Medicine ball</span><span class="st" aria-hidden="true">Off</span><span class="sw"><input type="checkbox" role="switch" aria-label="Medicine ball"><span class="th"></span></span></label></li>
+<li><label class="row"><span class="name">Exercise ball</span><span class="st" aria-hidden="true">Off</span><span class="sw"><input type="checkbox" role="switch" aria-label="Exercise ball"><span class="th"></span></span></label></li>
+<li><label class="row"><span class="name">Foam roll</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Foam roll"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label></li>
+<li><label class="row"><span class="name">Other</span><span class="st" aria-hidden="true">Off</span><span class="sw"><input type="checkbox" role="switch" aria-label="Other"><span class="th"></span></span></label></li>
+<li><label class="row"><span class="name">Metolius wooden fingerboard</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Metolius wooden fingerboard"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label></li>
+<li><label class="row"><span class="name">TRX straps</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="TRX straps"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label></li>
+</ul>
+</div>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["t-light","t-dark"],"default":"t-light"},"wide":{"editor":"boolean","default":false},"$preview":{"width":390,"height":1540}}'>
+class Component extends DCLogic {
+renderVals() {
+const wide = !!this.props.wide;
+return {
+theme: this.props.theme ?? 't-light',
+wide, narrow: !wide,
+rootW: wide ? '100%' : '390px',
+rootH: wide ? '1040px' : '1540px',
+pageClass: wide ? 'page wide' : 'page',
+idSfx: wide ? 'd' : 'p'
+};
+}
+}
+</script>
+</body>
+</html>

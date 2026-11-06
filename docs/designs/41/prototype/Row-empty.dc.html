@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Equipment row · fixed gear with no weights</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="rebound-ui.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rb {{theme}}" style="width: 390px; min-height: 520px">
+<main class="page">
+<div class="grp">
+<div class="grp-h"><h3 class="hd">Free weights</h3><span class="count">2 of 4 on</span></div>
+<ul class="card">
+<li><label class="row"><span class="name">Dumbbells</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Dumbbells"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label>
+<a class="wts" href="#" aria-label="Dumbbell weights: 20 and 24 kg, 45 and 50 lb"><span class="lab">Weights</span><span class="val">20, 24 kg + 45, 50 lb</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></li>
+<li><label class="row"><span class="name">Adjustable dumbbells</span><span class="st" aria-hidden="true">Off</span><span class="sw"><input type="checkbox" role="switch" aria-label="Adjustable dumbbells"><span class="th"></span></span></label></li>
+<li><label class="row"><span class="name">Kettlebells</span><span class="st on" aria-hidden="true">On</span><span class="sw on"><input type="checkbox" role="switch" checked aria-label="Kettlebells"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></label>
+<a class="wts add-w" href="#" aria-label="Add kettlebell weights" aria-describedby="kb-wait"><span class="val">Add weights</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+<p class="waiting" id="kb-wait"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>Kettlebell exercises are left out of your workouts until you add a weight.</p></li>
+<li><label class="row"><span class="name">Adjustable kettlebells</span><span class="st" aria-hidden="true">Off</span><span class="sw"><input type="checkbox" role="switch" aria-label="Adjustable kettlebells"><span class="th"></span></span></label></li>
+</ul>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["t-light","t-dark"],"default":"t-light"},"$preview":{"width":390,"height":520}}'>
+class Component extends DCLogic {
+renderVals() { return { theme: this.props.theme ?? 't-light' }; }
+}
+</script>
+</body>
+</html>
