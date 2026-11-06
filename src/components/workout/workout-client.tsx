@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState, useTransition } from "react";
+import { Fragment, useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import {
   ArrowRightIcon,
@@ -11,6 +11,7 @@ import {
   CopyIcon,
   FlagIcon,
   HistoryIcon,
+  InfoIcon,
   ListIcon,
   PencilIcon,
   PlusIcon,
@@ -38,7 +39,8 @@ import {
 } from "@/app/workout/actions";
 import type { PlanRow } from "@/lib/workout-data";
 import { EQUIPMENT, equipmentLabel, type Equipment, type Unit } from "@/db/vocab";
-import { stepWeight, type Weight } from "@/lib/weights";
+import { aOrAn, formatWeight, snapToOptions, stepWeight, weightPool, type Weight } from "@/lib/weights";
+import { setWeightOwned } from "@/app/settings/actions";
 
 const isEquipment = (e: string): e is Equipment => (EQUIPMENT as readonly string[]).includes(e);
 import { draftWeight, formatSet, type LoggedSet, nowSlot, num, prefillFor, type Prefill } from "@/lib/workout";
@@ -86,19 +88,152 @@ function stepDraft(draft: Draft, options: Weight[], direction: 1 | -1): Draft | 
   return next ? { ...draft, weight: next.value, unit: next.unit } : draft;
 }
 
-function Fields({ kind, draft, onChange, options }: { kind: PlanRow["kind"]; draft: Draft; onChange: (d: Draft) => void; options: Weight[] }) {
+/** What happened to a typed weight, said under the weight box. */
+type Note = { kind: "added" | "snapped"; text: string };
+
+/**
+ * The weight, reps and hold boxes. A weight is only ever one the user owns: - and + step through them, and a typed
+ * weight is checked when the user leaves the box. One they own is kept; one they don't asks to add it to their
+ * equipment (fixed gear) or snaps to the nearest weight in the range (adjustable gear).
+ */
+function Fields({
+  p,
+  draft,
+  onChange,
+  onBlocked,
+}: {
+  p: Pick<PlanRow, "kind" | "options" | "addTo" | "snapLabel">;
+  draft: Draft;
+  onChange: (d: Draft) => void;
+  /** True while the add prompt is open, so the parent can hold back Complete set. */
+  onBlocked: (blocked: boolean) => void;
+}) {
+  const { kind, addTo, snapLabel } = p;
+  const [added, setAdded] = useState<Weight[]>([]);
+  const options = added.length > 0 ? weightPool([...p.options, ...added], []) : p.options;
+  const committed = useRef<Weight>({ value: draft.weight ?? 0, unit: draft.unit });
+  const [ask, setAsk] = useState<Weight | null>(null);
+  const [askFailed, setAskFailed] = useState(false);
+  const [adding, startAdding] = useTransition();
+  const [note, setNote] = useState<Note | null>(null);
+
+  useEffect(() => {
+    onBlocked(ask !== null);
+    return () => onBlocked(false);
+  }, [ask, onBlocked]);
+
+  const setWeight = (w: Weight) => {
+    committed.current = w;
+    onChange({ ...draft, weight: w.value, unit: w.unit });
+  };
+
+  /** Runs when the user leaves the weight box. */
+  function commit() {
+    if (kind !== "weighted" || options.length === 0 || draft.weight === null) return;
+    const typed: Weight = { value: draft.weight, unit: draft.unit };
+    const snap = snapToOptions(options, typed);
+    if (snap?.how === "same") {
+      committed.current = typed;
+      setNote(null);
+    } else if (addTo) {
+      setAskFailed(false);
+      setNote(null);
+      setAsk(typed);
+    } else if (snap) {
+      setWeight(snap.weight);
+      const w = `${formatWeight(snap.weight.value)} ${snap.weight.unit}`;
+      setNote({
+        kind: "snapped",
+        text:
+          snap.how === "above"
+            ? `Set to ${w}, the top of your ${snapLabel}' range.`
+            : snap.how === "below"
+              ? `Set to ${w}, the bottom of your ${snapLabel}' range.`
+              : `Set to ${w}, the nearest weight in your ${snapLabel}' range.`,
+      });
+    }
+  }
+
+  function add() {
+    if (!ask || !addTo) return;
+    const w = ask;
+    startAdding(async () => {
+      try {
+        await setWeightOwned(addTo.item, w.value, w.unit, true);
+      } catch {
+        setAskFailed(true);
+        return;
+      }
+      setAdded((a) => [...a, w]);
+      committed.current = w;
+      setAsk(null);
+      setNote({ kind: "added", text: `${formatWeight(w.value)} ${w.unit} added to your ${addTo.plural}.` });
+    });
+  }
+
+  function cancel() {
+    setWeight(committed.current);
+    setAsk(null);
+    setAskFailed(false);
+  }
+
   return (
     <div className="flex flex-col gap-3">
       {kind === "weighted" && (
-        <Stepper
-          label="Weight"
-          unit={draft.unit}
-          decimal
-          step={2.5}
-          value={draft.weight}
-          onChange={(v) => onChange({ ...draft, weight: v })}
-          onBump={options.length > 0 ? (d) => onChange(stepDraft(draft, options, d) ?? draft) : undefined}
-        />
+        <>
+          <Stepper
+            label="Weight"
+            unit={draft.unit}
+            decimal
+            step={2.5}
+            value={draft.weight}
+            onChange={(v) => {
+              setNote(null);
+              onChange({ ...draft, weight: v });
+            }}
+            onBump={
+              options.length > 0
+                ? (d) => {
+                    setNote(null);
+                    const next = stepDraft(draft, options, d);
+                    if (next && next.weight !== null) committed.current = { value: next.weight, unit: next.unit };
+                    onChange(next ?? draft);
+                  }
+                : undefined
+            }
+            onCommit={commit}
+          />
+          {ask && addTo && (
+            <div role="group" aria-labelledby="ask-q" className="flex flex-col gap-3 rounded-2xl bg-muted p-4">
+              <p id="ask-q" className="text-lg leading-6 font-bold">
+                Add {formatWeight(ask.value)} {ask.unit} to your {addTo.plural}?
+              </p>
+              <p className="text-[15px] leading-[22px] text-muted-foreground">
+                You don&apos;t have {aOrAn(ask.value)} {formatWeight(ask.value)} {ask.unit} {addTo.noun} yet. Adding it saves it to your equipment.
+              </p>
+              {askFailed && (
+                <p role="alert" className="text-[15px] leading-[22px] font-bold text-destructive">
+                  Couldn&apos;t add it. Check your connection and try again.
+                </p>
+              )}
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" onClick={cancel} disabled={adding} className="flex min-h-14 items-center justify-center rounded-xl bg-secondary text-base font-bold text-secondary-foreground disabled:opacity-60">
+                  Cancel
+                </button>
+                <button type="button" onClick={add} disabled={adding} className="flex min-h-14 items-center justify-center gap-2 rounded-xl bg-primary text-base font-bold text-primary-foreground disabled:opacity-60">
+                  <PlusIcon className="size-5" aria-hidden />
+                  Add
+                </button>
+              </div>
+            </div>
+          )}
+          {note && (
+            <p role="status" className="flex items-start gap-2 text-[15px] leading-[22px] font-bold">
+              {note.kind === "added" ? <CheckIcon className="mt-0.5 size-[18px] shrink-0 text-primary" aria-hidden /> : <InfoIcon className="mt-0.5 size-[18px] shrink-0 text-muted-foreground" aria-hidden />}
+              <span className={note.kind === "snapped" ? "font-normal text-muted-foreground" : undefined}>{note.text}</span>
+            </p>
+          )}
+        </>
       )}
       {kind !== "timed" && <Stepper label="Reps" step={1} value={draft.reps} onChange={(v) => onChange({ ...draft, reps: v })} />}
       {kind === "timed" && (
@@ -160,6 +295,7 @@ export function WorkoutClient(props: {
   // Numbers being typed, per set. Kept here (not in the set cards) so typing never loses focus.
   const [drafts, setDrafts] = useState<Record<string, { init: string; draft: Draft }>>({});
   const [pending, start] = useTransition();
+  const [weightBlocked, setWeightBlocked] = useState(false);
   const run = (fn: () => Promise<unknown>, after?: () => void) =>
     start(async () => {
       await fn();
@@ -180,6 +316,7 @@ export function WorkoutClient(props: {
       plannedReps: p.reps,
       starting: p.starting,
       defaultUnit: p.unit,
+      options: p.options,
       lastTime: p.lastTime?.sets ?? [],
       logged: setsOf(p.exerciseId),
     });
@@ -319,11 +456,11 @@ export function WorkoutClient(props: {
         </p>
         {/* Reserved for the suggested weight (#22). Empty for now, keeps its height. */}
         {p.kind === "weighted" && <div className="h-14 rounded-xl border border-dashed border-input" aria-hidden />}
-        <Fields kind={p.kind} draft={draft} onChange={setDraft} options={p.options} />
+        <Fields key={`${p.exerciseId}-${n}`} p={p} draft={draft} onChange={setDraft} onBlocked={setWeightBlocked} />
         {withButton && (
           <CompleteButton
             label={`Complete set ${n}`}
-            disabled={pending || !valid(p.kind, draft)}
+            disabled={pending || weightBlocked || !valid(p.kind, draft)}
             onClick={() => run(() => logSet(workoutId, p.exerciseId, n, toValues(p.kind, draft)), () => setOpen(null))}
           />
         )}
@@ -484,7 +621,7 @@ export function WorkoutClient(props: {
           ) : (
             <CompleteButton
               label={`Complete set ${n}`}
-              disabled={pending || !valid(p.kind, draft)}
+              disabled={pending || weightBlocked || !valid(p.kind, draft)}
               onClick={() => run(() => logSet(workoutId, p.exerciseId, n!, toValues(p.kind, draft)))}
             />
           )}
@@ -644,11 +781,11 @@ export function WorkoutClient(props: {
       >
         {editing && (
           <>
-            <Fields kind={editing.p.kind} draft={editing.draft} onChange={(d) => setEditing({ ...editing, draft: d })} options={editing.p.options} />
+            <Fields key={editing.set.id} p={editing.p} draft={editing.draft} onChange={(d) => setEditing({ ...editing, draft: d })} onBlocked={setWeightBlocked} />
             <CompleteButton
               label="Save changes"
               icon={<SaveIcon className="size-5" aria-hidden />}
-              disabled={pending || !valid(editing.p.kind, editing.draft)}
+              disabled={pending || weightBlocked || !valid(editing.p.kind, editing.draft)}
               onClick={() => run(() => editSet(workoutId, editing.set.id, toValues(editing.p.kind, editing.draft)), () => setEditing(null))}
             />
             <button

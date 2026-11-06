@@ -1,6 +1,7 @@
 /** Pure rules for logging a workout: prefill, the "Now" marker, totals and auto-close. No I/O. */
 import type { Unit } from "../db/vocab";
 import { convert, formatWeight, snapHalf } from "./units";
+import { snapToOptions, type Weight } from "./weights";
 
 export type Kind = "weighted" | "bodyweight" | "timed";
 
@@ -56,11 +57,18 @@ export function prefill(input: {
   starting: Starting | null;
   /** The item's default unit, used when there is no earlier weight to copy. */
   defaultUnit: Unit;
+  /** The weights the user owns for this gear. A weighted set is only ever prefilled with one of them. Empty when the gear has no weight list. */
+  options?: Weight[];
   lastTime: Values[];
   thisWorkout: Values[];
 }): Prefill {
-  const { kind, setNumber, plannedReps, starting, defaultUnit, lastTime, thisWorkout } = input;
-  const pick = (v: Values, source: PrefillSource): Prefill => ({
+  const { kind, setNumber, plannedReps, starting, defaultUnit, lastTime, thisWorkout, options = [] } = input;
+  /** Moves a weight nobody owns to the nearest one the user does. */
+  const owned = (p: Prefill): Prefill => {
+    const snap = kind === "weighted" ? snapToOptions(options, { value: p.weight ?? 0, unit: p.unit }) : null;
+    return snap ? { ...p, weight: snap.weight.value, unit: snap.weight.unit } : p;
+  };
+  const pick = (v: Values, source: PrefillSource): Prefill => owned({
     weight: kind === "weighted" ? (v.weight ?? 0) : null,
     unit: v.unit,
     reps: kind === "timed" ? null : v.reps,
@@ -75,13 +83,13 @@ export function prefill(input: {
   if (previous) return pick(previous, { rule: "previous-set", setNumber: previous.setNumber, lastTimeSets: lastTime.length });
 
   const planned = upperBound(plannedReps);
-  return {
+  return owned({
     weight: kind === "weighted" ? (starting?.weight ?? 0) : null,
     unit: starting?.unit ?? defaultUnit,
     reps: kind === "timed" ? null : planned,
     durationSec: kind === "timed" ? planned : null,
     source: kind === "weighted" && starting !== null ? { rule: "starting-weight" } : { rule: "plan" },
-  };
+  });
 }
 
 /**
@@ -94,6 +102,7 @@ export function prefillFor(input: {
   plannedReps: string;
   starting: Starting | null;
   defaultUnit: Unit;
+  options?: Weight[];
   lastTime: Values[];
   logged: Values[];
 }): Prefill {

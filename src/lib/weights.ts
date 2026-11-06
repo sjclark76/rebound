@@ -1,4 +1,4 @@
-import { RANGE_STEPS, WEIGHT_BOUNDS, isUnit, type Unit } from "../db/vocab";
+import { RANGE_STEPS, WEIGHT_BOUNDS, isUnit, poolItems, type Unit } from "../db/vocab";
 import { formatWeight, LB_PER_KG, snapHalf } from "./units";
 
 export { formatWeight };
@@ -54,17 +54,38 @@ function runs(owned: Weight[]): { unit: Unit; values: number[] }[] {
     .filter((r) => r.values.length > 0);
 }
 
-/** "20, 24 kg + 45, 50 lb": kg weights then lb weights, each run ascending with its unit once. Null with no weights. */
+/** The gap, if a run of three or more weights is evenly spaced. */
+const evenStep = (values: number[]): number | null => {
+  if (values.length < 3) return null;
+  const gap = round(values[1] - values[0]);
+  return values.every((v, i) => i === 0 || round(v - values[i - 1]) === gap) ? gap : null;
+};
+
+/** "20, 24 kg + 45, 50 lb": kg weights then lb weights, each run ascending with its unit once. An even run of three or more is shortened ("5–105 lb every 5"). Null with no weights. */
 export function summariseOwned(owned: Weight[]): string | null {
   const r = runs(owned);
-  return r.length > 0 ? r.map(({ unit, values }) => `${values.map(formatWeight).join(", ")} ${unit}`).join(" + ") : null;
+  return r.length > 0
+    ? r
+        .map(({ unit, values }) => {
+          const step = evenStep(values);
+          return step ? `${formatWeight(values[0])}–${formatWeight(values.at(-1)!)} ${unit} every ${formatWeight(step)}` : `${values.map(formatWeight).join(", ")} ${unit}`;
+        })
+        .join(" + ")
+    : null;
 }
 
 const and = (ns: number[]) => (ns.length < 2 ? ns.map(formatWeight).join("") : `${ns.slice(0, -1).map(formatWeight).join(", ")} and ${formatWeight(ns.at(-1)!)}`);
-/** The summary spelled out for screen readers: "20 and 24 kg, 45 and 50 lb". Null with no weights. */
+/** The summary spelled out for screen readers: "20 and 24 kg, 45 and 50 lb", or "5 to 105 lb, every 5 lb" for an even run. Null with no weights. */
 export function describeOwned(owned: Weight[]): string | null {
   const r = runs(owned);
-  return r.length > 0 ? r.map(({ unit, values }) => `${and(values)} ${unit}`).join(", ") : null;
+  return r.length > 0
+    ? r
+        .map(({ unit, values }) => {
+          const step = evenStep(values);
+          return step ? `${formatWeight(values[0])} to ${formatWeight(values.at(-1)!)} ${unit}, every ${formatWeight(step)} ${unit}` : `${and(values)} ${unit}`;
+        })
+        .join(", ")
+    : null;
 }
 
 /** "5–50 lb". */
@@ -122,3 +143,33 @@ export function tileWeights(presets: readonly number[], owned: Weight[], unit: U
 /** The owned list with this weight added, or removed if it was there. Number and unit must both match. */
 export const toggleOwned = (owned: Weight[], w: Weight): Weight[] =>
   owned.some((o) => o.value === w.value && o.unit === w.unit) ? owned.filter((o) => !(o.value === w.value && o.unit === w.unit)) : [...owned, w];
+
+export type Snap = { weight: Weight; how: "same" | "above" | "below" | "between" };
+/** The weight in `options` nearest to `target` by true weight, whatever its unit; the lighter one on a tie. `how` says where the target was: already there, above the top, below the bottom, or between two. Null with no options. */
+export function snapToOptions(options: Weight[], target: Weight): Snap | null {
+  if (options.length === 0) return null;
+  const now = toKg(target);
+  const near = options.reduce((best, o) => {
+    const d = Math.abs(toKg(o) - now);
+    const bd = Math.abs(toKg(best) - now);
+    return d < bd - SAME_KG || (Math.abs(d - bd) <= SAME_KG && toKg(o) < toKg(best)) ? o : best;
+  });
+  const kgs = options.map(toKg);
+  const how = Math.abs(toKg(near) - now) <= SAME_KG ? "same" : now > Math.max(...kgs) ? "above" : now < Math.min(...kgs) ? "below" : "between";
+  return { weight: near, how };
+}
+
+/** What the user owns, as far as weights go. */
+export type GearWeights = { owned: readonly string[]; weights: Readonly<Record<string, Weight[]>>; ranges: Readonly<Record<string, AdjustableRange>> };
+
+/** The weights an exercise tagged with this equipment can use: ticked weights of the item and any range of its adjustable twin, for items the user has switched on. Empty for gear with no weights. */
+export function poolFor(equipment: string | null, gear: GearWeights): Weight[] {
+  const items = equipment ? poolItems(equipment).filter((i) => gear.owned.includes(i)) : [];
+  return weightPool(items.flatMap((i) => gear.weights[i] ?? []), items.flatMap((i) => (gear.ranges[i] ? [gear.ranges[i]] : [])));
+}
+
+/** "a" or "an" before a weight said aloud: an 8, an 11, an 18, an 85; a 20, a 110. */
+export const aOrAn = (n: number) => {
+  const whole = Math.floor(n);
+  return whole === 8 || whole === 11 || whole === 18 || (whole >= 80 && whole <= 89) ? "an" : "a";
+};

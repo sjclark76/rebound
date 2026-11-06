@@ -31,19 +31,6 @@ export const exercise = pgTable("exercise", {
   images: text("images").array().notNull(),
 });
 
-/** The unit of the Bowflex Xtreme 2 SE, the one item with a unit toggle of its own (it has no weight list). No row means kg. It converts nothing; every saved weight carries its own unit. */
-export const equipmentUnit = pgTable(
-  "equipment_unit",
-  {
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    equipment: text("equipment").notNull(),
-    unit: weightUnit("unit").notNull().default("kg"),
-  },
-  (t) => [primaryKey({ columns: [t.userId, t.equipment] })],
-);
-
 /** Equipment each user owns. */
 export const userEquipment = pgTable(
   "user_equipment",

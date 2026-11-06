@@ -3,6 +3,9 @@ import { db } from "@/db";
 import { equipmentRange, equipmentWeight, userEquipment } from "@/db/schema";
 import type { AdjustableRange, Weight } from "./weights";
 
+/** What the user owns: the items switched on, the weights ticked on fixed items, and the ranges of adjustable ones. */
+export type Gear = { owned: string[]; weights: Record<string, Weight[]>; ranges: Record<string, AdjustableRange> };
+
 /** The equipment items the user has switched on. */
 export async function getOwnedEquipment(userId: string): Promise<string[]> {
   const rows = await db.select({ equipment: userEquipment.equipment }).from(userEquipment).where(eq(userEquipment.userId, userId));
@@ -26,4 +29,10 @@ export async function getOwnedWeights(userId: string, equipment?: string) {
 export async function getRanges(userId: string): Promise<Record<string, AdjustableRange>> {
   const rows = await db.select().from(equipmentRange).where(eq(equipmentRange.userId, userId));
   return Object.fromEntries(rows.map((r) => [r.equipment, { unit: r.unit, start: r.start, step: r.step, top: r.top }]));
+}
+
+/** Everything the user owns, in one go. */
+export async function getGear(userId: string): Promise<Gear> {
+  const [owned, weights, ranges] = await Promise.all([getOwnedEquipment(userId), getOwnedWeights(userId), getRanges(userId)]);
+  return { owned, weights, ranges };
 }

@@ -140,3 +140,21 @@ describe("suggestWorkout", () => {
     expect(r?.exercises.at(-1)).toMatchObject({ exercise: { id: "plank" }, reps: "30–45" });
   });
 });
+
+describe("gear with no weights", () => {
+  const kb = catalogue.map((e) => ({ ...e, id: `kb_${e.id}`, equipment: "kettlebells" }));
+  const both = { ...base, exercises: [...catalogue, ...kb], equipment: ["dumbbell", "kettlebells"] };
+  it("leaves out exercises for gear that has no weights yet", () => {
+    const s = suggestWorkout({ ...both, withoutWeights: ["kettlebells"] });
+    expect(s!.exercises.every((e) => e.exercise.equipment === "dumbbell")).toBe(true);
+  });
+  it("suggests them again once the gear has a weight", () => {
+    const s = suggestWorkout(both);
+    expect(s!.exercises.some((e) => e.exercise.equipment === "kettlebells")).toBe(true);
+  });
+  it("still suggests bodyweight work", () => {
+    const body = catalogue.map((e) => ({ ...e, id: `body_${e.id}`, equipment: "body only" }));
+    const s = suggestWorkout({ ...base, exercises: body, equipment: ["kettlebells"], withoutWeights: ["kettlebells"] });
+    expect(s!.exercises.length).toBeGreaterThan(0);
+  });
+});

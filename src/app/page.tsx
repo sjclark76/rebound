@@ -7,7 +7,9 @@ import { LogoMark } from "@/components/logo-mark";
 import { SignOutButton } from "@/components/sign-out-button";
 import { StatusChip } from "@/components/status-chip";
 import { Button } from "@/components/ui/button";
+import { EQUIPMENT, equipmentLabel, type Equipment } from "@/db/vocab";
 import { type Split, SPLIT_NAMES, SPLITS } from "@/lib/generator";
+import { formatWeight, type Weight } from "@/lib/weights";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion, optionsQuery, parseOptions, type SuggestionOptions } from "@/lib/suggestion";
 import { startWorkout } from "@/app/workout/actions";
@@ -92,7 +94,7 @@ async function Suggestion({ searchParams, userId, today }: Pick<PageProps<"/">, 
   const user = { id: userId };
   const params = await searchParams;
   const options = parseOptions(params);
-  const { suggestion, injuries, hasEquipment } = await loadSuggestion(user.id, today, options);
+  const { suggestion, injuries, hasEquipment, weights } = await loadSuggestion(user.id, today, options);
   const date = (weekday: "short" | "long", month: "short" | "long") =>
     today.toLocaleDateString("en-GB", { weekday, day: "numeric", month });
   const kicker = (
@@ -187,7 +189,7 @@ async function Suggestion({ searchParams, userId, today }: Pick<PageProps<"/">, 
         <ol className="overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-border dark:shadow-none">
           {main.map((e, i) => (
             <li key={e.exercise.id} className="border-t first:border-t-0">
-              <ExerciseRow href={homeHref(options, e.exercise.id)} number={i + 1} item={e} current={e === detail} />
+              <ExerciseRow href={homeHref(options, e.exercise.id)} number={i + 1} item={e} weight={weights[e.exercise.id]} current={e === detail} />
             </li>
           ))}
         </ol>
@@ -195,7 +197,7 @@ async function Suggestion({ searchParams, userId, today }: Pick<PageProps<"/">, 
           <>
             <h2 className="mt-3 font-heading text-lg font-bold">Core finisher</h2>
             <div className="overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-border dark:shadow-none">
-              <ExerciseRow href={homeHref(options, core.exercise.id)} item={core} current={core === detail} />
+              <ExerciseRow href={homeHref(options, core.exercise.id)} item={core} weight={weights[core.exercise.id]} current={core === detail} />
             </div>
           </>
         )}
@@ -223,7 +225,7 @@ async function Suggestion({ searchParams, userId, today }: Pick<PageProps<"/">, 
       <div className={cn("lg:col-start-3 lg:row-span-4 lg:row-start-1", !selected && "max-lg:hidden")}>
         <ExerciseDetail
           exercise={detail.exercise}
-          dose={`${detail.sets} × ${detail.reps}${detail.exercise.force === "static" ? " s" : ""}`}
+          dose={`${detail.sets} × ${detail.reps}${detail.exercise.force === "static" ? " s" : ""}${weights[detail.exercise.id] ? ` · ${formatWeight(weights[detail.exercise.id].value)} ${weights[detail.exercise.id].unit}` : ""}`}
           context={
             detailIndex >= 0
               ? `Exercise ${detailIndex + 1} of ${main.length} · ${name}`
@@ -261,9 +263,11 @@ function Chips({
   );
 }
 
+const isEquipment = (e: string): e is Equipment => (EQUIPMENT as readonly string[]).includes(e);
+
 type Item = { exercise: { name: string; equipment: string | null; force: string | null }; sets: number; reps: string };
 
-function ExerciseRow({ href, number, item, current }: { href: string; number?: number; item: Item; current: boolean }) {
+function ExerciseRow({ href, number, item, weight, current }: { href: string; number?: number; item: Item; weight?: Weight; current: boolean }) {
   return (
     <Link
       href={href}
@@ -278,7 +282,9 @@ function ExerciseRow({ href, number, item, current }: { href: string; number?: n
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="text-lg leading-6 font-bold">{item.exercise.name}</span>
         <span className="text-[15px] leading-5 text-muted-foreground tabular-nums">
-          {item.sets} × {item.reps}{item.exercise.force === "static" ? " s" : ""} · {capitalise(item.exercise.equipment ?? "body only")}
+          {item.sets} × {item.reps}{item.exercise.force === "static" ? " s" : ""} ·{" "}
+          {weight && <><b className="font-bold text-foreground">{formatWeight(weight.value)} {weight.unit}</b> · </>}
+          {item.exercise.equipment && isEquipment(item.exercise.equipment) ? equipmentLabel(item.exercise.equipment) : capitalise(item.exercise.equipment ?? "body only")}
         </span>
       </span>
       <ChevronRightIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden />

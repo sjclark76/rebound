@@ -22,6 +22,8 @@ export type TrainedMuscle = { muscle: string; trainedAt: Date };
 export type GeneratorInput = {
   exercises: CatalogueExercise[];
   equipment: readonly string[];
+  /** Switched-on gear that has no weights yet: exercises that use it are left out. */
+  withoutWeights?: readonly string[];
   injuries: ActiveInjury[];
   recent: TrainedMuscle[];
   today: Date;
@@ -104,12 +106,13 @@ export function suggestWorkout<E extends CatalogueExercise>(
   const blockedPrimary = new Set(injuries.map((i) => i.muscle));
 
   const owned = new Set(equipment);
+  const noWeights = new Set(input.withoutWeights ?? []);
   const safe = input.exercises
     .filter(
       (e) =>
         e.category === "strength" &&
         e.level in LEVEL_RANK &&
-        (e.equipment === null || e.equipment === "body only" || owned.has(e.equipment)) &&
+        (e.equipment === null || e.equipment === "body only" || (owned.has(e.equipment) && !noWeights.has(e.equipment))) &&
         !e.primaryMuscles.some((m) => blockedPrimary.has(m as Muscle)) &&
         !e.secondaryMuscles.some((m) => blockedAny.has(m as Muscle)),
     )

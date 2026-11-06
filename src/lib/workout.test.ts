@@ -101,6 +101,23 @@ describe("prefill", () => {
   });
 });
 
+describe("prefill snaps to weights the user owns", () => {
+  const base = { kind: "weighted" as const, plannedReps: "8–10", starting: null, defaultUnit: "kg" as const, thisWorkout: [], lastTime: [] };
+  const owned = [{ value: 8, unit: "kg" as const }, { value: 12, unit: "kg" as const }, { value: 45, unit: "lb" as const }];
+  it("moves a starting weight nobody owns to the nearest owned one", () =>
+    expect(prefill({ ...base, setNumber: 1, starting: { weight: 10, unit: "kg" }, options: owned })).toMatchObject({ weight: 8, unit: "kg", source: { rule: "starting-weight" } }));
+  it("moves a weight with no starting weight at all to the lightest owned", () =>
+    expect(prefill({ ...base, setNumber: 1, options: owned })).toMatchObject({ weight: 8, unit: "kg" }));
+  it("keeps a weight that is owned, whatever its unit", () =>
+    expect(prefill({ ...base, setNumber: 1, lastTime: [set(1, { weight: 45, unit: "lb" })], options: owned })).toMatchObject({ weight: 45, unit: "lb" }));
+  it("snaps a weight copied from last time that is no longer owned", () =>
+    expect(prefill({ ...base, setNumber: 1, lastTime: [set(1, { weight: 20, unit: "kg" })], options: owned })).toMatchObject({ weight: 45, unit: "lb" }));
+  it("leaves bodyweight and gear with no weight list alone", () => {
+    expect(prefill({ ...base, kind: "bodyweight", setNumber: 1, options: owned }).weight).toBeNull();
+    expect(prefill({ ...base, setNumber: 1, starting: { weight: 10, unit: "kg" }, options: [] })).toMatchObject({ weight: 10, unit: "kg" });
+  });
+});
+
 describe("prefillFor", () => {
   const base = { kind: "weighted" as const, plannedReps: "10–12", starting: { weight: 20, unit: "kg" as const }, defaultUnit: "kg" as const, lastTime: [], logged: [] };
 
