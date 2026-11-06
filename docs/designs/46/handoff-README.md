@@ -15,17 +15,23 @@ prototype/   .dc.html artboards and canvas.json. Main (home), Choose (type picke
 - Desktop: the same content in one centred card, actions side by side.
 
 2. Today's workout (2-todays-workout-*)
-- Reached from "See pull workout". Back arrow, title "Today's workout", the recommendation, the exercise list and core finisher, sticky Start workout.
+- Reached from "See pull workout". Back arrow, title "Today's workout", the date (no repeated label), the recommendation, the exercise list and core finisher, sticky Start workout.
 - No type row. Desktop keeps today's three columns (session + Start, list, exercise detail) with a "Home" back link.
 
 3. Choose a workout (3-choose-*)
 - Same as Today's workout plus a "Workout type" section above the list: six 48px buttons in a 3 × 2 grid (Full body, Upper body, Push, Pull, Legs, Core). Selected = filled primary + check icon, aria-pressed.
 - The recommended type starts selected. Picking another changes the exercises and the why line ("You chose upper body today."), and shows "Back to Pull" on the section header.
+- Desktop shows both the recommended type selected and Upper body tapped.
 - Recovering: a note under the type row on the secondary fill with a clock icon, e.g. "Legs were trained yesterday." The workout still shows.
 - Core: five abdominal and lower-back exercises, no core finisher.
 
 4. Home after finishing (4-home-after-finishing-*)
-- "Done today" card at the top (circle-check, "Pull · 7:42 am · 18 sets", "Summary" link to the finished workout).
+- "Done today" card at the top: circle-check, "Done today" label, "Pull" on its own line, "7:42 am · 18 sets" below, and a "Summary" link to the finished workout.
 - Fresh recommendation below (Push), kicker "Next workout".
 
 Exercises, weights and timings are sample data from the user's equipment; the exercise detail panel on desktop is a placeholder for the existing component.
+
+Agreed during review (now in the #46 spec)
+- Home shows the size line ("Last trained 4 days ago · 5 exercises and a core finisher") and is labelled "Recommended"; after finishing, "Next workout".
+- The Done today card's link is labelled "Summary".
+- Today's workout and Choose a workout show only the date above the type name, so "Today's workout" isn't repeated.

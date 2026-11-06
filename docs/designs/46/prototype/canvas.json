@@ -176,6 +176,22 @@
    "expand": "fill",
    "x": 2720,
    "y": 4940
+  },
+  "DesktopUpper.dc.html": {
+   "x": 5440,
+   "y": 3560,
+   "w": 1280,
+   "h": 1000,
+   "title": "3 \u00b7 Choose \u00b7 Upper body tapped",
+   "expand": "fill"
+  },
+  "DesktopDarkUpper.dc.html": {
+   "x": 5440,
+   "y": 4940,
+   "w": 1280,
+   "h": 1000,
+   "title": "3 \u00b7 Choose \u00b7 Upper body tapped",
+   "expand": "fill"
   }
  },
  "order": [
@@ -197,10 +213,12 @@
   "DesktopLightDone.dc.html",
   "DesktopPreview.dc.html",
   "Desktop.dc.html",
+  "DesktopUpper.dc.html",
   "DesktopHomeDark.dc.html",
   "DesktopDarkDone.dc.html",
   "DesktopDarkPreview.dc.html",
-  "DesktopDark.dc.html"
+  "DesktopDark.dc.html",
+  "DesktopDarkUpper.dc.html"
  ],
  "notes": {
   "t0": {
@@ -222,14 +240,14 @@
    "y": 3300,
    "text": "Desktop \u00b7 light",
    "kind": "title1",
-   "maxW": 4000
+   "maxW": 5400
   },
   "t3": {
    "x": 0,
    "y": 4680,
    "text": "Desktop \u00b7 dark",
    "kind": "title1",
-   "maxW": 4000
+   "maxW": 5400
   },
   "n1": {
    "x": 3330,
