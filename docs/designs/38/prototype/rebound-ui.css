@@ -168,36 +168,53 @@
 .useg label.sel{background:var(--secondary);color:var(--fg)}
 .useg label .ic{width:16px;height:16px;stroke-width:3}
 .useg label:focus-within{outline:2px solid var(--ring);outline-offset:2px}
-.useg:disabled{box-shadow:inset 0 0 0 1.5px var(--border)}
-.useg:disabled label,.useg:disabled input{cursor:not-allowed}
-.useg:disabled label.sel{background:var(--muted);color:var(--muted-fg)}
 .li-err .err{padding:0 16px 16px}
-.block{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:22px;background:var(--card);box-shadow:0 0 0 1px var(--border),var(--shadow)}
-.page.wide .block{max-width:560px}
-.block p{display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:24px}
-.block p .ic{margin-top:2px}
-.block .btn2{background:var(--card);box-shadow:0 0 0 1.5px var(--input)}
-/* overlay screens */
 .crop{position:relative;overflow:hidden}
-.scrim{position:absolute;inset:0;background:rgba(22,33,29,.5)}
-.t-dark .scrim{background:rgba(0,0,0,.66)}
-.sheet{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:20px;padding:10px 16px 28px;border-radius:24px 24px 0 0;background:var(--card);box-shadow:0 -8px 32px rgba(22,33,29,.18)}
-.t-dark .sheet,.t-dark .dlg{box-shadow:0 0 0 1px var(--border)}
-.grab{width:40px;height:4px;margin:0 auto;border-radius:999px;background:var(--border)}
-.dlg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:520px;display:flex;flex-direction:column;gap:20px;padding:32px;border-radius:24px;background:var(--card);box-shadow:0 12px 48px rgba(22,33,29,.22)}
-.dlg-t{font-size:26px;line-height:32px}
-.dlg-p{font-size:17px;line-height:25px}
-.dlg-p.muted{color:var(--muted-fg)}
-.conv{display:flex;flex-direction:column;border-radius:16px;background:var(--muted)}
-.conv li{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 14px;font-size:16px;line-height:22px;font-weight:700}
-.conv li+li{border-top:1px solid var(--border)}
-.conv .ic{color:var(--primary)}
-.conv .t{display:flex;flex-direction:column;gap:2px;min-width:0}
-.conv .d{font-size:15px;line-height:20px;font-weight:400;color:var(--muted-fg);font-variant-numeric:tabular-nums}
-.rnd{display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:24px}
-.rnd .ic{margin-top:2px;color:var(--muted-fg)}
-.dlg-acts{display:flex;flex-direction:column;gap:10px}
-.dlg .dlg-acts{flex-direction:row-reverse;gap:12px}
-.dlg .dlg-acts .btn1{width:auto;flex:1;min-height:56px;font-size:18px}
-.dlg .dlg-acts .btn2{width:auto;flex:1;min-height:56px}
 .btn2.tall{min-height:56px}
+/* unit on a weight group's edit screen: same control as the row, labelled "Unit" */
+.ublk{display:flex;flex-direction:column;gap:8px;border:0;margin:0;padding:0}
+.ublk legend{font-size:16px;line-height:24px;font-weight:700;padding:0 4px;margin-bottom:8px}
+
+/* ---- Logging weight field (matches docs/designs/7 + src/components/workout) ---- */
+.lhdr{display:flex;align-items:center;gap:4px;min-height:64px;padding:0 8px;border-bottom:1px solid var(--border)}
+.lhdr .ttl{flex:1;min-width:0;display:flex;flex-direction:column}
+.lhdr .ttl b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:20px;line-height:24px;letter-spacing:-0.02em}
+.lhdr .ttl span{display:flex;align-items:center;gap:6px;font-size:15px;line-height:20px;color:var(--muted-fg)}
+.lhdr .ttl .ic{width:16px;height:16px}
+.finish{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 14px;border:0;border-radius:12px;background:var(--secondary);color:var(--secondary-fg);font:inherit;font-size:16px;font-weight:700}
+.exnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.exnav .nav{display:flex;gap:8px}
+.sq48{width:48px;height:48px;flex-shrink:0;display:grid;place-items:center;border:0;border-radius:12px;background:var(--secondary);color:var(--secondary-fg)}
+.ex-h{display:flex;flex-direction:column;gap:4px}
+.ex-t{font-size:30px;line-height:36px}
+.sets .sh{display:flex;align-items:baseline;justify-content:space-between;padding:14px 16px}
+.sets .sh h2{font-size:18px;line-height:24px}
+.sets li.set{display:flex;align-items:center;gap:12px;min-height:72px;padding:8px 12px 8px 16px;border-top:1px solid var(--border)}
+.sets li.now{background:var(--accent)}
+.sets .dot{width:36px;height:36px;flex-shrink:0;display:grid;place-items:center;border-radius:999px}
+.sets .dot.done{background:var(--secondary)}
+.sets .dot.now{background:var(--primary);color:var(--primary-fg)}
+.sets .dot.todo{border:1.5px solid var(--input)}
+.sets .tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.sets .m{display:flex;align-items:baseline;gap:8px}
+.sets .m small{font-size:15px;font-weight:700;color:var(--muted-fg)}
+.sets .m b{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:20px;line-height:26px;font-variant-numeric:tabular-nums}
+.sets .s{font-size:15px;line-height:20px;color:var(--muted-fg);font-variant-numeric:tabular-nums}
+.sets .tag{font-size:15px;font-weight:700}
+.sets .tag.todo{color:var(--muted-fg)}
+.sets .pen{width:48px;height:48px;display:grid;place-items:center;border:0;background:transparent;color:var(--fg)}
+.editor{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:22px;background:var(--card);box-shadow:0 0 0 2px var(--primary)}
+.editor h3{font-size:24px;line-height:30px}
+.src{display:flex;gap:8px;font-size:15px;line-height:20px;color:var(--muted-fg)}
+.src .ic{margin-top:0}
+.slot{height:56px;border-radius:12px;border:1px dashed var(--input)}
+.lstp{display:flex;flex-direction:column;gap:6px}
+.lstp .l{font-size:15px;line-height:20px;font-weight:700;color:var(--muted-fg)}
+.lstp .r{display:flex;align-items:center;gap:8px}
+.b52{width:52px;height:52px;flex-shrink:0;display:grid;place-items:center;border:0;border-radius:12px;background:var(--secondary);color:var(--secondary-fg)}
+.inp{position:relative;flex:1;min-width:0}
+.inp input{display:block;width:100%;height:52px;border-radius:12px;border:1.5px solid var(--input);background:var(--card);text-align:center;font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:700;font-size:32px;color:var(--fg);font-variant-numeric:tabular-nums}
+.inp .u{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--muted-fg);pointer-events:none}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pair .btn2{min-height:56px}
+.ublk .useg{align-self:flex-start}

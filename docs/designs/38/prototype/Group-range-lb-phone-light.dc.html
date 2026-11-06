@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Edit weight group · range in lb · phone · light</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="rebound-ui.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;700&amp;family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div class="rb t-light" style="width: 390px; min-height: 990px">
+<header class="hdr line">
+<div class="hdr-in" style="padding-left: 8px; justify-content: flex-start">
+<a class="back" href="#"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Dumbbell weights</a>
+</div>
+</header>
+<main class="page">
+<div class="sec-head">
+<p class="kick">Dumbbell weights · Group 1 of 2</p>
+<h1 class="hd title">Adjustable dumbbells</h1>
+</div>
+<div class="fblock">
+<label class="lbl" for="set-name">Name <span class="opt">(optional)</span></label>
+<span class="field txt"><input id="set-name" type="text" value="Adjustable dumbbells"></span>
+</div>
+<fieldset class="seg">
+<legend class="sr">Kind of group</legend>
+<label class="sel"><input type="radio" name="mode" checked><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Range</label>
+<label><input type="radio" name="mode">Pick weights</label>
+</fieldset>
+<fieldset class="ublk" aria-describedby="unit-note">
+<legend>Unit</legend>
+<div class="useg"><label><input type="radio" name="unit" value="kg">kg</label><label class="sel"><input type="radio" name="unit" value="lb" checked><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>lb</label></div>
+<p class="note" id="unit-note">As marked on this gear. Changing it relabels the numbers, so 5 lb becomes 5 kg.</p>
+</fieldset>
+<div class="blk">
+<ul class="card" aria-label="Range">
+<li class="stp"><span class="lab" id="r-start">Start at</span><span class="ctl"><button type="button" class="sq56" aria-label="Less start at"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button><output aria-labelledby="r-start">5<small>lb</small></output><button type="button" class="sq56" aria-label="More start at"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></span></li>
+<li class="stp"><span class="lab" id="r-step">Go up by</span><span class="ctl"><button type="button" class="sq56" aria-label="Less go up by"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button><output aria-labelledby="r-step">2.5<small>lb</small></output><button type="button" class="sq56" aria-label="More go up by"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></span></li>
+<li class="stp"><span class="lab" id="r-end">Up to</span><span class="ctl"><button type="button" class="sq56" aria-label="Less up to"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button><output aria-labelledby="r-end">50<small>lb</small></output><button type="button" class="sq56" aria-label="More up to"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5v14"/></svg></button></span></li>
+</ul>
+<p class="note">Steps go up in whole pounds or 2.5 lb.</p>
+</div>
+<div class="sum" role="status">
+<span class="k">In this group · 19 weights</span>
+<span class="v" style="font-size: 18px; line-height: 24px">5, 7.5, 10, 12.5 … 45, 47.5, 50 lb</span>
+</div>
+<button type="button" class="btn-del"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>Remove this group</button>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":990}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
