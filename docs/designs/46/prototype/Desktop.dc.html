@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Choose a workout, desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;display=swap">
+<style>
+body{margin:0}
+.rb{--bg:#f5f3ee;--fg:#16211d;--card:#ffffff;--primary:#1d6b56;--pfg:#ffffff;--sec:#e3ebe6;--muted:#ebe8e1;--mfg:#566260;--border:#dcd8cf;--input:#848c88;--rehab:#a8750a;--rehabm:#fbefd6;--rehabf:#7a4f00;--ball:#e8894f;--shadow:0 1px 3px rgba(22,33,29,.08);--bar:0 -4px 16px rgba(22,33,29,.08)}
+.rb.dark{--bg:#0f1513;--fg:#e8ede9;--card:#18211e;--primary:#5ec4a4;--pfg:#06231b;--sec:#22302b;--muted:#1d2723;--mfg:#9eaba5;--border:#2c3934;--input:#6b7a74;--rehab:#e9b44c;--rehabm:#2e2410;--rehabf:#f3cd7c;--ball:#06231b;--shadow:none;--bar:none}
+.rb a{color:var(--primary)}.rb a:hover{color:var(--fg)}
+.rb button:focus-visible,.rb a:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+</style>
+</helmet>
+<div class="rb {{themeClass}}" style="min-height: 100vh; width: 100%; box-sizing: border-box; background: var(--bg); color: var(--fg); font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif">
+  <header style="border-bottom: 1px solid var(--border)"><div style="max-width: 1200px; margin: 0 auto; height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 32px">
+    <span style="display: flex; align-items: center; gap: 8px">
+      <svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--primary)"></rect><path d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke="var(--pfg)" stroke-width="6" stroke-linecap="round"></path><circle cx="48" cy="17" r="6.5" fill="var(--ball)"></circle></svg>
+      <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 750; letter-spacing: -0.03em">rebound</span>
+    </span>
+    <span style="display: flex; gap: 4px">
+      <a href="#settings" aria-label="Settings" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; color: var(--fg)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+      <button type="button" aria-label="Sign out" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; border: 0; background: transparent; color: var(--fg); padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg></button>
+    </span>
+  </div></header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 32px 32px 48px; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 24px 32px">
+    <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+      <a href="DesktopHome.dc.html" style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; min-height: 48px; margin: -12px 0 -12px -8px; padding: 0 8px; border-radius: 12px; font-size: 16px; font-weight: 700; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>Home</a>
+    <section aria-label="Today's session" style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <p style="margin: 0; font-size: 15px; line-height: 20px; font-weight: 700; color: var(--mfg)">Saturday 7 November · {{kicker}}</p>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 72px; line-height: 72px; font-weight: 700; letter-spacing: -0.02em">{{name}}</h1>
+        <p style="margin: 0; font-size: 16px; line-height: 24px; color: var(--mfg)">{{lastTrained}}</p>
+      </div>
+      <p style="margin: 0; font-size: 18px; line-height: 26px">{{why}}</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <span style="display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--rehabm); color: var(--rehabf); font-size: 15px; line-height: 20px; font-weight: 700"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rehab)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path></svg>Shoulders · rehab</span>
+      </div>
+    </section>
+
+      <button type="button" style="width: 100%; height: 64px; border: 0; border-radius: 12px; background: var(--primary); color: var(--pfg); display: flex; align-items: center; justify-content: center; gap: 8px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 20px; font-weight: 700; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3l14 9-14 9z"></path></svg>Start workout</button>
+    </div>
+    <div style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 24px">
+    <sc-if value="{{showTypes}}" hint-placeholder-val="{{ true }}">
+    <section aria-label="Workout type" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: center; justify-content: space-between; min-height: 28px">
+        <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; line-height: 24px; font-weight: 700">Workout type</h2>
+        <sc-if value="{{changed}}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{reset}}" style="min-height: 48px; margin: -10px -8px -10px 0; padding: 0 8px; border: 0; background: transparent; color: var(--primary); font: inherit; font-size: 15px; font-weight: 700; cursor: pointer">Back to {{suggestedName}}</button>
+        </sc-if>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{types}}" as="t" hint-placeholder-count="6">
+          <sc-if value="{{t.selected}}" hint-placeholder-val="{{ false }}">
+            <button type="button" aria-pressed="true" onClick="{{t.pick}}" style="min-height: 48px; padding: 0 6px; display: flex; align-items: center; justify-content: center; gap: 4px; border-radius: 12px; border: 1.5px solid var(--primary); background: var(--primary); color: var(--pfg); font: inherit; font-size: 15px; line-height: 20px; font-weight: 700; cursor: pointer; white-space: nowrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>{{t.label}}</button>
+          </sc-if>
+          <sc-if value="{{t.unselected}}" hint-placeholder-val="{{ true }}">
+            <button type="button" aria-pressed="false" onClick="{{t.pick}}" style="min-height: 48px; padding: 0 6px; display: flex; align-items: center; justify-content: center; border-radius: 12px; border: 1.5px solid var(--input); background: var(--card); color: var(--fg); font: inherit; font-size: 15px; line-height: 20px; font-weight: 700; cursor: pointer; white-space: nowrap">{{t.label}}</button>
+          </sc-if>
+        </sc-for>
+      </div>
+      <sc-if value="{{hasNote}}" hint-placeholder-val="{{ false }}">
+        <p role="status" style="margin: 0; display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; box-sizing: border-box; border-radius: 12px; background: var(--sec); font-size: 15px; line-height: 20px; font-weight: 700"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>{{note}}</p>
+      </sc-if>
+    </section>
+
+    </sc-if>
+    <section aria-label="Exercises" style="display: flex; flex-direction: column; gap: 12px">
+      <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; line-height: 24px; font-weight: 700">{{countLabel}}</h2>
+      <ol style="margin: 0; padding: 0; list-style: none; border-radius: 16px; overflow: hidden; background: var(--card); box-shadow: var(--shadow); border: 1px solid var(--border)">
+        <sc-for list="{{main}}" as="e" hint-placeholder-count="5">
+          <li style="border-top: {{e.divider}}">
+            <a href="#exercise" style="display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 12px 12px 16px; box-sizing: border-box; color: var(--fg); text-decoration: none">
+              <span style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 999px; background: var(--sec); display: grid; place-items: center; font-family: 'Bricolage Grotesque', sans-serif; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums">{{e.n}}</span>
+              <span style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0">
+                <span style="font-size: 18px; line-height: 24px; font-weight: 700">{{e.name}}</span>
+                <span style="font-size: 15px; line-height: 20px; color: var(--mfg); font-variant-numeric: tabular-nums">{{e.dose}} · <sc-if value="{{e.hasWeight}}" hint-placeholder-val="{{ false }}"><b style="color: var(--fg)">{{e.weight}}</b> · </sc-if>{{e.equipment}}</span>
+              </span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mfg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 18 6-6-6-6"></path></svg>
+            </a>
+          </li>
+        </sc-for>
+      </ol>
+      <sc-if value="{{hasFinisher}}" hint-placeholder-val="{{ true }}">
+        <h2 style="margin: 12px 0 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 18px; line-height: 24px; font-weight: 700">Core finisher</h2>
+        <a href="#exercise" style="display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 12px 12px 16px; box-sizing: border-box; border-radius: 16px; background: var(--card); box-shadow: var(--shadow); border: 1px solid var(--border); color: var(--fg); text-decoration: none">
+          <span style="display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0">
+            <span style="font-size: 18px; line-height: 24px; font-weight: 700">{{finisher.name}}</span>
+            <span style="font-size: 15px; line-height: 20px; color: var(--mfg); font-variant-numeric: tabular-nums">{{finisher.dose}} · {{finisher.equipment}}</span>
+          </span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--mfg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0"><path d="m9 18 6-6-6-6"></path></svg>
+        </a>
+      </sc-if>
+    </section>
+    </div>
+      <aside aria-label="Exercise detail" style="flex: 1.3 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 16px; background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow)">
+        <p style="margin: 0; font-size: 15px; line-height: 20px; font-weight: 700; color: var(--mfg)">{{detailContext}}</p>
+        <h2 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 30px; line-height: 36px; font-weight: 700">{{first.name}}</h2>
+        <p style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; line-height: 32px; font-weight: 700; font-variant-numeric: tabular-nums">{{first.dose}}</p>
+        <div style="height: 320px; border-radius: 12px; background: var(--muted); display: grid; place-items: center; padding: 24px; box-sizing: border-box; text-align: center; color: var(--mfg); font-size: 15px; font-weight: 700">Exercise detail (photos, steps) unchanged from today's screen</div>
+      </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"startType":{"editor":"enum","options":["","full","upper","push","pull","legs","core"],"default":""},"done":{"editor":"boolean","default":false},"mode":{"editor":"enum","options":["choose","preview"],"default":"choose"},"$preview":{"width":1280,"height":1000}}'>
+const TYPES = [
+  { id: 'full', label: 'Full body', lower: 'full body' },
+  { id: 'upper', label: 'Upper body', lower: 'upper body' },
+  { id: 'push', label: 'Push', lower: 'push' },
+  { id: 'pull', label: 'Pull', lower: 'pull' },
+  { id: 'legs', label: 'Legs', lower: 'legs' },
+  { id: 'core', label: 'Core', lower: 'core' }
+];
+const DB = 'Dumbbells', BODY = 'Body only';
+const X = {
+  bench: { name: 'Dumbbell bench press', dose: '4 × 8', weight: '25 kg', equipment: DB },
+  incline: { name: 'Incline dumbbell press', dose: '3 × 10', weight: '20 kg', equipment: DB },
+  pushup: { name: 'Push-up', dose: '3 × 12', equipment: BODY },
+  trxTri: { name: 'TRX triceps extension', dose: '3 × 12', equipment: 'TRX' },
+  pullup: { name: 'Pull-up', dose: '4 × 6', equipment: 'Pull-up bar' },
+  row: { name: 'One-arm dumbbell row', dose: '4 × 10', weight: '22.5 kg', equipment: DB },
+  trxRow: { name: 'TRX row', dose: '3 × 12', equipment: 'TRX' },
+  curl: { name: 'Hammer curl', dose: '3 × 12', weight: '12.5 kg', equipment: DB },
+  apart: { name: 'Band pull-apart', dose: '3 × 15', equipment: 'Resistance band' },
+  goblet: { name: 'Goblet squat', dose: '4 × 10', weight: '24 kg', equipment: 'Kettlebell' },
+  rdl: { name: 'Romanian deadlift', dose: '4 × 10', weight: '30 kg', equipment: DB },
+  split: { name: 'Bulgarian split squat', dose: '3 × 8', weight: '15 kg', equipment: DB },
+  swing: { name: 'Kettlebell swing', dose: '3 × 15', weight: '16 kg', equipment: 'Kettlebell' },
+  calf: { name: 'Single-leg calf raise', dose: '3 × 15', equipment: BODY },
+  deadbug: { name: 'Dead bug', dose: '3 × 10', equipment: BODY },
+  hollow: { name: 'Hollow hold', dose: '3 × 30 s', equipment: BODY },
+  sideplank: { name: 'Side plank', dose: '3 × 30 s', equipment: BODY },
+  birddog: { name: 'Bird dog', dose: '3 × 10', equipment: BODY },
+  superman: { name: 'Superman hold', dose: '3 × 20 s', equipment: BODY }
+};
+const PLANS = {
+  full: { main: [X.goblet, X.rdl, X.bench, X.row, X.pushup, X.pullup], fin: X.deadbug, days: 3 },
+  upper: { main: [X.bench, X.row, X.pullup, X.pushup, X.curl, X.trxTri], fin: X.hollow, days: 2 },
+  push: { main: [X.bench, X.incline, X.pushup, X.trxTri], fin: X.deadbug, days: 2 },
+  pull: { main: [X.pullup, X.row, X.trxRow, X.curl, X.apart], fin: X.hollow, days: 4 },
+  legs: { main: [X.goblet, X.rdl, X.split, X.swing, X.calf], fin: X.sideplank, days: 1 },
+  core: { main: [X.deadbug, X.hollow, X.sideplank, X.birddog, X.superman], fin: null, days: 3 }
+};
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { picked: null }; }
+  renderVals() {
+    const done = this.props.done === true || this.props.done === 'true';
+    const suggested = done ? 'push' : 'pull';
+    const type = this.state.picked || this.props.startType || suggested;
+    const meta = TYPES.find((t) => t.id === type);
+    const plan = PLANS[type];
+    const pullToday = done && (type === 'pull' || type === 'upper' || type === 'full');
+    let days = plan.days;
+    if (pullToday) days = 0;
+    const lastTrained = days === 0 ? 'Last trained today' : days === 1 ? 'Last trained yesterday' : 'Last trained ' + days + ' days ago';
+    let note = '';
+    if (type === 'legs') note = 'Legs were trained yesterday.';
+    else if (pullToday) note = 'Back and biceps were trained today.';
+    const why = [
+      type === suggested ? meta.label + ' muscles are the most rested.' : 'You chose ' + meta.lower + ' today.',
+      type === 'core' ? 'Abdominals and lower back only.' : '',
+      'Your shoulders only help out, never lead.'
+    ].filter(Boolean).join(' ');
+    return {
+      showTypes: this.props.mode !== 'preview',
+      screenTitle: this.props.mode === 'preview' ? "Today's workout" : 'Choose a workout',
+      themeClass: this.props.theme === 'dark' ? 'dark' : '',
+      done,
+      kicker: done ? 'Next workout' : "Today's workout",
+      name: meta.label,
+      lastTrained,
+      why,
+      changed: type !== suggested,
+      suggestedName: TYPES.find((t) => t.id === suggested).label,
+      reset: () => this.setState({ picked: suggested }),
+      types: TYPES.map((t) => ({ label: t.label, selected: t.id === type, unselected: t.id !== type, pick: () => this.setState({ picked: t.id }) })),
+      hasNote: note !== '',
+      note,
+      countLabel: plan.main.length + ' exercises',
+      main: plan.main.map((e, i) => ({ ...e, n: i + 1, hasWeight: !!e.weight, divider: i === 0 ? '0' : '1px solid var(--border)' })),
+      hasFinisher: !!plan.fin,
+      finisher: plan.fin || { name: '', dose: '', equipment: '' },
+      first: plan.main[0], detailContext: 'Exercise 1 of ' + plan.main.length + ' · ' + meta.label,
+      startLabel: meta.lower + ' workout'
+    };
+  }
+}
+</script>
+</body>
+</html>
