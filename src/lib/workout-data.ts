@@ -130,7 +130,7 @@ export async function loadWorkout(userId: string, workoutId: number): Promise<Lo
       plannedSets: p.plannedSets,
       reps: p.reps,
       skipped: p.skippedAt !== null,
-      core: e.primaryMuscles[0] === "abdominals",
+      core: e.primaryMuscles[0] === "abdominals" && w.split !== "core", // a Core workout has no separate finisher
       starting: ((s) => (s ? { weight: s.weight, unit: s.unit } : null))(starts.find((s) => s.exerciseId === e.id)),
       lastTime: last.get(e.id) ?? null,
       };
