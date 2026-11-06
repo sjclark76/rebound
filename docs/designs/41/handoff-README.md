@@ -29,8 +29,10 @@ screenshots/ not included. Export from the canvas (Share › Export) if wanted.
 4. Fixed gear on, no weights (Row-empty, also in Settings)
 - "Add weights" link, plus one muted hint line under it (aria-describedby): "Kettlebell exercises are left out of your workouts until you add a weight." It goes away once a weight is added.
 
-Proposed, not in the spec (confirm before building)
-- The prompt opens on leaving the box (Done or tap away), not while typing.
+Agreed during review (now in the #41 spec)
+- The prompt and the snap happen on leaving the box (Done or tap away), not while typing.
 - Complete set is disabled while the prompt is open.
-- An adjustable value inside the range but off the step (46 lb) snaps to the nearest step, the same way. Described, not drawn.
-- Weighted rows keep the gear name after the weight; the brief's example showed only "3 × 8–10 · 12 kg".
+- An adjustable value inside the range but off the step (46 lb) snaps to the nearest step, lighter on a tie. Described, not drawn.
+- Weighted rows keep the gear name after the weight.
+- Adjustable and fixed gear of the same kind both on: an out-of-range weight uses the same prompt and is added to the fixed list. Not drawn separately.
+- All new copy above is kept as drawn.
