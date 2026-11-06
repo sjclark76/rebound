@@ -15,6 +15,8 @@ const KG_BY_EQUIPMENT: Record<string, number> = {
   "e-z curl bar": 15,
   "medicine ball": 4,
   "exercise ball": 0,
+  "trx straps": 0,
+  "metolius wooden fingerboard": 0,
   bands: 0,
   "foam roll": 0,
   other: 10,
@@ -31,7 +33,7 @@ async function main() {
 
   const rows = (await db.select({ id: exercise.id, equipment: exercise.equipment, category: exercise.category }).from(exercise))
     .filter((e) => e.category === "strength" && e.equipment && e.equipment !== "body only")
-    .map((e) => ({ userId: u.id, exerciseId: e.id, weightKg: KG_BY_EQUIPMENT[e.equipment!] ?? 10 }));
+    .map((e) => ({ userId: u.id, exerciseId: e.id, weight: KG_BY_EQUIPMENT[e.equipment!] ?? 10 }));
 
   for (let i = 0; i < rows.length; i += 200) {
     await db.insert(startingWeight).values(rows.slice(i, i + 200)).onConflictDoNothing();

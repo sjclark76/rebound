@@ -1,5 +1,4 @@
 import {
-  index,
   integer,
   pgEnum,
   pgTable,
@@ -10,12 +9,12 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { user } from "./auth-schema";
-import { INJURY_MODES, WEIGHT_GROUP_TYPES } from "./vocab";
+import { INJURY_MODES, UNITS } from "./vocab";
 
 export * from "./auth-schema";
 
 export const injuryMode = pgEnum("injury_mode", INJURY_MODES);
-export const weightGroupType = pgEnum("weight_group_type", WEIGHT_GROUP_TYPES);
+export const weightUnit = pgEnum("weight_unit", UNITS);
 
 /** Exercise catalogue, seeded from free-exercise-db. */
 export const exercise = pgTable("exercise", {
@@ -32,6 +31,19 @@ export const exercise = pgTable("exercise", {
   images: text("images").array().notNull(),
 });
 
+/** The unit of the Bowflex Xtreme 2 SE, the one item with a unit toggle of its own (it has no weight list). No row means kg. It converts nothing; every saved weight carries its own unit. */
+export const equipmentUnit = pgTable(
+  "equipment_unit",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    equipment: text("equipment").notNull(),
+    unit: weightUnit("unit").notNull().default("kg"),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.equipment] })],
+);
+
 /** Equipment each user owns. */
 export const userEquipment = pgTable(
   "user_equipment",
@@ -44,23 +56,34 @@ export const userEquipment = pgTable(
   (t) => [primaryKey({ columns: [t.userId, t.equipment] })],
 );
 
-/** A saved batch of weights for one of a user's equipment items: a range (start, step, top) or picked weights. Kept when the item is switched off. */
-export const equipmentWeightGroup = pgTable(
-  "equipment_weight_group",
+/** A weight the user owns on a fixed item (dumbbells, kettlebells, medicine ball), in the unit it is marked in. One item can hold kg and lb weights. Kept when the item is switched off. */
+export const equipmentWeight = pgTable(
+  "equipment_weight",
   {
-    id: serial("id").primaryKey(),
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     equipment: text("equipment").notNull(),
-    name: text("name"),
-    type: weightGroupType("type").notNull(),
-    start: real("start"), // range only, kg
-    step: real("step"),
-    top: real("top"),
-    weights: real("weights").array().notNull().default([]), // picked only, kg
+    weight: real("weight").notNull(),
+    unit: weightUnit("unit").notNull(),
   },
-  (t) => [index("equipment_weight_group_user_equipment_idx").on(t.userId, t.equipment)],
+  (t) => [primaryKey({ columns: [t.userId, t.equipment, t.weight, t.unit] })],
+);
+
+/** The one range an adjustable item adjusts through (start, step, top), in the unit it is marked in. */
+export const equipmentRange = pgTable(
+  "equipment_range",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    equipment: text("equipment").notNull(),
+    unit: weightUnit("unit").notNull(),
+    start: real("start").notNull(),
+    step: real("step").notNull(),
+    top: real("top").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.equipment] })],
 );
 
 /** Active or past injuries, expressed against the muscle vocabulary. */
@@ -120,7 +143,8 @@ export const startingWeight = pgTable(
     exerciseId: text("exercise_id")
       .notNull()
       .references(() => exercise.id),
-    weightKg: real("weight_kg").notNull(),
+    weight: real("weight").notNull(),
+    unit: weightUnit("unit").notNull().default("kg"),
   },
   (t) => [primaryKey({ columns: [t.userId, t.exerciseId] })],
 );
@@ -135,6 +159,7 @@ export const workoutSet = pgTable("workout_set", {
     .references(() => exercise.id),
   setNumber: integer("set_number").notNull(),
   reps: integer("reps"),
-  weightKg: real("weight_kg"),
+  weight: real("weight"),
+  unit: weightUnit("unit").notNull().default("kg"),
   durationSec: integer("duration_sec"),
 });

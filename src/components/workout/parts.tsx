@@ -11,6 +11,7 @@ export function Stepper({
   value,
   onChange,
   step,
+  onBump,
   decimal = false,
 }: {
   label: string;
@@ -18,10 +19,12 @@ export function Stepper({
   value: number | null;
   onChange: (v: number | null) => void;
   step: number;
+  /** Replaces the default +/- step (for example to move through a list of real weights). */
+  onBump?: (direction: 1 | -1) => void;
   decimal?: boolean;
 }) {
   const id = `stepper-${label}`;
-  const bump = (d: number) => onChange(Math.max(0, Math.round(((value ?? 0) + d) * 100) / 100));
+  const bump = (d: number) => (onBump ? onBump(d < 0 ? -1 : 1) : onChange(Math.max(0, Math.round(((value ?? 0) + d) * 100) / 100)));
   const btn = "grid size-[52px] shrink-0 place-items-center rounded-xl bg-secondary text-secondary-foreground active:translate-y-px";
   return (
     <div className="flex flex-col gap-1.5">
@@ -43,10 +46,11 @@ export function Stepper({
               const n = Number(t);
               if (!Number.isNaN(n) && n >= 0) onChange(n);
             }}
+            aria-describedby={unit ? `${id}-unit` : undefined}
             className="h-[52px] w-full rounded-xl border-[1.5px] border-input bg-card text-center font-heading text-[32px] font-bold tabular-nums outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           />
           {unit && (
-            <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm font-bold text-muted-foreground">
+            <span id={`${id}-unit`} className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-sm font-bold text-muted-foreground">
               {unit}
             </span>
           )}

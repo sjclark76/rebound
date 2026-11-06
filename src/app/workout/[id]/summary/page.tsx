@@ -6,6 +6,7 @@ import { LogoMark } from "@/components/logo-mark";
 import { SignOutButton } from "@/components/sign-out-button";
 import { StatusChip } from "@/components/status-chip";
 import { SPLIT_NAMES, type Split } from "@/lib/generator";
+import type { Unit } from "@/db/vocab";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion } from "@/lib/suggestion";
 import { getInjuryChips, loadWorkout } from "@/lib/workout-data";
@@ -60,7 +61,7 @@ async function Summary({ params }: Pick<PageProps<"/workout/[id]/summary">, "par
         <div className="grid grid-cols-2 gap-3">
           {stat("Exercises", `${s.exercisesDone} of ${s.exercisesTotal}`, s.skipped ? `${s.skipped} skipped` : undefined)}
           {stat("Sets", String(s.sets))}
-          {stat("Volume", `${Math.round(s.volumeKg).toLocaleString("en-GB")} kg`, "Weighted sets only")}
+          {stat("Volume", `${Math.round(s.volume).toLocaleString("en-GB")} kg`, "Weighted sets only")}
           {stat("Duration", `${s.minutes} min`, `${time(w.startedAt)}–${time(w.completedAt)}`)}
         </div>
         <section className="flex flex-col gap-3">
@@ -104,11 +105,11 @@ async function Summary({ params }: Pick<PageProps<"/workout/[id]/summary">, "par
 }
 
 /** "4 sets · 22.5 kg × 10, 9, 8, 8" / "3 sets · 12, 12, 11 reps" / "3 sets · 45, 40, 35 sec". */
-function summaryLine(kind: "weighted" | "bodyweight" | "timed", sets: { weightKg: number | null; reps: number | null; durationSec: number | null }[]) {
+function summaryLine(kind: "weighted" | "bodyweight" | "timed", sets: { weight: number | null; unit: Unit; reps: number | null; durationSec: number | null }[]) {
   const head = `${sets.length} set${sets.length === 1 ? "" : "s"}`;
   if (kind === "timed") return `${head} · ${sets.map((s) => s.durationSec).join(", ")} sec`;
   if (kind === "bodyweight") return `${head} · ${sets.map((s) => s.reps).join(", ")} reps`;
-  const weights = new Set(sets.map((s) => s.weightKg));
+  const weights = new Set(sets.map((s) => `${s.weight}${s.unit}`));
   return weights.size === 1
     ? `${head} · ${formatSet("weighted", { ...sets[0], reps: null }).replace(/ × 0$/, "")} × ${sets.map((s) => s.reps).join(", ")}`
     : `${head} · ${sets.map((s) => formatSet("weighted", s)).join(", ")}`;

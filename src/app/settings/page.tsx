@@ -1,8 +1,9 @@
 import { Suspense } from "react";
 import { EquipmentList } from "@/components/settings/equipment-list";
 import { pageTitle, SettingsHeader, SettingsPage } from "@/components/settings/shell";
-import { getOwnedEquipment, getWeightGroups } from "@/lib/equipment-data";
+import { getOwnedEquipment, getOwnedWeights, getRanges } from "@/lib/equipment-data";
 import { requireSession } from "@/lib/session";
+import { getUnits } from "@/lib/settings-data";
 
 export default function Settings() {
   return (
@@ -28,6 +29,6 @@ export default function Settings() {
 
 async function Equipment() {
   const { user } = await requireSession();
-  const [owned, groups] = await Promise.all([getOwnedEquipment(user.id), getWeightGroups(user.id)]);
-  return <EquipmentList owned={owned} groups={groups} />;
+  const [owned, weights, ranges, units] = await Promise.all([getOwnedEquipment(user.id), getOwnedWeights(user.id), getRanges(user.id), getUnits(user.id)]);
+  return <EquipmentList owned={owned} weights={weights} ranges={ranges} units={units} />;
 }

@@ -3,7 +3,9 @@
 export const EQUIPMENT = [
   "body only",
   "dumbbell",
+  "adjustable dumbbells",
   "kettlebells",
+  "adjustable kettlebells",
   "barbell",
   "e-z curl bar",
   "bands",
@@ -46,12 +48,13 @@ export type InjuryMode = (typeof INJURY_MODES)[number];
 
 /** How the equipment screen groups items. New items and groups are added here, nowhere else. "body only" is always allowed, so it isn't listed. Barbell, E-Z curl bar, machine and cable are left out for now (not owned). */
 export const EQUIPMENT_GROUPS: readonly { name: string; items: readonly Equipment[] }[] = [
-  { name: "Free weights", items: ["dumbbell", "kettlebells"] },
+  { name: "Free weights", items: ["dumbbell", "adjustable dumbbells", "kettlebells", "adjustable kettlebells"] },
   { name: "Machines & cables", items: ["bowflex xtreme 2 se"] },
   { name: "Accessories", items: ["bands", "medicine ball", "exercise ball", "foam roll", "other", "metolius wooden fingerboard", "trx straps"] },
 ];
 
 const LABELS: Partial<Record<Equipment, string>> = {
+  dumbbell: "Dumbbells",
   "e-z curl bar": "E-Z curl bar",
   "bowflex xtreme 2 se": "Bowflex Xtreme 2 SE",
   "metolius wooden fingerboard": "Metolius wooden fingerboard",
@@ -60,21 +63,56 @@ const LABELS: Partial<Record<Equipment, string>> = {
 /** The name shown for an equipment item. */
 export const equipmentLabel = (e: Equipment) => LABELS[e] ?? e[0].toUpperCase() + e.slice(1);
 
-/** Equipment that has weights worth recording, with the tiles offered when picking weights and a starting range. */
-export const WEIGHTED_EQUIPMENT = {
-  dumbbell: { presets: [20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 45], range: { start: 2, step: 1, top: 24 } },
-  kettlebells: { presets: [4, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 40, 48], range: { start: 4, step: 4, top: 32 } },
-  "medicine ball": { presets: [1, 2, 3, 4, 5, 6, 8, 10, 12], range: { start: 1, step: 1, top: 10 } },
-} as const satisfies Partial<Record<Equipment, { presets: readonly number[]; range: { start: number; step: number; top: number } }>>;
-export type WeightedEquipment = keyof typeof WEIGHTED_EQUIPMENT;
-export const isWeighted = (e: string): e is WeightedEquipment => e in WEIGHTED_EQUIPMENT;
+export const UNITS = ["kg", "lb"] as const;
+export type Unit = (typeof UNITS)[number];
+export const isUnit = (u: unknown): u is Unit => (UNITS as readonly unknown[]).includes(u);
 
-export const WEIGHT_GROUP_TYPES = ["range", "picked"] as const;
-export type WeightGroupType = (typeof WEIGHT_GROUP_TYPES)[number];
-/** Step sizes offered for a range, in kg. */
-export const RANGE_STEPS = [0.5, 1, 2, 2.5, 4, 5] as const;
+/** The one item with a unit setting of its own: the Bowflex has no weight list, so its unit is a toggle on its row. Everything else keeps a unit on each weight, or has no weight at all. */
+export const hasUnit = (e: string) => e === "bowflex xtreme 2 se";
 
-/** URL form of an equipment name ("medicine ball" -> "medicine-ball") and back, for weighted items only. */
+/** Fixed gear: you tick the weights you own, from tiles in either unit. */
+export const FIXED_EQUIPMENT = {
+  dumbbell: {
+    noun: "dumbbell",
+    presets: { kg: [20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 45], lb: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60] },
+  },
+  kettlebells: {
+    noun: "kettlebell",
+    presets: { kg: [4, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 40, 48], lb: [10, 15, 20, 25, 30, 35, 45, 55, 65, 70, 90, 105] },
+  },
+  "medicine ball": {
+    noun: "medicine ball",
+    presets: { kg: [1, 2, 3, 4, 5, 6, 8, 10, 12], lb: [2, 4, 6, 8, 10, 12, 15, 20, 25] },
+  },
+} as const satisfies Partial<Record<Equipment, { noun: string; presets: Record<Unit, readonly number[]> }>>;
+export type FixedEquipment = keyof typeof FIXED_EQUIPMENT;
+export const isFixed = (e: string): e is FixedEquipment => e in FIXED_EQUIPMENT;
+
+/** Adjustable gear: one range it adjusts through, in the unit it is marked in. `counts` is the fixed item it stands in for. */
+export const ADJUSTABLE_EQUIPMENT = {
+  "adjustable dumbbells": { counts: "dumbbell", range: { kg: { start: 2, step: 1, top: 24 }, lb: { start: 5, step: 2.5, top: 50 } } },
+  "adjustable kettlebells": { counts: "kettlebells", range: { kg: { start: 4, step: 4, top: 32 }, lb: { start: 10, step: 5, top: 70 } } },
+} as const satisfies Partial<Record<Equipment, { counts: FixedEquipment; range: Record<Unit, { start: number; step: number; top: number }> }>>;
+export type AdjustableEquipment = keyof typeof ADJUSTABLE_EQUIPMENT;
+export const isAdjustable = (e: string): e is AdjustableEquipment => e in ADJUSTABLE_EQUIPMENT;
+export const hasWeightsPage = (e: string) => isFixed(e) || isAdjustable(e);
+
+/** Owning an adjustable item counts as owning the fixed item it stands in for (for suggestions). Null for anything else. */
+export const countsAs = (e: string): FixedEquipment | null => (isAdjustable(e) ? ADJUSTABLE_EQUIPMENT[e].counts : null);
+
+/** The items whose weights an exercise tagged with this equipment logs against: the fixed item and its adjustable twin. */
+export const poolItems = (e: string): Equipment[] =>
+  isFixed(e) ? [e, ...(Object.keys(ADJUSTABLE_EQUIPMENT) as AdjustableEquipment[]).filter((a) => ADJUSTABLE_EQUIPMENT[a].counts === e)] : [];
+
+/** Step sizes offered for a range: kg in halves and a few whole steps, lb in whole pounds or 2.5. */
+export const RANGE_STEPS: Record<Unit, readonly number[]> = { kg: [0.5, 1, 2, 2.5, 4, 5], lb: [1, 2, 2.5, 3, 4, 5] };
+/** Smallest and largest weight allowed, per unit. */
+export const WEIGHT_BOUNDS: Record<Unit, { min: number; max: number }> = { kg: { min: 0.5, max: 500 }, lb: { min: 1, max: 1105 } };
+
+/** URL form of an equipment name ("medicine ball" -> "medicine-ball") and back, for items with a weights page. */
 export const equipmentSlug = (e: string) => e.replaceAll(" ", "-");
-export const weightedFromSlug = (slug: string): WeightedEquipment | null =>
-  (Object.keys(WEIGHTED_EQUIPMENT) as WeightedEquipment[]).find((e) => equipmentSlug(e) === slug) ?? null;
+export const weightsItemFromSlug = (slug: string): FixedEquipment | AdjustableEquipment | null =>
+  ([...Object.keys(FIXED_EQUIPMENT), ...Object.keys(ADJUSTABLE_EQUIPMENT)] as (FixedEquipment | AdjustableEquipment)[]).find((e) => equipmentSlug(e) === slug) ?? null;
+
+/** What the generator treats as owned: every switched-on item, plus the fixed item each adjustable one stands in for. */
+export const suggestionEquipment = (owned: readonly string[]): string[] => [...new Set([...owned, ...owned.flatMap((e) => countsAs(e) ?? [])])];

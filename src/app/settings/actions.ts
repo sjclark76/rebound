@@ -3,10 +3,10 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
-import { equipmentWeightGroup, userEquipment } from "@/db/schema";
-import { EQUIPMENT, equipmentSlug, isWeighted, WEIGHT_GROUP_TYPES, WEIGHTED_EQUIPMENT, type WeightGroupType } from "@/db/vocab";
+import { equipmentRange, equipmentUnit, equipmentWeight, userEquipment } from "@/db/schema";
+import { ADJUSTABLE_EQUIPMENT, EQUIPMENT, equipmentSlug, hasUnit, isAdjustable, isFixed, isUnit, WEIGHT_BOUNDS, type Unit } from "@/db/vocab";
 import { requireSession } from "@/lib/session";
-import { cleanGroupState, type GroupState, type WeightGroup } from "@/lib/weights";
+import { cleanRange, type AdjustableRange } from "@/lib/weights";
 
 const refresh = (equipment?: string) => {
   revalidatePath("/settings");
@@ -14,64 +14,49 @@ const refresh = (equipment?: string) => {
   if (equipment) revalidatePath(`/settings/equipment/${equipmentSlug(equipment)}`, "layout");
 };
 
-/** Switches an equipment item on or off. Off keeps its weight groups. "body only" is always allowed, so it isn't stored. */
+/** Switches an equipment item on or off. Off keeps its weights. Switching an adjustable item on gives it its default range if it has none. "body only" is always allowed, so it isn't stored. */
 export async function setEquipment(equipment: string, on: boolean) {
   const { user } = await requireSession();
   if (!(EQUIPMENT as readonly string[]).includes(equipment) || equipment === "body only") throw new Error("Unknown equipment");
-  if (on) await db.insert(userEquipment).values({ userId: user.id, equipment }).onConflictDoNothing();
-  else await db.delete(userEquipment).where(and(eq(userEquipment.userId, user.id), eq(userEquipment.equipment, equipment)));
+  if (on) {
+    await db.insert(userEquipment).values({ userId: user.id, equipment }).onConflictDoNothing();
+    if (isAdjustable(equipment)) await db.insert(equipmentRange).values({ userId: user.id, equipment, unit: "kg", ...ADJUSTABLE_EQUIPMENT[equipment].range.kg }).onConflictDoNothing();
+  } else await db.delete(userEquipment).where(and(eq(userEquipment.userId, user.id), eq(userEquipment.equipment, equipment)));
   refresh(equipment);
 }
 
-/** Adds a weight group to a weighted item, starting from that item's default range, and returns its id. */
-export async function createWeightGroup(equipment: string, type: WeightGroupType, name: string): Promise<number> {
+/** Ticks or unticks one weight on a fixed item, in the unit it is marked in. */
+export async function setWeightOwned(equipment: string, weight: number, unit: Unit, owned: boolean) {
   const { user } = await requireSession();
-  if (!isWeighted(equipment) || !WEIGHT_GROUP_TYPES.includes(type)) throw new Error("Can't add weights to that");
-  const r = WEIGHTED_EQUIPMENT[equipment].range;
-  const state = cleanGroupState(
-    type === "range"
-      ? { name, type, start: r.start, step: r.step, top: r.top, weights: [] }
-      : { name, type, start: null, step: null, top: null, weights: [] },
-  );
-  if (!state) throw new Error("Invalid weight group");
-  const [row] = await db.insert(equipmentWeightGroup).values({ userId: user.id, equipment, ...state }).returning({ id: equipmentWeightGroup.id });
+  const { min, max } = isUnit(unit) ? WEIGHT_BOUNDS[unit] : { min: 1, max: 0 };
+  if (!isFixed(equipment) || !(weight >= min && weight <= max && (weight * 2) % 1 === 0)) throw new Error("Can't add that weight");
+  if (owned) await db.insert(equipmentWeight).values({ userId: user.id, equipment, weight, unit }).onConflictDoNothing();
+  else
+    await db
+      .delete(equipmentWeight)
+      .where(and(eq(equipmentWeight.userId, user.id), eq(equipmentWeight.equipment, equipment), eq(equipmentWeight.weight, weight), eq(equipmentWeight.unit, unit)));
   refresh(equipment);
-  return row.id;
 }
 
-/** Saves a weight group's full state. */
-export async function updateWeightGroup(id: number, input: GroupState) {
+/** Saves the range of an adjustable item. */
+export async function saveRange(equipment: string, input: AdjustableRange) {
   const { user } = await requireSession();
-  const state = cleanGroupState(input);
-  if (!state) throw new Error("Invalid weight group");
-  const [row] = await db
-    .update(equipmentWeightGroup)
-    .set(state)
-    .where(and(eq(equipmentWeightGroup.id, id), eq(equipmentWeightGroup.userId, user.id)))
-    .returning({ equipment: equipmentWeightGroup.equipment });
-  if (!row) throw new Error("Weight group not found");
-  refresh(row.equipment);
+  const range = cleanRange(input);
+  if (!isAdjustable(equipment) || !range) throw new Error("Invalid range");
+  await db
+    .insert(equipmentRange)
+    .values({ userId: user.id, equipment, ...range })
+    .onConflictDoUpdate({ target: [equipmentRange.userId, equipmentRange.equipment], set: range });
+  refresh(equipment);
 }
 
-export type RemovedGroup = { equipment: string; group: WeightGroup };
-
-/** Removes a weight group and returns it so the removal can be undone. */
-export async function removeWeightGroup(id: number): Promise<RemovedGroup> {
+/** Sets the Bowflex's unit. Converts nothing, because every saved weight carries its own unit. */
+export async function setEquipmentUnit(equipment: string, unit: Unit) {
   const { user } = await requireSession();
-  const [r] = await db
-    .delete(equipmentWeightGroup)
-    .where(and(eq(equipmentWeightGroup.id, id), eq(equipmentWeightGroup.userId, user.id)))
-    .returning();
-  if (!r) throw new Error("Weight group not found");
-  refresh(r.equipment);
-  return { equipment: r.equipment, group: { id: r.id, name: r.name, type: r.type, start: r.start, step: r.step, top: r.top, weights: r.weights } };
-}
-
-/** Puts a removed weight group back, in its old position. */
-export async function restoreWeightGroup({ equipment, group }: RemovedGroup) {
-  const { user } = await requireSession();
-  const state = cleanGroupState(group);
-  if (!isWeighted(equipment) || !state) throw new Error("Invalid weight group");
-  await db.insert(equipmentWeightGroup).values({ id: group.id, userId: user.id, equipment, ...state }).onConflictDoNothing();
+  if (!isUnit(unit) || !hasUnit(equipment)) throw new Error("Can't set a unit for that");
+  await db
+    .insert(equipmentUnit)
+    .values({ userId: user.id, equipment, unit })
+    .onConflictDoUpdate({ target: [equipmentUnit.userId, equipmentUnit.equipment], set: { unit } });
   refresh(equipment);
 }

@@ -37,15 +37,19 @@ import {
   unskipExercise,
 } from "@/app/workout/actions";
 import type { PlanRow } from "@/lib/workout-data";
-import { formatSet, type LoggedSet, nowSlot, num, prefillFor, type Prefill } from "@/lib/workout";
+import { EQUIPMENT, equipmentLabel, type Equipment, type Unit } from "@/db/vocab";
+import { stepWeight, type Weight } from "@/lib/weights";
+
+const isEquipment = (e: string): e is Equipment => (EQUIPMENT as readonly string[]).includes(e);
+import { draftWeight, formatSet, type LoggedSet, nowSlot, num, prefillFor, type Prefill } from "@/lib/workout";
 import { ConfirmSheet, Stepper } from "./parts";
 
-type Draft = { weightKg: number | null; reps: number | null; durationSec: number | null };
+type Draft = { weight: number | null; unit: Unit; reps: number | null; durationSec: number | null };
 type View = "focused" | "list";
 
 const capitalise = (s: string) => s[0].toUpperCase() + s.slice(1);
 const dose = (p: PlanRow) =>
-  `${p.plannedSets} × ${p.reps}${p.kind === "timed" ? " s" : ""} · ${capitalise(p.equipment ?? "body only")}`;
+  `${p.plannedSets} × ${p.reps}${p.kind === "timed" ? " s" : ""} · ${p.equipment && isEquipment(p.equipment) ? equipmentLabel(p.equipment) : capitalise(p.equipment ?? "body only")}`;
 
 function sourceText(p: PlanRow, n: number, pf: Prefill, thisWorkout: LoggedSet[]) {
   const s = pf.source;
@@ -58,7 +62,7 @@ function sourceText(p: PlanRow, n: number, pf: Prefill, thisWorkout: LoggedSet[]
     const tail = s.lastTimeSets > 0 ? `You did ${s.lastTimeSets} sets last time.` : "No earlier workout to copy from.";
     return `Copied from set ${s.setNumber}${from ? `: ${formatSet(p.kind, from)}` : ""}. ${tail}`;
   }
-  if (s.rule === "starting-weight") return `Starting weight: ${num(pf.weightKg)} kg. You haven't logged this exercise before.`;
+  if (s.rule === "starting-weight") return `Starting weight: ${num(pf.weight)} ${pf.unit}. You haven't logged this exercise before.`;
   return `From today's plan: ${formatSet(p.kind, pf)}. No earlier workout to copy from.`;
 }
 
@@ -75,11 +79,26 @@ function rowSub(p: PlanRow, n: number, pf: Prefill) {
   return "No history for this exercise yet";
 }
 
-function Fields({ kind, draft, onChange }: { kind: PlanRow["kind"]; draft: Draft; onChange: (d: Draft) => void }) {
+/** - and + on the weight move to the next real weight the equipment has (any unit); with no groups they move 2.5 in the current unit. */
+function stepDraft(draft: Draft, options: Weight[], direction: 1 | -1): Draft | null {
+  if (options.length === 0) return null;
+  const next = stepWeight(options, { value: draft.weight ?? 0, unit: draft.unit }, direction);
+  return next ? { ...draft, weight: next.value, unit: next.unit } : draft;
+}
+
+function Fields({ kind, draft, onChange, options }: { kind: PlanRow["kind"]; draft: Draft; onChange: (d: Draft) => void; options: Weight[] }) {
   return (
     <div className="flex flex-col gap-3">
       {kind === "weighted" && (
-        <Stepper label="Weight" unit="kg" decimal step={2.5} value={draft.weightKg} onChange={(v) => onChange({ ...draft, weightKg: v })} />
+        <Stepper
+          label="Weight"
+          unit={draft.unit}
+          decimal
+          step={2.5}
+          value={draft.weight}
+          onChange={(v) => onChange({ ...draft, weight: v })}
+          onBump={options.length > 0 ? (d) => onChange(stepDraft(draft, options, d) ?? draft) : undefined}
+        />
       )}
       {kind !== "timed" && <Stepper label="Reps" step={1} value={draft.reps} onChange={(v) => onChange({ ...draft, reps: v })} />}
       {kind === "timed" && (
@@ -90,11 +109,12 @@ function Fields({ kind, draft, onChange }: { kind: PlanRow["kind"]; draft: Draft
 }
 
 const valid = (kind: PlanRow["kind"], d: Draft) =>
-  kind === "timed" ? !!d.durationSec : kind === "weighted" ? d.weightKg !== null && !!d.reps : !!d.reps;
+  kind === "timed" ? !!d.durationSec : kind === "weighted" ? d.weight !== null && !!d.reps : !!d.reps;
 
 function toValues(kind: PlanRow["kind"], d: Draft) {
   return {
-    weightKg: kind === "weighted" ? d.weightKg : null,
+    weight: kind === "weighted" ? d.weight : null,
+    unit: d.unit,
     reps: kind === "timed" ? null : d.reps,
     durationSec: kind === "timed" ? d.durationSec : null,
   };
@@ -158,14 +178,15 @@ export function WorkoutClient(props: {
       kind: p.kind,
       setNumber: n,
       plannedReps: p.reps,
-      startingKg: p.startingKg,
+      starting: p.starting,
+      defaultUnit: p.unit,
       lastTime: p.lastTime?.sets ?? [],
       logged: setsOf(p.exerciseId),
     });
 
   const draftFor = (p: PlanRow, n: number) => {
     const pf = prefillOf(p, n);
-    const initial: Draft = { weightKg: pf.weightKg, reps: pf.reps, durationSec: pf.durationSec };
+    const initial: Draft = { weight: draftWeight(pf.weight), unit: pf.unit, reps: pf.reps, durationSec: pf.durationSec };
     const key = `${p.exerciseId}:${n}`;
     const init = JSON.stringify([pf.source, initial]);
     const stored = drafts[key];
@@ -265,7 +286,7 @@ export function WorkoutClient(props: {
               type="button"
               aria-label={`Edit set ${n}`}
               className="grid size-12 shrink-0 place-items-center rounded-full"
-              onClick={() => setEditing({ p, set: done, draft: { weightKg: done.weightKg, reps: done.reps, durationSec: done.durationSec } })}
+              onClick={() => setEditing({ p, set: done, draft: { weight: draftWeight(done.weight), unit: done.unit, reps: done.reps, durationSec: done.durationSec } })}
             >
               <PencilIcon className="size-5" aria-hidden />
             </button>
@@ -298,7 +319,7 @@ export function WorkoutClient(props: {
         </p>
         {/* Reserved for the suggested weight (#22). Empty for now, keeps its height. */}
         {p.kind === "weighted" && <div className="h-14 rounded-xl border border-dashed border-input" aria-hidden />}
-        <Fields kind={p.kind} draft={draft} onChange={setDraft} />
+        <Fields kind={p.kind} draft={draft} onChange={setDraft} options={p.options} />
         {withButton && (
           <CompleteButton
             label={`Complete set ${n}`}
@@ -386,7 +407,7 @@ export function WorkoutClient(props: {
     const n = firstOpenSlot(p);
     const slots = slotCount(p);
     const complete = !p.skipped && n === null;
-    const draft = n ? draftFor(p, n).draft : { weightKg: null, reps: null, durationSec: null };
+    const draft = n ? draftFor(p, n).draft : { weight: null, unit: p.unit, reps: null, durationSec: null };
     const primary = p.skipped || complete;
     return (
       <div className="flex flex-1 flex-col gap-4 lg:flex-none">
@@ -623,7 +644,7 @@ export function WorkoutClient(props: {
       >
         {editing && (
           <>
-            <Fields kind={editing.p.kind} draft={editing.draft} onChange={(d) => setEditing({ ...editing, draft: d })} />
+            <Fields kind={editing.p.kind} draft={editing.draft} onChange={(d) => setEditing({ ...editing, draft: d })} options={editing.p.options} />
             <CompleteButton
               label="Save changes"
               icon={<SaveIcon className="size-5" aria-hidden />}

@@ -1,7 +1,12 @@
 import { and, desc, eq, inArray, isNotNull, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { exercise, injury, startingWeight, workout, workoutExercise, workoutSet } from "@/db/schema";
-import { exerciseKind, isStale, type Kind, type LoggedSet } from "./workout";
+import type { Unit } from "@/db/vocab";
+import { getOwnedEquipment, getOwnedWeights, getRanges } from "./equipment-data";
+import { getUnits, unitOf } from "./settings-data";
+import { exerciseKind, isStale, type Kind, type LoggedSet, type Starting } from "./workout";
+import { poolItems } from "@/db/vocab";
+import { weightPool, type Weight } from "./weights";
 
 /** Closes workouts left open for more than 24 hours; empty ones are simply removed. */
 export async function closeStaleWorkouts(userId: string, now = new Date()) {
@@ -33,12 +38,16 @@ export type PlanRow = {
   name: string;
   equipment: string | null;
   kind: Kind;
+  /** The unit to start in when there is nothing to copy: that of the lightest weight the equipment has, or the Bowflex's unit, else kg. */
+  unit: Unit;
+  /** The real weights the equipment has (ticked weights plus an adjustable range), lightest to heaviest. - and + step through them. */
+  options: Weight[];
   position: number;
   plannedSets: number;
   reps: string;
   skipped: boolean;
   core: boolean;
-  startingKg: number | null;
+  starting: Starting | null;
   lastTime: { dateLabel: string; sets: LoggedSet[] } | null;
 };
 
@@ -56,7 +65,11 @@ export async function loadWorkout(userId: string, workoutId: number): Promise<Lo
   const [w] = await db.select().from(workout).where(and(eq(workout.id, workoutId), eq(workout.userId, userId)));
   if (!w) return null;
 
-  const [planRows, sets] = await Promise.all([
+  const [units, owned, weights, ranges, planRows, sets] = await Promise.all([
+    getUnits(userId),
+    getOwnedEquipment(userId),
+    getOwnedWeights(userId),
+    getRanges(userId),
     db
       .select({ p: workoutExercise, e: exercise })
       .from(workoutExercise)
@@ -66,6 +79,10 @@ export async function loadWorkout(userId: string, workoutId: number): Promise<Lo
     db.select().from(workoutSet).where(eq(workoutSet.workoutId, w.id)).orderBy(workoutSet.setNumber),
   ]);
   const ids = planRows.map((r) => r.e.id);
+  const optionsFor = (equipment: string | null): Weight[] => {
+    const items = equipment ? poolItems(equipment).filter((i) => owned.includes(i)) : [];
+    return weightPool(items.flatMap((i) => weights[i] ?? []), items.flatMap((i) => (ranges[i] ? [ranges[i]] : [])));
+  };
 
   const [starts, history] = ids.length
     ? await Promise.all([
@@ -103,19 +120,24 @@ export async function loadWorkout(userId: string, workoutId: number): Promise<Lo
     startedAt: w.startedAt,
     completedAt: w.completedAt,
     sets,
-    plan: planRows.map(({ p, e }) => ({
+    plan: planRows.map(({ p, e }) => {
+      const options = optionsFor(e.equipment);
+      return {
       exerciseId: e.id,
       name: e.name,
       equipment: e.equipment,
       kind: exerciseKind(e),
+      unit: options[0]?.unit ?? unitOf(units, e.equipment),
+      options,
       position: p.position,
       plannedSets: p.plannedSets,
       reps: p.reps,
       skipped: p.skippedAt !== null,
       core: e.primaryMuscles[0] === "abdominals",
-      startingKg: starts.find((s) => s.exerciseId === e.id)?.weightKg ?? null,
+      starting: ((s) => (s ? { weight: s.weight, unit: s.unit } : null))(starts.find((s) => s.exerciseId === e.id)),
       lastTime: last.get(e.id) ?? null,
-    })),
+      };
+    }),
   };
 }
 
