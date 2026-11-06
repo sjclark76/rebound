@@ -1,25 +1,26 @@
-# Rebound · Units (kg / lb) — design handoff
+# Rebound · Per-item units (kg | lb) — design handoff
 
-Story: suggested workouts use the Bowflex Xtreme 2 SE, Metolius fingerboard and TRX straps, logged in the unit the user picks. New on screen: a kg / lb setting. Extends docs/designs/8 (Equipment settings); same tokens (src/app/globals.css) and shared CSS.
+Story: suggested workouts use the Bowflex Xtreme 2 SE, Metolius fingerboard and TRX straps, and each piece of gear keeps its weights in its own unit. Replaces the earlier global Units setting (there is no Units section). Extends docs/designs/8; the lb weight-group screens in docs/designs/38 (screen 5) are unchanged.
 
-screenshots/   16 PNGs at 2x, light and dark
-  1-settings-units           phone 390 + desktop 1280 (Units section above Equipment, kg selected)
-  2-switch-confirm           phone bottom sheet + desktop dialog
-  3-unit-save-failed         phone (reverted to kg, inline error + Try again)
-  4-switch-blocked-workout-open  phone (control disabled, reason + Go to workout)
-  5-edit-set-range-lb        phone: 5–50 lb, every 2.5 lb
-  5-edit-set-picked-lb       phone: lb preset tiles, 55, 60, 65 lb picked
-design-files/  .dc.html artboards, canvas.json, rebound-ui.css (the design-8 file plus a "Units story" block at the end)
+screenshots/   12 PNGs at 2x, light and dark
+  1-equipment-units          phone 390 + desktop 1280. Dumbbell, kettlebells in kg; Bowflex in lb; fingerboard and TRX with no unit
+  2-switch-dumbbell-confirm  phone bottom sheet + desktop dialog
+  3-unit-save-failed         phone: Dumbbell row stays kg, inline error + Try again
+  4-unit-blocked-workout-open  phone: unit controls disabled, notice + Go to workout
+design-files/  .dc.html artboards, canvas.json, rebound-ui.css (design-8 CSS + "Per-item unit" block at the end)
 
 Build notes
-- Units is the first section on /settings (it's short, and it changes how everything below reads). Heading "Units", lede "Weights are shown and logged in this unit."
-- Control: <fieldset> legend "Weight unit" + two radios drawn as the existing segmented control (.seg), 56px tall. Selected = card fill + check icon + text, so it's never colour alone. Options "Kilograms (kg)" / "Pounds (lb)". kg is the default.
-- Choosing the other unit does not change anything yet: it opens the confirmation (phone bottom sheet, desktop centred dialog; role="dialog", aria-modal, labelled by the title). Focus goes to the dialog; Esc / scrim tap = "Keep kg".
-- Confirm copy: "Switch to pounds?" / "Rebound will convert every weight you've saved from kg to lb and save it again:" Logged sets · Starting weights · Dumbbell and kettlebell weights / "After that, weights show and are logged in lb. You can switch back the same way." Actions: primary "Switch to lb" (64px phone), secondary "Keep kg". The kg→lb direction mirrors this ("Switch to kilograms?", "Switch to kg", "Keep lb").
-- While converting: the selected segment holds, and the primary button shows progress and is disabled (not drawn).
-- Save failed: the conversion should be all-or-nothing. The control stays on kg, the card tints, and the error sits inside it (role="alert", aria-describedby on the radios): "Couldn't switch to lb. Nothing was changed: your weights are still in kg. Check your connection and try again." + Try again, which reruns the conversion without asking again. Clears on success.
-- Blocked: when a workout is open, the fieldset is disabled and a note sits below it (aria-describedby): lock icon + "A workout is open. Finish or end it to switch units, so its sets stay in one unit." + "Go to workout" link. The server should refuse the switch too (a workout opened in another tab) and show the same message.
-- Weight groups: every value, tile, field suffix and summary uses the chosen unit ("lb" in the steppers, the "Another weight" field suffix and its aria-label "Add a weight in pounds", the Settings summary rows).
-- lb range: "Go up by" steps through whole pounds and 2.5 lb (note under the steppers: "Steps go up in whole pounds or 2.5 lb."). Start/Up to snap to the step.
-- lb presets drawn: 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100 lb (kg presets unchanged).
-- Open question: how converted values round (e.g. 22.5 kg = 49.6 lb). The design doesn't promise a rule; the spec should set one.
+- Groups follow EQUIPMENT_GROUPS in src/db/vocab.ts (Bowflex under Machines & cables; fingerboard and TRX under Accessories).
+- Lede gains one clause: "Switch on what you own, and set the unit each piece is marked in. Changes save as you go and apply from your next suggested workout."
+- Unit line: its own line under the On/Off row, left-aligned and labelled "Unit", so it never sits beside the switch. <fieldset> (legend, visually hidden: "<Item> unit") with two radios, kg and lb, drawn as a bordered 2-segment control (68px segments, 48px total height). Selected = spruce-tinted fill + check + text. The switch keeps its track/thumb look; the 64px <label> row still toggles On/Off only.
+- Shown whether the item is on or off. Not shown for items with no weights: Metolius wooden fingerboard, TRX straps. Default kg.
+- Order inside a row: On/Off row → Unit line → Weights summary link (weighted items that are on).
+- Choosing the other unit opens the confirmation; nothing changes until "Switch to lb". Title names the item: "Switch Dumbbell to pounds?" Body: "Only Dumbbell's weights change. They're converted from kg to lb and saved again:" then Weight sets (with the item's current summary), Starting weights ("For exercises that use dumbbells"), Logged sets ("Of exercises that use dumbbells"). Note: "Weights round to the nearest 0.5 lb, so 22.5 kg becomes 49.5 lb. Your other equipment keeps its own unit." Actions "Switch to lb" (primary) / "Keep kg". lb→kg mirrors it. Weight sets only appear for items that have them.
+- Phone: bottom sheet; desktop: centred 520px dialog. role="dialog", aria-modal, focus moves into it, Esc / scrim = keep.
+- Save failed: the conversion is all-or-nothing. Row tints, control stays on the old unit, error inside the row (role="alert", aria-describedby on the fieldset): "Couldn't switch Dumbbell to lb. Nothing was changed: its weights are still in kg. Check your connection and try again." + Try again (reruns without asking again). Clears on success or next change.
+- Blocked: with a workout open, every unit fieldset is disabled (aria-describedby the notice), and one notice sits under the lede: lock + "A workout is open, so units can't change. Finish or end it first, so its sets stay in one unit. On and Off still work." + "Go to workout". The server should refuse too (workout opened elsewhere), and the row then shows the same message inline.
+- Weight groups use the item's unit everywhere (summary row, edit screens, presets): see docs/designs/38.
+
+Open questions
+- Should Bands, Exercise ball, Foam roll and Other have a unit? The spec says every row except TRX and fingerboard, so they're drawn with one, but none of them store weights today.
+- How does a range convert? 2–24 kg every 1 kg doesn't map to whole or 2.5 lb steps. Convert to a picked set, or re-step the range (and say which in the confirmation)?

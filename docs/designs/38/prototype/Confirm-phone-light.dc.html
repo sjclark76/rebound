@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Switch unit · confirm · phone · light</title>
+<title>Switch Dumbbell unit · confirm · phone · light</title>
 <script src="./support.js"></script>
 <link rel="stylesheet" href="rebound-ui.css">
 </head>
@@ -13,7 +13,7 @@
 <style>body{margin:0}</style>
 </helmet>
 <div class="rb t-light crop" style="width: 390px; height: 844px">
-<div aria-hidden="true">
+<div aria-hidden="true" inert>
 <header class="hdr line">
 <div class="hdr-in" style="padding-left: 8px; justify-content: flex-start">
 <span class="back"><svg class="ic lg" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>Today</span>
@@ -23,34 +23,30 @@
 <p class="hd title">Settings</p>
 <div class="sec">
 <div class="sec-head">
-<p class="hd" style="font-size: 22px; line-height: 28px">Units</p>
-<p class="lede">Weights are shown and logged in this unit.</p>
-</div>
-<div class="card ucard">
-<p style="font-size: 15px; line-height: 20px; font-weight: 700; padding: 0 4px">Weight unit</p>
-<div class="seg u">
-<span class="sel" style="display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 56px; border-radius: 12px; font-size: 17px; font-weight: 700; background: var(--card); box-shadow: 0 0 0 1px var(--border)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Kilograms (kg)</span>
-<span style="display: flex; align-items: center; justify-content: center; min-height: 56px; font-size: 17px; font-weight: 700; color: var(--muted-fg)">Pounds (lb)</span>
-</div>
-</div>
-</div>
-<div class="sec-head">
 <p class="hd" style="font-size: 22px; line-height: 28px">Equipment</p>
-<p class="lede">Switch on what you own. Changes save as you go and apply from your next suggested workout.</p>
+<p class="lede">Switch on what you own, and set the unit each piece is marked in. Changes save as you go and apply from your next suggested workout.</p>
+</div>
+<div class="grp">
+<div class="grp-h"><p class="hd" style="font-size: 18px; line-height: 24px">Free weights</p><span class="count">2 of 2 on</span></div>
+<ul class="card">
+<li><div class="row"><span class="name">Dumbbell</span><span class="st on">On</span><span class="sw on"><span class="th"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></div>
+<div class="urow"><span class="ulab">Unit</span><div class="useg"><label class="sel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>kg</label><label>lb</label></div></div></li>
+</ul>
+</div>
 </div>
 </div>
 </div>
 <div class="scrim"></div>
 <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cf-t" aria-describedby="cf-d">
 <div class="grab"></div>
-<h2 class="hd dlg-t" id="cf-t">Switch to pounds?</h2>
-<p class="dlg-p" id="cf-d">Rebound will convert every weight you've saved from kg to lb and save it again:</p>
+<h2 class="hd dlg-t" id="cf-t">Switch Dumbbell to pounds?</h2>
+<p class="dlg-p" id="cf-d">Only Dumbbell's weights change. They're converted from kg to lb and saved again:</p>
 <ul class="conv">
-<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>Logged sets</li>
-<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>Starting weights</li>
-<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6v12"/><path d="M18 6v12"/><path d="M3 9v6"/><path d="M21 9v6"/><path d="M6 12h12"/></svg>Dumbbell and kettlebell weights</li>
+<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6v12"/><path d="M18 6v12"/><path d="M3 9v6"/><path d="M21 9v6"/><path d="M6 12h12"/></svg><span class="t">Weight sets<span class="d">2–24 kg + 26, 28, 30 kg</span></span></li>
+<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg><span class="t">Starting weights<span class="d">For exercises that use dumbbells</span></span></li>
+<li><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg><span class="t">Logged sets<span class="d">Of exercises that use dumbbells</span></span></li>
 </ul>
-<p class="dlg-p muted">After that, weights show and are logged in lb. You can switch back the same way.</p>
+<p class="rnd"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>Weights round to the nearest 0.5 lb, so 22.5&nbsp;kg becomes 49.5&nbsp;lb. Your other equipment keeps its own unit.</span></p>
 <div class="dlg-acts">
 <button type="button" class="btn1">Switch to lb</button>
 <button type="button" class="btn2 tall">Keep kg</button>
