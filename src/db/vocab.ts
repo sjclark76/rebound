@@ -53,6 +53,12 @@ export const EQUIPMENT_GROUPS: readonly { name: string; items: readonly Equipmen
   { name: "Accessories", items: ["bands", "medicine ball", "exercise ball", "foam roll", "other", "metolius wooden fingerboard", "trx straps"] },
 ];
 
+/** Only equipment the settings screen offers counts as owned. Anything else in the database (a seed script's barbell or cable, say) can't be seen or switched off, so it is ignored. */
+export const selectableEquipment = (owned: readonly string[]): string[] => {
+  const offered = new Set<string>(EQUIPMENT_GROUPS.flatMap((g) => g.items));
+  return owned.filter((e) => offered.has(e));
+};
+
 const LABELS: Partial<Record<Equipment, string>> = {
   dumbbell: "Dumbbells",
   "e-z curl bar": "E-Z curl bar",
