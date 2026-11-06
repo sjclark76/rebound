@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { EQUIPMENT, EQUIPMENT_GROUPS, FIXED_EQUIPMENT, countsAs, gearWithoutWeights, hasWeightsPage, isAdjustable, isFixed, poolItems, suggestionEquipment } from "./vocab";
+import { EQUIPMENT, EQUIPMENT_GROUPS, FIXED_EQUIPMENT, countsAs, gearWithoutWeights, hasWeightsPage, selectableEquipment, isAdjustable, isFixed, poolItems, suggestionEquipment } from "./vocab";
 
 describe("the Bowflex", () => {
   it("has a weights page like the other fixed gear", () => {
@@ -54,4 +54,11 @@ describe("gearWithoutWeights", () => {
   it("doesn't count gear whose adjustable twin is on, since the range gives it weights", () =>
     expect(gearWithoutWeights(["dumbbell", "adjustable dumbbells"], {})).toEqual([]));
   it("ignores gear that is off, and gear with no weights at all", () => expect(gearWithoutWeights(["bands", "foam roll"], {})).toEqual([]));
+});
+
+describe("selectableEquipment", () => {
+  it("keeps only equipment the settings screen offers, so hidden rows can't put barbell or cable in a workout", () => {
+    expect(selectableEquipment(["dumbbell", "barbell", "cable", "machine", "body only", "bands", "adjustable dumbbells"])).toEqual(["dumbbell", "bands", "adjustable dumbbells"]);
+  });
+  it("is empty when nothing offered is owned", () => expect(selectableEquipment(["barbell"])).toEqual([]));
 });

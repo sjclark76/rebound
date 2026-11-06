@@ -1,15 +1,16 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { equipmentRange, equipmentWeight, userEquipment } from "@/db/schema";
+import { selectableEquipment } from "@/db/vocab";
 import type { AdjustableRange, Weight } from "./weights";
 
 /** What the user owns: the items switched on, the weights ticked on fixed items, and the ranges of adjustable ones. */
 export type Gear = { owned: string[]; weights: Record<string, Weight[]>; ranges: Record<string, AdjustableRange> };
 
-/** The equipment items the user has switched on. */
+/** The equipment items the user has switched on, as far as the settings screen offers them. */
 export async function getOwnedEquipment(userId: string): Promise<string[]> {
   const rows = await db.select({ equipment: userEquipment.equipment }).from(userEquipment).where(eq(userEquipment.userId, userId));
-  return rows.map((r) => r.equipment);
+  return selectableEquipment(rows.map((r) => r.equipment));
 }
 
 /** The weights the user has ticked on their fixed items, keyed by item. Pass an item to get just its weights. */
