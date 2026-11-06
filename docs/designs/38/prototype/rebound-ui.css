@@ -157,19 +157,23 @@
 .page.wide .footbar{margin:8px 0 0;padding:0;border:0;box-shadow:none;background:transparent}
 .field.txt{color:var(--fg)}
 
-/* ---- Units story (kg / lb) ---- */
-.ucard{display:flex;flex-direction:column;gap:12px;padding:12px}
-.ucard fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.ucard legend{font-size:15px;line-height:20px;font-weight:700;padding:0 4px;margin-bottom:8px}
-.seg.u label{min-height:56px;font-size:17px}
-.seg.u label .ab{font-weight:400;color:inherit}
-.seg.off label{cursor:not-allowed;color:var(--muted-fg)}
-.seg.off label.sel{background:transparent;box-shadow:0 0 0 1.5px var(--input);color:var(--fg)}
-.seg.off input{cursor:not-allowed}
-.page.wide .ucard{max-width:560px}
-.uerr{background:var(--destructive-tint)}
-.uerr .err{padding:0 4px 4px}
-.block{display:flex;flex-direction:column;gap:12px;padding:14px;border-radius:14px;background:var(--muted)}
+/* ---- Per-item unit (kg | lb) ---- */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* unit line sits under the On/Off row, left-aligned, so it never reads as the switch */
+.urow{display:flex;align-items:center;gap:12px;margin:-6px 16px 12px}
+.urow .ulab{font-size:15px;line-height:20px;font-weight:700;color:var(--muted-fg)}
+.useg{display:inline-grid;grid-template-columns:repeat(2,68px);gap:2px;padding:2px;border:0;margin:0;border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--input)}
+.useg label{position:relative;display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;border-radius:10px;font-size:16px;font-weight:700;color:var(--muted-fg);cursor:pointer}
+.useg input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer}
+.useg label.sel{background:var(--secondary);color:var(--fg)}
+.useg label .ic{width:16px;height:16px;stroke-width:3}
+.useg label:focus-within{outline:2px solid var(--ring);outline-offset:2px}
+.useg:disabled{box-shadow:inset 0 0 0 1.5px var(--border)}
+.useg:disabled label,.useg:disabled input{cursor:not-allowed}
+.useg:disabled label.sel{background:var(--muted);color:var(--muted-fg)}
+.li-err .err{padding:0 16px 16px}
+.block{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:22px;background:var(--card);box-shadow:0 0 0 1px var(--border),var(--shadow)}
+.page.wide .block{max-width:560px}
 .block p{display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:24px}
 .block p .ic{margin-top:2px}
 .block .btn2{background:var(--card);box-shadow:0 0 0 1.5px var(--input)}
@@ -188,6 +192,10 @@
 .conv li{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 14px;font-size:16px;line-height:22px;font-weight:700}
 .conv li+li{border-top:1px solid var(--border)}
 .conv .ic{color:var(--primary)}
+.conv .t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.conv .d{font-size:15px;line-height:20px;font-weight:400;color:var(--muted-fg);font-variant-numeric:tabular-nums}
+.rnd{display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:24px}
+.rnd .ic{margin-top:2px;color:var(--muted-fg)}
 .dlg-acts{display:flex;flex-direction:column;gap:10px}
 .dlg .dlg-acts{flex-direction:row-reverse;gap:12px}
 .dlg .dlg-acts .btn1{width:auto;flex:1;min-height:56px;font-size:18px}

@@ -1,27 +1,27 @@
 {"v":3,"createdOnFiles":{"v":1,"at":"2026-11-06T00:49:10Z"},"title":"Rebound · Units (kg / lb)","launch":{"view":"canvas"},"pages":[],
 "boards":{
-"Main.dc.html":{"x":0,"y":0,"w":390,"h":1540,"title":"1 · Settings with Units · phone · light"},
-"Settings-phone-dark.dc.html":{"x":470,"y":0,"w":390,"h":1540,"title":"1 · Settings with Units · phone · dark"},
-"Confirm-phone-light.dc.html":{"x":1020,"y":0,"w":390,"h":844,"title":"2 · Switch-unit confirmation · phone · light"},
-"Confirm-phone-dark.dc.html":{"x":1490,"y":0,"w":390,"h":844,"title":"2 · Switch-unit confirmation · phone · dark"},
+"Main.dc.html":{"x":0,"y":0,"w":390,"h":1700,"title":"1 · Equipment with per-item unit · phone · light"},
+"Settings-phone-dark.dc.html":{"x":470,"y":0,"w":390,"h":1700,"title":"1 · Equipment with per-item unit · phone · dark"},
+"Confirm-phone-light.dc.html":{"x":1020,"y":0,"w":390,"h":844,"title":"2 · Switch Dumbbell to lb · phone · light"},
+"Confirm-phone-dark.dc.html":{"x":1490,"y":0,"w":390,"h":844,"title":"2 · Switch Dumbbell to lb · phone · dark"},
 "Failed-phone-light.dc.html":{"x":2040,"y":0,"w":390,"h":844,"title":"3 · Unit save failed · phone · light"},
 "Failed-phone-dark.dc.html":{"x":2510,"y":0,"w":390,"h":844,"title":"3 · Unit save failed · phone · dark"},
 "Blocked-phone-light.dc.html":{"x":3060,"y":0,"w":390,"h":844,"title":"4 · Blocked: workout open · phone · light"},
 "Blocked-phone-dark.dc.html":{"x":3530,"y":0,"w":390,"h":844,"title":"4 · Blocked: workout open · phone · dark"},
-"Settings-desktop-light.dc.html":{"x":0,"y":1900,"w":1280,"h":1100,"expand":"fill","title":"1 · Settings with Units · desktop · light"},
-"Settings-desktop-dark.dc.html":{"x":1360,"y":1900,"w":1280,"h":1100,"expand":"fill","title":"1 · Settings with Units · desktop · dark"},
-"Confirm-desktop-light.dc.html":{"x":2720,"y":1900,"w":1280,"h":800,"title":"2 · Switch-unit confirmation · desktop · light"},
-"Confirm-desktop-dark.dc.html":{"x":4080,"y":1900,"w":1280,"h":800,"title":"2 · Switch-unit confirmation · desktop · dark"},
-"Weights-range-lb-phone-light.dc.html":{"x":0,"y":3360,"w":390,"h":900,"title":"5 · Edit set: range in lb · phone · light"},
-"Weights-range-lb-phone-dark.dc.html":{"x":470,"y":3360,"w":390,"h":900,"title":"5 · Edit set: range in lb · phone · dark"},
-"Weights-pick-lb-phone-light.dc.html":{"x":1020,"y":3360,"w":390,"h":960,"title":"5 · Edit set: picked in lb · phone · light"},
-"Weights-pick-lb-phone-dark.dc.html":{"x":1490,"y":3360,"w":390,"h":960,"title":"5 · Edit set: picked in lb · phone · dark"}
+"Settings-desktop-light.dc.html":{"x":0,"y":2060,"w":1280,"h":1100,"expand":"fill","title":"1 · Equipment with per-item unit · desktop · light"},
+"Settings-desktop-dark.dc.html":{"x":1360,"y":2060,"w":1280,"h":1100,"expand":"fill","title":"1 · Equipment with per-item unit · desktop · dark"},
+"Confirm-desktop-light.dc.html":{"x":2720,"y":2060,"w":1280,"h":800,"title":"2 · Switch Dumbbell to lb · desktop · light"},
+"Confirm-desktop-dark.dc.html":{"x":4080,"y":2060,"w":1280,"h":800,"title":"2 · Switch Dumbbell to lb · desktop · dark"},
+"Weights-range-lb-phone-light.dc.html":{"x":0,"y":3520,"w":390,"h":900,"title":"5 · Edit set: range in lb · phone · light"},
+"Weights-range-lb-phone-dark.dc.html":{"x":470,"y":3520,"w":390,"h":900,"title":"5 · Edit set: range in lb · phone · dark"},
+"Weights-pick-lb-phone-light.dc.html":{"x":1020,"y":3520,"w":390,"h":960,"title":"5 · Edit set: picked in lb · phone · light"},
+"Weights-pick-lb-phone-dark.dc.html":{"x":1490,"y":3520,"w":390,"h":960,"title":"5 · Edit set: picked in lb · phone · dark"}
 },
 "order":["Main.dc.html","Settings-phone-dark.dc.html","Confirm-phone-light.dc.html","Confirm-phone-dark.dc.html","Failed-phone-light.dc.html","Failed-phone-dark.dc.html","Blocked-phone-light.dc.html","Blocked-phone-dark.dc.html","Settings-desktop-light.dc.html","Settings-desktop-dark.dc.html","Confirm-desktop-light.dc.html","Confirm-desktop-dark.dc.html","Weights-range-lb-phone-light.dc.html","Weights-range-lb-phone-dark.dc.html","Weights-pick-lb-phone-light.dc.html","Weights-pick-lb-phone-dark.dc.html"],
 "notes":{
-"t1":{"x":0,"y":-300,"text":"Phone: Units setting, confirm, save failed, blocked","kind":"title1","maxW":3920},
-"t2":{"x":0,"y":1640,"text":"Desktop: Units setting and confirm","kind":"title1","maxW":5360},
-"t3":{"x":0,"y":3100,"text":"Weight groups in lb","kind":"title1","maxW":1880}
+"t1":{"x":0,"y":-300,"text":"Phone: per-item unit, confirm, save failed, blocked","kind":"title1","maxW":3920},
+"t2":{"x":0,"y":1800,"text":"Desktop: per-item unit and confirm","kind":"title1","maxW":5360},
+"t3":{"x":0,"y":3260,"text":"Weight groups in lb (from designs/38, unchanged)","kind":"title1","maxW":1880}
 },
 "designSystems":[{"title":"Rebound","namespace":"rebound","artifact":"https://claude.ai/code/artifact/b1121b33-8e57-4476-86f5-747dddd6dea0","version":null,"copiedAt":"2026-11-06T00:49:10Z"}]
 }
