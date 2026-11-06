@@ -1,10 +1,7 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { equipmentWeightGroup, userEquipment } from "@/db/schema";
-import type { WeightGroup } from "./weights";
-
-type Row = typeof equipmentWeightGroup.$inferSelect;
-const toGroup = (r: Row): WeightGroup => ({ id: r.id, name: r.name, type: r.type, start: r.start, step: r.step, top: r.top, weights: r.weights });
+import { equipmentRange, equipmentWeight, userEquipment } from "@/db/schema";
+import type { AdjustableRange, Weight } from "./weights";
 
 /** The equipment items the user has switched on. */
 export async function getOwnedEquipment(userId: string): Promise<string[]> {
@@ -12,26 +9,21 @@ export async function getOwnedEquipment(userId: string): Promise<string[]> {
   return rows.map((r) => r.equipment);
 }
 
-/** The user's weight groups, oldest first, keyed by equipment item. Pass an item to get just its groups. */
-export async function getWeightGroups(userId: string): Promise<Record<string, WeightGroup[]>>;
-export async function getWeightGroups(userId: string, equipment: string): Promise<WeightGroup[]>;
-export async function getWeightGroups(userId: string, equipment?: string) {
+/** The weights the user has ticked on their fixed items, keyed by item. Pass an item to get just its weights. */
+export async function getOwnedWeights(userId: string): Promise<Record<string, Weight[]>>;
+export async function getOwnedWeights(userId: string, equipment: string): Promise<Weight[]>;
+export async function getOwnedWeights(userId: string, equipment?: string) {
   const rows = await db
     .select()
-    .from(equipmentWeightGroup)
-    .where(and(eq(equipmentWeightGroup.userId, userId), equipment ? eq(equipmentWeightGroup.equipment, equipment) : undefined))
-    .orderBy(asc(equipmentWeightGroup.id));
-  if (equipment) return rows.map(toGroup);
-  const byItem: Record<string, WeightGroup[]> = {};
-  for (const r of rows) (byItem[r.equipment] ??= []).push(toGroup(r));
-  return byItem;
+    .from(equipmentWeight)
+    .where(and(eq(equipmentWeight.userId, userId), equipment ? eq(equipmentWeight.equipment, equipment) : undefined));
+  const byItem: Record<string, Weight[]> = {};
+  for (const r of rows) (byItem[r.equipment] ??= []).push({ value: r.weight, unit: r.unit });
+  return equipment ? (byItem[equipment] ?? []) : byItem;
 }
 
-/** One of the user's weight groups with its equipment item, or null if it isn't theirs. */
-export async function getWeightGroup(userId: string, id: number) {
-  const [r] = await db
-    .select()
-    .from(equipmentWeightGroup)
-    .where(and(eq(equipmentWeightGroup.id, id), eq(equipmentWeightGroup.userId, userId)));
-  return r ? { equipment: r.equipment, group: toGroup(r) } : null;
+/** The range of each adjustable item the user has set, keyed by item. */
+export async function getRanges(userId: string): Promise<Record<string, AdjustableRange>> {
+  const rows = await db.select().from(equipmentRange).where(eq(equipmentRange.userId, userId));
+  return Object.fromEntries(rows.map((r) => [r.equipment, { unit: r.unit, start: r.start, step: r.step, top: r.top }]));
 }

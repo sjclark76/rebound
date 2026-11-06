@@ -1,20 +1,17 @@
-import { RANGE_STEPS, type WeightGroupType } from "../db/vocab";
+import { RANGE_STEPS, WEIGHT_BOUNDS, isUnit, type Unit } from "../db/vocab";
+import { formatWeight, LB_PER_KG, snapHalf } from "./units";
 
+export { formatWeight };
+
+/** A weight as marked on the gear: a number and the unit it is in. */
+export type Weight = { value: number; unit: Unit };
+const toKg = (w: Weight) => (w.unit === "kg" ? w.value : w.value / LB_PER_KG);
+
+/** The range one adjustable item adjusts through, in the unit it is marked in. */
 export type Range = { start: number; step: number; top: number };
+export type AdjustableRange = Range & { unit: Unit };
 
-/** A saved batch of weights for one equipment item: evenly spaced (range) or individually picked. */
-export type WeightGroup = {
-  id: number;
-  name: string | null;
-  type: WeightGroupType;
-  start: number | null;
-  step: number | null;
-  top: number | null;
-  weights: number[];
-};
-
-const MIN_KG = 0.5;
-const MAX_KG = 500;
+const HALF = 0.5;
 const round = (n: number) => Math.round(n * 100) / 100;
 
 /** Every weight from start to top in steps of step. */
@@ -25,103 +22,103 @@ export function expandRange(start: number, step: number, top: number): number[] 
   return out;
 }
 
-const sortedUnique = (ws: number[]) => [...new Set(ws.map(round))].sort((a, b) => a - b);
-
-/** The weights a single group contributes. */
-export function groupWeights(g: WeightGroup): number[] {
-  return g.type === "range" && g.start != null && g.step != null && g.top != null
-    ? expandRange(g.start, g.step, g.top)
-    : sortedUnique(g.weights);
+/** Every weight an exercise's equipment has: the weights ticked on the fixed item plus the range of its adjustable twin, lightest to heaviest by true weight, each in its own unit. The same number in the same unit counts once; in another unit it is a different weight. */
+export function weightPool(owned: Weight[], ranges: AdjustableRange[]): Weight[] {
+  const seen = new Set<string>();
+  const all: Weight[] = [];
+  const add = (value: number, unit: Unit) => {
+    const key = `${value}${unit}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      all.push({ value, unit });
+    }
+  };
+  for (const o of owned) add(o.value, o.unit);
+  for (const g of ranges) for (const v of expandRange(g.start, g.step, g.top)) add(v, g.unit);
+  return all.sort((a, b) => toKg(a) - toKg(b) || a.unit.localeCompare(b.unit));
 }
 
-/** All the weights an item has: every group's weights, each counted once. */
-export function unionWeights(groups: WeightGroup[]): number[] {
-  return sortedUnique(groups.flatMap(groupWeights));
+const SAME_KG = 0.005;
+/** The next heavier (direction 1) or lighter (-1) weight than the current one, by true weight, whatever its unit. Null past either end. Works from a typed weight that isn't in the list. */
+export function stepWeight(options: Weight[], current: Weight, direction: 1 | -1): Weight | null {
+  const now = toKg(current);
+  const beyond = options.filter((o) => (direction > 0 ? toKg(o) > now + SAME_KG : toKg(o) < now - SAME_KG));
+  if (beyond.length === 0) return null;
+  return beyond.reduce((best, o) => ((direction > 0 ? toKg(o) < toKg(best) : toKg(o) > toKg(best)) ? o : best));
 }
 
-/** "26" or "2.5": no trailing .0. */
-export const formatKg = (n: number) => String(round(n));
-
-/** A compact summary for the equipment list row, e.g. "2–24 kg + 26, 28, 30 kg". Null with no weights. */
-export function summariseGroups(groups: WeightGroup[]): string | null {
-  const ranges = groups.filter((g) => g.type === "range" && groupWeights(g).length > 0);
-  const pickedWeights = sortedUnique(groups.filter((g) => g.type === "picked").flatMap((g) => g.weights));
-  const parts = [
-    ...ranges.map((g) => `${formatKg(g.start!)}–${formatKg(g.top!)} kg`),
-    ...(pickedWeights.length > 0 ? [`${pickedWeights.map(formatKg).join(", ")} kg`] : []),
-  ];
-  return parts.length > 0 ? parts.join(" + ") : null;
+/** One run per unit, kg first, each ascending. */
+function runs(owned: Weight[]): { unit: Unit; values: number[] }[] {
+  return (["kg", "lb"] as const)
+    .map((unit) => ({ unit, values: [...new Set(owned.filter((o) => o.unit === unit).map((o) => round(o.value)))].sort((a, b) => a - b) }))
+    .filter((r) => r.values.length > 0);
 }
+
+/** "20, 24 kg + 45, 50 lb": kg weights then lb weights, each run ascending with its unit once. Null with no weights. */
+export function summariseOwned(owned: Weight[]): string | null {
+  const r = runs(owned);
+  return r.length > 0 ? r.map(({ unit, values }) => `${values.map(formatWeight).join(", ")} ${unit}`).join(" + ") : null;
+}
+
+const and = (ns: number[]) => (ns.length < 2 ? ns.map(formatWeight).join("") : `${ns.slice(0, -1).map(formatWeight).join(", ")} and ${formatWeight(ns.at(-1)!)}`);
+/** The summary spelled out for screen readers: "20 and 24 kg, 45 and 50 lb". Null with no weights. */
+export function describeOwned(owned: Weight[]): string | null {
+  const r = runs(owned);
+  return r.length > 0 ? r.map(({ unit, values }) => `${and(values)} ${unit}`).join(", ") : null;
+}
+
+/** "5–50 lb". */
+export const summariseRange = (r: AdjustableRange) => `${formatWeight(r.start)}–${formatWeight(r.top)} ${r.unit}`;
 
 /** A short look at a weight list: all of it when short, otherwise the first four and last three. */
-export function previewWeights(weights: number[]): string {
-  const shown = weights.length > 8 ? [...weights.slice(0, 4).map(formatKg), "…", ...weights.slice(-3).map(formatKg)] : weights.map(formatKg);
-  return `${shown.join(", ").replace(", …,", " …")} kg`;
+export function previewWeights(weights: number[], unit: Unit): string {
+  const shown = weights.length > 8 ? [...weights.slice(0, 4).map(formatWeight), "…", ...weights.slice(-3).map(formatWeight)] : weights.map(formatWeight);
+  return `${shown.join(", ").replace(", …,", " …")} ${unit}`;
 }
 
-/** Moves one field of a range, keeping start ≤ top and start ≥ 0.5. Start and top move 0.5 kg at a time; "step" moves through the allowed sizes. */
-export function adjustRange(r: Range, field: keyof Range, direction: number): Range {
+/** Moves one field of a range, keeping start ≤ top and start ≥ the unit's minimum. Start and top move 0.5 at a time (landing on a 0.5 after a conversion); "step" moves through the unit's allowed sizes. */
+export function adjustRange(r: Range, field: keyof Range, direction: number, unit: Unit): Range {
+  const steps = RANGE_STEPS[unit];
+  const { min, max } = WEIGHT_BOUNDS[unit];
   if (field === "step") {
-    const i = RANGE_STEPS.findIndex((s) => s >= r.step);
-    const next = RANGE_STEPS[Math.min(RANGE_STEPS.length - 1, Math.max(0, (i === -1 ? RANGE_STEPS.length - 1 : i) + Math.sign(direction)))];
+    const i = steps.findIndex((s) => s >= r.step);
+    const next = steps[Math.min(steps.length - 1, Math.max(0, (i === -1 ? steps.length - 1 : i) + Math.sign(direction)))];
     return { ...r, step: next };
   }
-  const moved = round(r[field] + direction * MIN_KG);
-  if (field === "start") return { ...r, start: Math.min(r.top, Math.max(MIN_KG, moved)) };
-  return { ...r, top: Math.min(MAX_KG, Math.max(r.start, moved)) };
+  const moved = snapHalf(r[field] + direction * HALF);
+  if (field === "start") return { ...r, start: Math.min(r.top, Math.max(min, moved)) };
+  return { ...r, top: Math.min(max, Math.max(r.start, moved)) };
 }
 
-/** The range that best describes picked weights: an even spacing if there is one, otherwise 1 kg steps. */
-export function pickedToRange(weights: number[]): Range | null {
-  const ws = sortedUnique(weights);
-  if (ws.length === 0) return null;
-  const gaps = new Set(ws.slice(1).map((w, i) => round(w - ws[i])));
-  const step = gaps.size === 1 ? [...gaps][0] : 1;
-  return { start: ws[0], step, top: ws[ws.length - 1] };
-}
-
-/** A typed weight in kg: positive, whole or half kilos, up to 500. Null if it isn't one. */
-export function parseWeight(input: string): number | null {
+/** A typed weight: whole or half units within the unit's bounds. Null if it isn't one. */
+export function parseWeight(input: string, unit: Unit): number | null {
   const n = Number(input.trim());
-  if (!input.trim() || !Number.isFinite(n) || n < MIN_KG || n > MAX_KG || (n * 2) % 1 !== 0) return null;
+  const { min, max } = WEIGHT_BOUNDS[unit];
+  if (!input.trim() || !Number.isFinite(n) || n < min || n > max || (n * 2) % 1 !== 0) return null;
   return n;
 }
 
-/** A fuller description for the weights page, e.g. "2–24 kg, every 1 kg, plus 26, 28, 30 kg". Null with no weights. */
-export function describeGroups(groups: WeightGroup[]): string | null {
-  const ranges = groups.filter((g) => g.type === "range" && groupWeights(g).length > 0);
-  const pickedWeights = sortedUnique(groups.filter((g) => g.type === "picked").flatMap((g) => g.weights));
-  const parts = [
-    ...ranges.map((g) => `${formatKg(g.start!)}–${formatKg(g.top!)} kg, every ${formatKg(g.step!)} kg`),
-    ...(pickedWeights.length > 0 ? [`${pickedWeights.map(formatKg).join(", ")} kg`] : []),
-  ];
-  return parts.length > 0 ? parts.join(", plus ") : null;
+/** Checks a range before saving. Steps and bounds are judged in the range's own unit. Null if invalid. */
+export function cleanRange(g: AdjustableRange): AdjustableRange | null {
+  const { unit, start, step, top } = g;
+  if (!isUnit(unit)) return null;
+  const { min, max } = WEIGHT_BOUNDS[unit];
+  const inBounds = (w: number) => Number.isFinite(w) && w >= min && w <= max;
+  return RANGE_STEPS[unit].includes(step) && inBounds(start) && inBounds(top) && start <= top ? { unit, start, step, top } : null;
 }
 
-export type GroupState = Omit<WeightGroup, "id">;
-const MAX_NAME = 40;
-const MAX_PICKED = 60;
-
-/** Checks a group before saving and tidies it: trimmed name, picked weights sorted and unique, unused fields cleared. Null if invalid. */
-export function cleanGroupState(g: GroupState): GroupState | null {
-  const name = g.name?.trim().slice(0, MAX_NAME) || null;
-  if (g.type === "range") {
-    const { start, step, top } = g;
-    if (start == null || step == null || top == null) return null;
-    const ok = (RANGE_STEPS as readonly number[]).includes(step) && start >= MIN_KG && start <= top && top <= MAX_KG && (start * 2) % 1 === 0 && (top * 2) % 1 === 0;
-    return ok ? { name, type: "range", start, step, top, weights: [] } : null;
-  }
-  if (g.weights.some((w) => !Number.isFinite(w) || w < MIN_KG || w > MAX_KG || (w * 2) % 1 !== 0)) return null;
-  const weights = sortedUnique(g.weights);
-  return weights.length > MAX_PICKED ? null : { name, type: "picked", start: null, step: null, top: null, weights };
+/** Changes a range's unit and keeps its numbers (5-50 lb becomes 5-50 kg): the unit says how the gear is marked. A step the new unit doesn't allow moves to the nearest one that it does; a start below the new minimum is lifted. */
+export function relabelRange(g: AdjustableRange, to: Unit): AdjustableRange {
+  const step = RANGE_STEPS[to].reduce((best, s) => (Math.abs(s - g.step) < Math.abs(best - g.step) ? s : best));
+  const start = Math.max(WEIGHT_BOUNDS[to].min, g.start);
+  return { unit: to, start, step, top: Math.max(start, g.top) };
 }
 
-/** Which of these weights other groups already hold, and which groups hold them. */
-export function sharedWeights(weights: number[], others: WeightGroup[]): { weights: number[]; groups: WeightGroup[] } {
-  const held = others.map((g) => ({ g, ws: new Set(groupWeights(g)) }));
-  const shared = sortedUnique(weights).filter((w) => held.some((h) => h.ws.has(w)));
-  return { weights: shared, groups: held.filter((h) => shared.some((w) => h.ws.has(w))).map((h) => h.g) };
+/** The tiles shown for one unit: the item's presets plus any weight owned in that unit that isn't a preset, ascending. */
+export function tileWeights(presets: readonly number[], owned: Weight[], unit: Unit): number[] {
+  return [...new Set([...presets, ...owned.filter((o) => o.unit === unit).map((o) => o.value)])].sort((a, b) => a - b);
 }
 
-/** What to call a group on screen: its name, or its kind if it has none. */
-export const groupTitle = (g: Pick<WeightGroup, "name" | "type">) => g.name ?? (g.type === "range" ? "Range" : "Picked weights");
+/** The owned list with this weight added, or removed if it was there. Number and unit must both match. */
+export const toggleOwned = (owned: Weight[], w: Weight): Weight[] =>
+  owned.some((o) => o.value === w.value && o.unit === w.unit) ? owned.filter((o) => !(o.value === w.value && o.unit === w.unit)) : [...owned, w];

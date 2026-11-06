@@ -1,0 +1,30 @@
+{"v":3,"createdOnFiles":{"v":1,"at":"2026-11-06T00:49:10Z"},"title":"Rebound · Units (kg / lb)","launch":{"view":"canvas"},"pages":[],
+"boards":{
+"Group-range-lb-phone-light.dc.html":{"x":0,"y":0,"w":390,"h":990,"title":"1 · Edit group: range in lb · phone · light"},
+"Group-range-lb-phone-dark.dc.html":{"x":470,"y":0,"w":390,"h":990,"title":"1 · Edit group: range in lb · phone · dark"},
+"Group-picked-kg-phone-light.dc.html":{"x":1020,"y":0,"w":390,"h":990,"title":"1 · Edit group: picked in kg · phone · light"},
+"Group-picked-kg-phone-dark.dc.html":{"x":1490,"y":0,"w":390,"h":990,"title":"1 · Edit group: picked in kg · phone · dark"},
+"Groups-phone-light.dc.html":{"x":0,"y":1360,"w":390,"h":844,"title":"2 · Dumbbell weight groups, mixed units · phone · light"},
+"Groups-phone-dark.dc.html":{"x":470,"y":1360,"w":390,"h":844,"title":"2 · Dumbbell weight groups, mixed units · phone · dark"},
+"Main.dc.html":{"x":1020,"y":1360,"w":390,"h":1700,"title":"2+3 · Equipment: mixed summary, Default unit · phone · light"},
+"Settings-phone-dark.dc.html":{"x":1490,"y":1360,"w":390,"h":1700,"title":"2+3 · Equipment: mixed summary, Default unit · phone · dark"},
+"Failed-phone-light.dc.html":{"x":0,"y":3420,"w":390,"h":844,"title":"3 · Default unit save failed · phone · light"},
+"Failed-phone-dark.dc.html":{"x":470,"y":3420,"w":390,"h":844,"title":"3 · Default unit save failed · phone · dark"},
+"Settings-desktop-light.dc.html":{"x":1020,"y":3420,"w":1280,"h":1100,"expand":"fill","title":"3 · Equipment with Default unit · desktop · light"},
+"Settings-desktop-dark.dc.html":{"x":2380,"y":3420,"w":1280,"h":1100,"expand":"fill","title":"3 · Equipment with Default unit · desktop · dark"},
+"Log-kg-phone-light.dc.html":{"x":0,"y":4880,"w":390,"h":1140,"title":"4 · Logging: 20 kg · phone · light"},
+"Log-lb-phone-light.dc.html":{"x":470,"y":4880,"w":390,"h":1140,"title":"4 · Logging: + to 45 lb · phone · light"},
+"Log-kg-phone-dark.dc.html":{"x":1020,"y":4880,"w":390,"h":1140,"title":"4 · Logging: 20 kg · phone · dark"},
+"Log-lb-phone-dark.dc.html":{"x":1490,"y":4880,"w":390,"h":1140,"title":"4 · Logging: + to 45 lb · phone · dark"}
+},
+"order":["Group-range-lb-phone-light.dc.html","Group-range-lb-phone-dark.dc.html","Group-picked-kg-phone-light.dc.html","Group-picked-kg-phone-dark.dc.html","Groups-phone-light.dc.html","Groups-phone-dark.dc.html","Main.dc.html","Settings-phone-dark.dc.html","Failed-phone-light.dc.html","Failed-phone-dark.dc.html","Settings-desktop-light.dc.html","Settings-desktop-dark.dc.html","Log-kg-phone-light.dc.html","Log-lb-phone-light.dc.html","Log-kg-phone-dark.dc.html","Log-lb-phone-dark.dc.html"],
+"notes":{
+"t1":{"x":0,"y":-300,"text":"1 · Unit on each weight group","kind":"title1","maxW":1880},
+"t2":{"x":0,"y":1060,"text":"2 · Mixed kg and lb groups","kind":"title1","maxW":1880},
+"t3":{"x":0,"y":3120,"text":"3 · Default unit on the equipment row","kind":"title1","maxW":3660},
+"t4":{"x":0,"y":4580,"text":"4 · Logging steps through real weights","kind":"title1","maxW":1880},
+"s1":{"x":1960,"y":4880,"w":360,"text":"Tap + on 20 kg: the next heavier weight in Dumbbell's groups by true weight is 45 lb (20 kg is about 44.1 lb). Order around it: 42.5 lb, 20 kg, 45 lb, 47.5 lb, 50 lb, 24 kg. Only the number and its unit label change.","fill":"green"},
+"s2":{"x":1960,"y":0,"w":360,"text":"Changing a group's unit only relabels its numbers, so there's no confirmation. In lb, ranges step in whole pounds or 2.5 lb and the preset tiles are in lb.","fill":"green"}
+},
+"designSystems":[{"title":"Rebound","namespace":"rebound","artifact":"https://claude.ai/code/artifact/b1121b33-8e57-4476-86f5-747dddd6dea0","version":null,"copiedAt":"2026-11-06T00:49:10Z"}]
+}

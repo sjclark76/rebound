@@ -6,11 +6,12 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { workout, workoutExercise, workoutSet } from "@/db/schema";
+import { isUnit, type Unit } from "@/db/vocab";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion, parseOptions } from "@/lib/suggestion";
 import { closeStaleWorkouts } from "@/lib/workout-data";
 
-export type SetValues = { reps: number | null; weightKg: number | null; durationSec: number | null };
+export type SetValues = { reps: number | null; weight: number | null; unit: Unit; durationSec: number | null };
 
 /** Confirms the workout belongs to the signed-in user and is still open. */
 async function ownOpenWorkout(workoutId: number) {
@@ -54,6 +55,7 @@ export async function startWorkout(query: Record<string, string>) {
 /** Saves a set when Complete is tapped, or replaces it if that set number is already logged. */
 export async function logSet(workoutId: number, exerciseId: string, setNumber: number, values: SetValues) {
   await ownOpenWorkout(workoutId);
+  if (!isUnit(values.unit)) throw new Error("Unknown unit");
   const [existing] = await db
     .select({ id: workoutSet.id })
     .from(workoutSet)
@@ -70,6 +72,7 @@ export async function logSet(workoutId: number, exerciseId: string, setNumber: n
 
 export async function editSet(workoutId: number, setId: number, values: SetValues) {
   await ownOpenWorkout(workoutId);
+  if (!isUnit(values.unit)) throw new Error("Unknown unit");
   await db.update(workoutSet).set(values).where(and(eq(workoutSet.id, setId), eq(workoutSet.workoutId, workoutId)));
   done();
 }

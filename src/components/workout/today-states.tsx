@@ -167,7 +167,7 @@ export function CompletedToday({ w, kicker, chips }: { w: LoadedWorkout; kicker:
         </div>
         <div className="grid grid-cols-3 gap-3 border-t pt-4">
           {stat("Sets", String(s.sets))}
-          {stat("Volume", `${Math.round(s.volumeKg).toLocaleString("en-GB")} kg`)}
+          {stat("Volume", `${Math.round(s.volume).toLocaleString("en-GB")} kg`)}
           {stat("Duration", `${s.minutes} min`)}
         </div>
       </section>

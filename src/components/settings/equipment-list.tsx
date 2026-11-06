@@ -4,12 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckIcon, ChevronRightIcon, CircleAlertIcon, InfoIcon, RotateCcwIcon } from "lucide-react";
 import { cn } from "cn";
-import { EQUIPMENT_GROUPS, equipmentLabel, equipmentSlug, isWeighted, type Equipment } from "@/db/vocab";
-import { setEquipment } from "@/app/settings/actions";
-import { describeGroups, summariseGroups, type WeightGroup } from "@/lib/weights";
+import { EQUIPMENT_GROUPS, FIXED_EQUIPMENT, equipmentLabel, equipmentSlug, hasUnit, isAdjustable, isFixed, type Equipment, type Unit } from "@/db/vocab";
+import { setEquipment, setEquipmentUnit } from "@/app/settings/actions";
+import { describeOwned, summariseOwned, summariseRange, type AdjustableRange, type Weight } from "@/lib/weights";
 import { cardList } from "./shell";
+import { UnitControl } from "./unit-control";
 
 type Failed = { to: boolean };
+type UnitChange = { item: Equipment; to: Unit };
+
+const other = (u: Unit): Unit => (u === "kg" ? "lb" : "kg");
 
 /** A copy of the set with the item added or removed. */
 const with_ = (s: Set<string>, item: string, present: boolean) => {
@@ -20,9 +24,25 @@ const with_ = (s: Set<string>, item: string, present: boolean) => {
 };
 
 /** Switch on what you own. Each switch saves straight away and reverts, with an error under its row, if the save fails. */
-export function EquipmentList({ owned, groups }: { owned: string[]; groups: Record<string, WeightGroup[]> }) {
+export function EquipmentList({ owned, weights, ranges, units: initialUnits }: { owned: string[]; weights: Record<string, Weight[]>; ranges: Record<string, AdjustableRange>; units: Record<string, Unit> }) {
   const [on, setOn] = useState(() => new Set(owned));
   const [failed, setFailed] = useState<Partial<Record<Equipment, Failed>>>({});
+  const [units, setUnits] = useState(initialUnits);
+  const [unitFailed, setUnitFailed] = useState<UnitChange | null>(null);
+  const unitOf = (item: Equipment): Unit => units[item] ?? "kg";
+
+  /** Saves the Bowflex's unit straight away and reverts, with an error in its row, if the save fails. */
+  async function changeUnit({ item, to }: UnitChange) {
+    setUnitFailed(null); // an error clears on the next change
+    const was = unitOf(item);
+    setUnits((u) => ({ ...u, [item]: to }));
+    try {
+      await setEquipmentUnit(item, to);
+    } catch {
+      setUnits((u) => ({ ...u, [item]: was }));
+      setUnitFailed({ item, to });
+    }
+  }
 
   async function toggle(item: Equipment, to: boolean) {
     setFailed({}); // an error clears on the next toggle
@@ -60,7 +80,12 @@ export function EquipmentList({ owned, groups }: { owned: string[]; groups: Reco
                   key={item}
                   item={item}
                   on={on.has(item)}
-                  groups={groups[item] ?? []}
+                  weights={weights[item] ?? []}
+                  range={ranges[item]}
+                  unit={unitOf(item)}
+                  unitFailed={unitFailed?.item === item ? unitFailed : undefined}
+                  onUnit={(to) => changeUnit({ item, to })}
+                  onRetryUnit={() => unitFailed && changeUnit(unitFailed)}
                   failed={failed[item]}
                   onToggle={(to) => toggle(item, to)}
                 />
@@ -73,12 +98,12 @@ export function EquipmentList({ owned, groups }: { owned: string[]; groups: Reco
   );
 }
 
-function Row({ item, on, groups, failed, onToggle }: { item: Equipment; on: boolean; groups: WeightGroup[]; failed?: Failed; onToggle: (to: boolean) => void }) {
+function Row({ item, on, weights, range, unit, unitFailed, onUnit, onRetryUnit, failed, onToggle }: { item: Equipment; on: boolean; weights: Weight[]; range?: AdjustableRange; unit: Unit; unitFailed?: UnitChange; onUnit: (to: Unit) => void; onRetryUnit: () => void; failed?: Failed; onToggle: (to: boolean) => void }) {
   const label = equipmentLabel(item);
   const errId = `err-${equipmentSlug(item)}`;
-  const summary = summariseGroups(groups);
+  const unitErrId = `unit-err-${equipmentSlug(item)}`;
   return (
-    <li className={cn(failed && "bg-destructive/10")}>
+    <li className={cn((failed || unitFailed) && "bg-destructive/10")}>
       <label className="flex min-h-16 cursor-pointer items-center gap-3 px-4 py-2 has-focus-visible:outline-2 has-focus-visible:-outline-offset-2 has-focus-visible:outline-ring">
         <span className="min-w-0 flex-1 text-lg leading-6 font-bold">{label}</span>
         <span aria-hidden className={cn("text-[15px] leading-5 font-bold", on ? "text-primary" : "text-muted-foreground")}>{on ? "On" : "Off"}</span>
@@ -102,26 +127,36 @@ function Row({ item, on, groups, failed, onToggle }: { item: Equipment; on: bool
           </span>
         </span>
       </label>
-      {on && isWeighted(item) && (
-        <Link
-          href={`/settings/equipment/${equipmentSlug(item)}`}
-          aria-label={`${label} weights: ${describeGroups(groups) ?? "none yet"}`}
-          className="mx-4 -mt-1 mb-3 flex min-h-12 items-center gap-2 rounded-xl bg-muted pr-2.5 pl-3.5 text-[15px] leading-5 font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-        >
-          {summary ? (
-            <>
-              <span className="text-muted-foreground">Weights</span>
-              <span className="min-w-0 flex-1 tabular-nums">{summary}</span>
-              <ChevronRightIcon className="size-5 text-muted-foreground" aria-hidden />
-            </>
-          ) : (
-            <>
-              <span className="flex-1 text-primary">Add weights</span>
-              <ChevronRightIcon className="size-5 text-primary" aria-hidden />
-            </>
-          )}
-        </Link>
+      {hasUnit(item) && (
+        <UnitControl
+          unit={unit}
+          onChange={onUnit}
+          name={`unit-${item}`}
+          legend={`${label} unit`}
+          label="Unit"
+          describedBy={unitFailed ? unitErrId : undefined}
+          className="mx-4 mb-3"
+        />
       )}
+      {unitFailed && (
+        <div className="flex flex-col gap-3 px-4 pb-4">
+          <p id={unitErrId} role="alert" className="flex items-start gap-2.5 text-base leading-6">
+            <CircleAlertIcon className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden />
+            <span>
+              <b className="text-destructive">Couldn&apos;t save the Bowflex unit.</b> It&apos;s still {other(unitFailed.to)}. Check your connection and try again.
+            </span>
+          </p>
+          <button
+            type="button"
+            onClick={onRetryUnit}
+            className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-card text-base font-bold ring-[1.5px] ring-input outline-none focus-visible:ring-ring"
+          >
+            <RotateCcwIcon className="size-5" aria-hidden />
+            Try again
+          </button>
+        </div>
+      )}
+      {on && (isFixed(item) || isAdjustable(item)) && <SummaryLink item={item} label={label} weights={weights} range={range} />}
       {failed && (
         <div className="flex flex-col gap-3 px-4 pb-4">
           <p id={errId} role="alert" className="flex items-start gap-2.5 text-base leading-6">
@@ -141,5 +176,32 @@ function Row({ item, on, groups, failed, onToggle }: { item: Equipment; on: bool
         </div>
       )}
     </li>
+  );
+}
+
+/** The row's link to its weights page, showing what is selected: ticked weights for fixed gear, the range for adjustable gear. */
+function SummaryLink({ item, label, weights, range }: { item: Equipment; label: string; weights: Weight[]; range?: AdjustableRange }) {
+  const fixed = isFixed(item);
+  const summary = fixed ? summariseOwned(weights) : range ? summariseRange(range) : null;
+  const noun = fixed ? `${FIXED_EQUIPMENT[item].noun[0].toUpperCase()}${FIXED_EQUIPMENT[item].noun.slice(1)} weights` : `${label} range`;
+  return (
+    <Link
+      href={`/settings/equipment/${equipmentSlug(item)}`}
+      aria-label={`${noun}: ${fixed ? (describeOwned(weights) ?? "none yet") : range ? `${range.start} to ${range.top} ${range.unit}` : "none yet"}`}
+      className="mx-4 -mt-1 mb-3 flex min-h-12 items-center gap-2 rounded-xl bg-muted pr-2.5 pl-3.5 text-[15px] leading-5 font-bold outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+    >
+      {summary ? (
+        <>
+          <span className="text-muted-foreground">{fixed ? "Weights" : "Range"}</span>
+          <span className="min-w-0 flex-1 tabular-nums">{summary}</span>
+          <ChevronRightIcon className="size-5 text-muted-foreground" aria-hidden />
+        </>
+      ) : (
+        <>
+          <span className="flex-1 text-primary">Add weights</span>
+          <ChevronRightIcon className="size-5 text-primary" aria-hidden />
+        </>
+      )}
+    </Link>
   );
 }
