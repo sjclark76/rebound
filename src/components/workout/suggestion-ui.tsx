@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, SettingsIcon } from "lucide-react";
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, PersonStandingIcon, SettingsIcon } from "lucide-react";
 import { cn } from "cn";
 import { LogoMark } from "@/components/logo-mark";
 import { SignOutButton } from "@/components/sign-out-button";
@@ -30,7 +30,7 @@ export const sizeText = (exercises: number, finisher: boolean) =>
   `${exercises} exercise${exercises === 1 ? "" : "s"}${finisher ? " and a core finisher" : ""}`;
 
 /** The logo bar: settings and sign out. */
-export function AppHeader({ className }: { className?: string }) {
+export function AppHeader({ className, current }: { className?: string; current?: "body" }) {
   return (
     <header className={cn("lg:border-b", className)}>
       <div className="mx-auto flex h-16 max-w-md items-center justify-between pt-[env(safe-area-inset-top)] pr-2 pl-4 lg:h-18 lg:max-w-[1200px] lg:px-8">
@@ -39,6 +39,18 @@ export function AppHeader({ className }: { className?: string }) {
           <span className="font-heading text-[22px] font-bold tracking-tight lg:text-2xl">rebound</span>
         </span>
         <div className="flex items-center gap-1">
+          <Link
+            href="/body"
+            aria-label="Body"
+            aria-current={current === "body" ? "page" : undefined}
+            className={cn(
+              "inline-flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-xl px-3 text-[15px] font-bold outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50",
+              current === "body" && "bg-secondary",
+            )}
+          >
+            <PersonStandingIcon className="size-6" aria-hidden />
+            <span className="hidden lg:inline">Body</span>
+          </Link>
           <Link
             href="/settings"
             aria-label="Settings"
@@ -55,7 +67,7 @@ export function AppHeader({ className }: { className?: string }) {
 }
 
 /** The phone top bar of the Today's workout and Choose a workout screens: back to home, and the screen's name. Wide screens show the logo bar instead. */
-export function ScreenHeader({ title, href = "/" }: { title: string; href?: string }) {
+export function ScreenHeader({ title, href = "/", current }: { title: string; href?: string; current?: "body" }) {
   return (
     <>
       <header className="lg:hidden">
@@ -70,7 +82,7 @@ export function ScreenHeader({ title, href = "/" }: { title: string; href?: stri
           <span className="font-heading text-xl font-bold">{title}</span>
         </div>
       </header>
-      <AppHeader className="max-lg:hidden" />
+      <AppHeader className="max-lg:hidden" current={current} />
     </>
   );
 }
