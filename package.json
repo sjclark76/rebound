@@ -16,6 +16,7 @@
     "db:seed:gear": "tsx scripts/seed-gear-exercises.ts",
     "db:seed:equipment": "tsx scripts/seed-equipment.ts",
     "db:seed:injuries": "tsx scripts/seed-injuries.ts",
+    "db:tag:muscles": "tsx scripts/tag-muscles.ts",
     "db:seed:weights": "tsx scripts/seed-starting-weights.ts"
   },
   "dependencies": {

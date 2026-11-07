@@ -149,3 +149,58 @@ export function gearWithoutWeights(owned: readonly string[], counts: Readonly<Re
 
 /** What the generator treats as owned: every switched-on item, plus the fixed item each adjustable one stands in for. */
 export const suggestionEquipment = (owned: readonly string[]): string[] => [...new Set([...owned, ...owned.flatMap((e) => countsAs(e) ?? [])])];
+
+/** The finer muscles the body map shows. Each belongs to one of the 17 groups above, which generator, injuries and splits still use. */
+export const FINE_MUSCLES = [
+  "upper chest",
+  "lower chest",
+  "front delts",
+  "side delts",
+  "rear delts",
+  "biceps",
+  "triceps",
+  "forearms",
+  "abdominals",
+  "obliques",
+  "hip flexors",
+  "lower back",
+  "upper traps",
+  "lower traps",
+  "lats",
+  "rhomboids",
+  "quadriceps",
+  "hamstrings",
+  "glutes",
+  "adductors",
+  "abductors",
+  "calves",
+  "neck",
+] as const;
+export type FineMuscle = (typeof FINE_MUSCLES)[number];
+
+/** The group each fine muscle belongs to. Hip flexors sit under abdominals because the catalogue tags leg raises that way. */
+export const GROUP_OF: Record<FineMuscle, Muscle> = {
+  "upper chest": "chest",
+  "lower chest": "chest",
+  "front delts": "shoulders",
+  "side delts": "shoulders",
+  "rear delts": "shoulders",
+  biceps: "biceps",
+  triceps: "triceps",
+  forearms: "forearms",
+  abdominals: "abdominals",
+  obliques: "abdominals",
+  "hip flexors": "abdominals",
+  "lower back": "lower back",
+  "upper traps": "traps",
+  "lower traps": "traps",
+  lats: "lats",
+  rhomboids: "middle back",
+  quadriceps: "quadriceps",
+  hamstrings: "hamstrings",
+  glutes: "glutes",
+  adductors: "adductors",
+  abductors: "abductors",
+  calves: "calves",
+  neck: "neck",
+};

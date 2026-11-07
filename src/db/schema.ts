@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgEnum,
   pgTable,
@@ -27,6 +28,11 @@ export const exercise = pgTable("exercise", {
   mechanic: text("mechanic"), // compound, isolation
   primaryMuscles: text("primary_muscles").array().notNull(),
   secondaryMuscles: text("secondary_muscles").array().notNull(),
+  /** The finer muscles (see FINE_MUSCLES) the body map uses; the group columns above stay for the generator. */
+  finePrimary: text("fine_primary").array().notNull().default([]),
+  fineSecondary: text("fine_secondary").array().notNull().default([]),
+  /** Loads the muscle stretched, or emphasises the lowering phase (Romanian deadlift, flyes). */
+  lengthened: boolean("lengthened").notNull().default(false),
   instructions: text("instructions").array().notNull(),
   images: text("images").array().notNull(),
 });
