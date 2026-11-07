@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Body, desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;display=swap">
+<style>
+body{margin:0}
+.rb{--bg:#f5f3ee;--fg:#16211d;--card:#ffffff;--primary:#1d6b56;--pfg:#ffffff;--sec:#e3ebe6;--muted:#ebe8e1;--mfg:#566260;--accent:#f8e4d3;--border:#dcd8cf;--input:#848c88;--rest:#b2365a;--restm:#fbe5ec;--restf:#8c1f41;--rehab:#a8750a;--rehabm:#fbefd6;--rehabf:#7a4f00;--ball:#e8894f;--shadow:0 1px 3px rgba(22,33,29,.08)}
+.rb.dark{--bg:#0f1513;--fg:#e8ede9;--card:#18211e;--primary:#5ec4a4;--pfg:#06231b;--sec:#22302b;--muted:#1d2723;--mfg:#9eaba5;--accent:#3a2a1f;--border:#2c3934;--input:#6b7a74;--rest:#ee8aa8;--restm:#36161f;--restf:#f6b3c6;--rehab:#e9b44c;--rehabm:#2e2410;--rehabf:#f3cd7c;--ball:#06231b;--shadow:none}
+.rb{--figbg:#ffffff}.rb.dark{--figbg:#2b3633}
+.rb a{color:var(--primary)}.rb a:hover{color:var(--fg)}
+.rb button{font:inherit;color:inherit}
+.rb button:focus-visible,.rb a:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.rb .navlink{color:var(--fg);text-decoration:none}
+.rb .navlink:hover{background:var(--muted);color:var(--fg)}
+</style>
+</helmet>
+<div class="rb {{themeClass}}" style="min-height: 100vh; width: 100%; box-sizing: border-box; background: var(--bg); color: var(--fg); font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif">
+  <header style="border-bottom: 1px solid var(--border)">
+    <div style="max-width: 1200px; height: 72px; margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: space-between">
+      <span style="display: flex; align-items: center; gap: 10px">
+        <svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--primary)"></rect><path d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke="var(--pfg)" stroke-width="6" stroke-linecap="round"></path><circle cx="48" cy="17" r="6.5" fill="var(--ball)"></circle></svg>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 750; letter-spacing: -0.03em">rebound</span>
+      </span>
+      <nav aria-label="Main" style="display: flex; align-items: center; gap: 4px">
+        <a href="#body" aria-current="page" class="navlink" style="min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; background: var(--sec); font-size: 15px; font-weight: 700"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"></circle><path d="m9 20 3-6 3 6"></path><path d="m6 8 6 2 6-2"></path><path d="M12 10v4"></path></svg>Body</a>
+        <a href="#settings" class="navlink" style="min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; font-size: 15px; font-weight: 700"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>Settings</a>
+        <button type="button" aria-label="Sign out" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; border: 0; background: transparent; padding: 0; cursor: pointer"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 32px 32px 64px; box-sizing: border-box; display: flex; flex-direction: column; gap: 32px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <p style="margin: 0; font-size: 15px; line-height: 20px; font-weight: 700; color: var(--mfg)">Sat 7 Nov</p>
+        <h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 40px; line-height: 44px; font-weight: 700; letter-spacing: -0.02em">Body</h1>
+      </div>
+      <section aria-label="Whole-body fatigue" style="display: flex; align-items: center; gap: 16px">
+        <span style="font-size: 15px; line-height: 20px; font-weight: 700; color: var(--mfg)">Whole-body fatigue</span>
+        <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 44px; line-height: 48px; font-weight: 700; font-variant-numeric: tabular-nums">{{whole.v}}</span>
+        <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700"><span aria-hidden="true" style="width: 16px; height: 16px; border-radius: 5px; background: {{whole.swatch}}; box-shadow: inset 0 0 0 1px rgba(0,0,0,.14)"></span>{{whole.band}}</span>
+      </section>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <div style="flex: 999 1 600px; min-width: 0; border-radius: 24px; background: var(--figbg); box-shadow: var(--shadow); border: 1px solid var(--border); padding: 28px 24px 24px; display: flex; flex-direction: column; gap: 24px">
+        <div style="display: flex; justify-content: center; gap: 48px; flex-wrap: wrap">
+          <figure style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+            <dc-import name="Figure" side="front" theme="{{theme}}" size="260" fills="{{fills}}" selected="{{sel}}" pick-muscle="{{pick}}" hint-size="260px,520px"></dc-import>
+            <figcaption style="font-size: 15px; font-weight: 700; color: var(--mfg)">Front</figcaption>
+          </figure>
+          <figure style="margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+            <dc-import name="Figure" side="back" theme="{{theme}}" size="260" fills="{{fills}}" selected="{{sel}}" pick-muscle="{{pick}}" hint-size="260px,520px"></dc-import>
+            <figcaption style="font-size: 15px; font-weight: 700; color: var(--mfg)">Back</figcaption>
+          </figure>
+        </div>
+        <section aria-label="Key" style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border); padding-top: 20px">
+          <div aria-hidden="true" style="height: 12px; border-radius: 999px; background: {{gradient}}"></div>
+          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 24px">
+            <sc-for list="{{bands}}" as="b" hint-placeholder-count="4">
+              <li style="display: flex; align-items: center; gap: 10px; font-size: 15px; line-height: 20px"><span aria-hidden="true" style="width: 20px; height: 20px; border-radius: 6px; background: {{b.swatch}}; box-shadow: inset 0 0 0 1px rgba(0,0,0,.14)"></span><strong>{{b.label}}</strong><span style="color: var(--mfg); font-variant-numeric: tabular-nums">{{b.range}}</span></li>
+            </sc-for>
+            <li style="display: flex; align-items: center; gap: 8px; font-size: 15px; line-height: 20px"><span aria-hidden="true" style="width: 24px; height: 24px; flex-shrink: 0; box-sizing: border-box; border-radius: 999px; background: var(--card); border: 2px solid var(--rest); display: grid; place-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--rest)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="4" width="4" height="16" rx="1"></rect><rect x="6" y="4" width="4" height="16" rx="1"></rect></svg></span><strong>Resting</strong></li>
+            <li style="display: flex; align-items: center; gap: 8px; font-size: 15px; line-height: 20px"><span aria-hidden="true" style="width: 24px; height: 24px; flex-shrink: 0; box-sizing: border-box; border-radius: 999px; background: var(--card); border: 2px solid var(--rehab); display: grid; place-items: center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--rehab)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path></svg></span><strong>Rehab</strong></li>
+          </ul>
+        </section>
+      </div>
+
+      <div style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <sc-if value="{{hasSel}}" hint-placeholder-val="{{ true }}">
+          <section aria-label="Selected muscle" aria-live="polite" style="border-radius: 16px; background: var(--card); box-shadow: var(--shadow); border: 2px solid var(--fg); padding: 20px; display: flex; flex-direction: column; gap: 14px">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 8px">
+              <h2 style="margin: 0; padding-top: 8px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">{{d.title}}</h2>
+              <button type="button" aria-label="Clear selection" onClick="{{clear}}" style="width: 48px; height: 48px; margin: -4px -8px 0 0; border: 0; border-radius: 12px; background: transparent; display: grid; place-items: center; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></button>
+            </div>
+            <sc-if value="{{d.isFatigue}}" hint-placeholder-val="{{ true }}">
+              <div style="display: flex; flex-direction: column; gap: 10px">
+                <div style="display: flex; align-items: baseline; gap: 12px">
+                  <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 44px; line-height: 48px; font-weight: 700; font-variant-numeric: tabular-nums">{{d.v}}</span>
+                  <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700"><span aria-hidden="true" style="width: 16px; height: 16px; border-radius: 5px; background: {{d.swatch}}; box-shadow: inset 0 0 0 1px rgba(0,0,0,.14)"></span>{{d.band}}</span>
+                </div>
+                <div aria-hidden="true" style="position: relative; height: 10px; border-radius: 999px; background: {{gradient}}">
+                  <span style="position: absolute; top: -4px; left: {{d.pct}}; width: 4px; height: 18px; margin-left: -2px; border-radius: 2px; background: var(--fg); box-shadow: 0 0 0 2px var(--card)"></span>
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{d.isRest}}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
+                <span style="display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--restm); color: var(--restf); font-size: 15px; font-weight: 700"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rest)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="4" width="4" height="16" rx="1"></rect><rect x="6" y="4" width="4" height="16" rx="1"></rect></svg>Resting</span>
+                <p style="margin: 0; font-size: 16px; line-height: 24px">Injured and resting. Rebound keeps it out of your workouts, so it isn't on the fatigue scale.</p>
+              </div>
+            </sc-if>
+            <sc-if value="{{d.isRehab}}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-start">
+                <span style="display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; background: var(--rehabm); color: var(--rehabf); font-size: 15px; font-weight: 700"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--rehab)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path></svg>Rehab</span>
+                <p style="margin: 0; font-size: 16px; line-height: 24px">Injured and in rehab. Rebound gives it gentle work only, so it isn't on the fatigue scale.</p>
+              </div>
+            </sc-if>
+            <p style="margin: 0; display: flex; align-items: center; gap: 8px; font-size: 16px; line-height: 24px; color: var(--mfg)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>{{d.last}}</p>
+          </section>
+        </sc-if>
+        <sc-if value="{{noSel}}" hint-placeholder-val="{{ false }}">
+          <p style="margin: 0; padding: 20px; border-radius: 16px; border: 1px dashed var(--input); font-size: 16px; line-height: 24px; color: var(--mfg)">Choose a muscle on the figure or in the list to see how tired it is.</p>
+        </sc-if>
+      </div>
+    </div>
+
+    <section aria-labelledby="rb-all-d" style="display: flex; flex-direction: column; gap: 16px">
+      <h2 id="rb-all-d" style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; line-height: 28px; font-weight: 700">All muscles</h2>
+      <div style="columns: 3 300px; column-gap: 24px">
+        <sc-for list="{{groups}}" as="g" hint-placeholder-count="7">
+          <div style="break-inside: avoid; display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px">
+            <h3 style="margin: 0; font-size: 15px; line-height: 20px; font-weight: 700; color: var(--mfg)">{{g.label}}</h3>
+            <div style="border-radius: 16px; background: var(--card); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden">
+              <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="3">
+                <button type="button" aria-pressed="{{r.pressed}}" onClick="{{r.pick}}" style="width: 100%; min-height: 52px; display: flex; align-items: center; gap: 12px; padding: 8px 16px; border: 0; border-top: {{r.divider}}; background: {{r.bg}}; text-align: left; cursor: pointer">
+                  <span aria-hidden="true" style="width: 20px; height: 20px; flex-shrink: 0; border-radius: 6px; background: {{r.swatch}}; box-shadow: inset 0 0 0 1px rgba(0,0,0,.14)"></span>
+                  <span style="flex: 1; min-width: 0; font-size: 16px; line-height: 22px; font-weight: 700">{{r.name}}</span>
+                  <sc-if value="{{r.isFatigue}}" hint-placeholder-val="{{ true }}">
+                    <span style="font-size: 16px; line-height: 22px; font-variant-numeric: tabular-nums; white-space: nowrap"><strong>{{r.v}}</strong> <span style="color: var(--mfg)">· {{r.band}}</span></span>
+                  </sc-if>
+                  <sc-if value="{{r.isRest}}" hint-placeholder-val="{{ false }}">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border-radius: 999px; background: var(--restm); color: var(--restf); font-size: 15px; font-weight: 700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rest)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="4" width="4" height="16" rx="1"></rect><rect x="6" y="4" width="4" height="16" rx="1"></rect></svg>Resting</span>
+                  </sc-if>
+                  <sc-if value="{{r.isRehab}}" hint-placeholder-val="{{ false }}">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 12px; border-radius: 999px; background: var(--rehabm); color: var(--rehabf); font-size: 15px; font-weight: 700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--rehab)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path></svg>Rehab</span>
+                  </sc-if>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"selected":{"editor":"enum","options":["","quads","lowerBack","frontDelts","glutes"],"default":"quads"},"$preview":{"width":1280,"height":1560}}'>
+const MUSCLES = [
+  ['upperChest', 'Upper chest', 'Chest', 22, '3 days ago'],
+  ['lowerChest', 'Lower chest', 'Chest', 18, '3 days ago'],
+  ['frontDelts', 'Front delts', 'Shoulders', 0, '3 days ago', 'rehab'],
+  ['sideDelts', 'Side delts', 'Shoulders', 20, '3 days ago'],
+  ['rearDelts', 'Rear delts', 'Shoulders', 28, '4 days ago'],
+  ['biceps', 'Biceps', 'Arms', 34, '4 days ago'],
+  ['triceps', 'Triceps', 'Arms', 21, '3 days ago'],
+  ['forearms', 'Forearms', 'Arms', 26, '4 days ago'],
+  ['abdominals', 'Abdominals', 'Core', 12, '5 days ago'],
+  ['obliques', 'Obliques', 'Core', 9, '5 days ago'],
+  ['upperTraps', 'Upper traps', 'Back', 30, '4 days ago'],
+  ['lowerTraps', 'Lower traps', 'Back', 18, '4 days ago'],
+  ['rhomboids', 'Rhomboids', 'Back', 33, '4 days ago'],
+  ['lats', 'Lats', 'Back', 41, '4 days ago'],
+  ['lowerBack', 'Lower back', 'Back', 0, 'Not trained this week', 'rest'],
+  ['hipFlexors', 'Hip flexors', 'Legs and hips', 26, '2 days ago'],
+  ['glutes', 'Glutes', 'Legs and hips', 78, '2 days ago'],
+  ['abductors', 'Abductors (outer hip)', 'Legs and hips', 44, '2 days ago'],
+  ['adductors', 'Adductors', 'Legs and hips', 47, '2 days ago'],
+  ['quads', 'Quadriceps', 'Legs and hips', 62, '2 days ago'],
+  ['hamstrings', 'Hamstrings', 'Legs and hips', 56, '2 days ago'],
+  ['calves', 'Calves', 'Legs and hips', 31, '2 days ago'],
+  ['neck', 'Neck', 'Neck', 4, 'Not trained this week']
+];
+const GROUPS = ['Chest', 'Shoulders', 'Arms', 'Core', 'Back', 'Legs and hips', 'Neck'];
+const RAMP = {
+  light: [[0, '#ebe8ef'], [25, '#dcc6e0'], [50, '#bb8dc2'], [75, '#8f5592'], [100, '#5b2861']],
+  dark: [[0, '#686479'], [25, '#87709e'], [50, '#aa84b9'], [75, '#cca2d6'], [100, '#f3d6f7']]
+};
+const STATE = {
+  light: { injured: '#c4bdb0', rest: '#b2365a', restMuted: '#fbe5ec', rehab: '#a8750a', rehabMuted: '#fbefd6', sel: '#f8e4d3', border: '#dcd8cf' },
+  dark: { injured: '#5a6561', rest: '#ee8aa8', restMuted: '#36161f', rehab: '#e9b44c', rehabMuted: '#2e2410', sel: '#3a2a1f', border: '#2c3934' }
+};
+function hex(h) { return [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)); }
+function color(theme, v) {
+  const s = RAMP[theme];
+  for (let i = 1; i < s.length; i++) {
+    if (v <= s[i][0]) {
+      const t = (v - s[i - 1][0]) / (s[i][0] - s[i - 1][0]);
+      const a = hex(s[i - 1][1]), b = hex(s[i][1]);
+      return 'rgb(' + a.map((x, k) => Math.round(x + (b[k] - x) * t)).join(',') + ')';
+    }
+  }
+  return s[s.length - 1][1];
+}
+function band(v) { return v >= 75 ? 'Very tired' : v >= 50 ? 'Tired' : v >= 25 ? 'Slightly tired' : 'Rested'; }
+// Injury swatch: the state's tint with a 2px outline in its colour, like the figure.
+function stripes(a, b) { return 'linear-gradient(' + a + ', ' + a + ') center / calc(100% - 4px) calc(100% - 4px) no-repeat, ' + b; }
+class Component extends DCLogic {
+  renderVals() {
+    const theme = this.props.theme === 'dark' ? 'dark' : 'light';
+    const st = STATE[theme];
+    const sel = this.state.sel !== undefined ? this.state.sel : (this.props.selected ?? 'quads');
+    const list = MUSCLES.map((r) => ({ id: r[0], name: r[1], group: r[2], v: r[3], last: r[4], inj: r[5] || null }));
+    const swatchFor = (m) => m.inj === 'rest' ? st.injured : m.inj === 'rehab' ? st.injured : color(theme, m.v);
+    const pick = (id) => this.setState({ sel: id });
+    const fills = {};
+    list.forEach((m) => { fills[m.id] = { fill: color(theme, m.v), inj: m.inj }; });
+    const scored = list.filter((m) => !m.inj);
+    const wv = Math.round(scored.reduce((a, m) => a + m.v, 0) / scored.length);
+    const groups = GROUPS.map((g) => ({
+      label: g,
+      rows: list.filter((m) => m.group === g).map((m, i) => ({
+        name: m.name, v: m.v, band: band(m.v), swatch: swatchFor(m),
+        isFatigue: !m.inj, isRest: m.inj === 'rest', isRehab: m.inj === 'rehab',
+        pressed: m.id === sel ? 'true' : 'false', bg: m.id === sel ? st.sel : 'transparent',
+        divider: i === 0 ? '0' : '1px solid ' + st.border,
+        pick: () => pick(m.id)
+      }))
+    }));
+    const sm = list.find((m) => m.id === sel);
+    const d = sm ? {
+      title: sm.name, v: sm.v, band: band(sm.v), swatch: color(theme, sm.v), pct: sm.v + '%',
+      isFatigue: !sm.inj, isRest: sm.inj === 'rest', isRehab: sm.inj === 'rehab',
+      last: sm.last.indexOf('Not') === 0 ? sm.last : 'Last trained ' + sm.last
+    } : {};
+    return {
+      theme, themeClass: theme === 'dark' ? 'dark' : '',
+      fills, sel, pick, clear: () => this.setState({ sel: '' }),
+      hasSel: !!sm, noSel: !sm, d,
+      whole: { v: wv, band: band(wv), swatch: color(theme, wv) },
+      gradient: 'linear-gradient(90deg, ' + [0, 25, 50, 75, 100].map((v) => color(theme, v) + ' ' + v + '%').join(', ') + ')',
+      bands: [['Rested', '0–24', 12], ['Slightly tired', '25–49', 37], ['Tired', '50–74', 62], ['Very tired', '75–100', 87]].map((b) => ({ label: b[0], range: b[1], swatch: color(theme, b[2]) })),
+      restSwatch: st.injured, rehabSwatch: st.injured,
+      groups
+    };
+  }
+}
+</script>
+</body>
+</html>

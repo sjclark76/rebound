@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Top bar with Body</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;display=swap">
+<style>
+body{margin:0}
+.tb{--bg:#f5f3ee;--fg:#16211d;--primary:#1d6b56;--pfg:#ffffff;--sec:#e3ebe6;--muted:#ebe8e1;--mfg:#566260;--border:#dcd8cf;--ball:#e8894f}
+.tb.dark{--bg:#0f1513;--fg:#e8ede9;--primary:#5ec4a4;--pfg:#06231b;--sec:#22302b;--muted:#1d2723;--mfg:#9eaba5;--border:#2c3934;--ball:#06231b}
+.tb a,.tb button{color:var(--fg);text-decoration:none;font:inherit}
+.tb a:focus-visible,.tb button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 700px; box-sizing: border-box; padding: 40px; background: #e9e6df; font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif; color: #16211d; display: flex; flex-direction: column; gap: 32px">
+  <div style="display: flex; gap: 40px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <p style="margin: 0; font-size: 15px; font-weight: 700; color: #566260">Phone · home · light</p>
+      <header class="tb" style="width: 390px; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 16px; background: var(--bg); color: var(--fg); border-radius: 12px">
+        <span style="display: flex; align-items: center; gap: 8px">
+          <svg viewBox="0 0 64 64" width="28" height="28" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--primary)"></rect><path d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke="var(--pfg)" stroke-width="6" stroke-linecap="round"></path><circle cx="48" cy="17" r="6.5" fill="var(--ball)"></circle></svg>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 750; letter-spacing: -0.03em">rebound</span>
+        </span>
+        <span style="display: flex; gap: 4px">
+          <a href="#body" aria-label="Body" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"></circle><path d="m9 20 3-6 3 6"></path><path d="m6 8 6 2 6-2"></path><path d="M12 10v4"></path></svg></a>
+          <a href="#settings" aria-label="Settings" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+          <button type="button" aria-label="Sign out" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; border: 0; background: transparent; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg></button>
+        </span>
+      </header>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <p style="margin: 0; font-size: 15px; font-weight: 700; color: #566260">Phone · home · dark</p>
+      <header class="tb dark" style="width: 390px; height: 64px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 16px; background: var(--bg); color: var(--fg); border-radius: 12px">
+        <span style="display: flex; align-items: center; gap: 8px">
+          <svg viewBox="0 0 64 64" width="28" height="28" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--primary)"></rect><path d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke="var(--pfg)" stroke-width="6" stroke-linecap="round"></path><circle cx="48" cy="17" r="6.5" fill="var(--ball)"></circle></svg>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; font-weight: 750; letter-spacing: -0.03em">rebound</span>
+        </span>
+        <span style="display: flex; gap: 4px">
+          <a href="#body" aria-label="Body" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"></circle><path d="m9 20 3-6 3 6"></path><path d="m6 8 6 2 6-2"></path><path d="M12 10v4"></path></svg></a>
+          <a href="#settings" aria-label="Settings" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg></a>
+          <button type="button" aria-label="Sign out" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; border: 0; background: transparent; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg></button>
+        </span>
+      </header>
+    </div>
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; padding-top: 28px">
+      <p style="margin: 0; font-size: 16px; line-height: 24px">Body sits before Settings. Icon only on phones, 48 px target, labelled “Body” for screen readers. On wide screens it gains its label, and on the Body screen it is marked current with the secondary fill.</p>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <p style="margin: 0; font-size: 15px; font-weight: 700; color: #566260">Desktop · home · light</p>
+    <header class="tb" style="width: 1200px; background: var(--bg); color: var(--fg); border-radius: 12px; border-bottom: 1px solid var(--border)">
+      <div style="height: 72px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between">
+        <span style="display: flex; align-items: center; gap: 10px">
+          <svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--primary)"></rect><path d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke="var(--pfg)" stroke-width="6" stroke-linecap="round"></path><circle cx="48" cy="17" r="6.5" fill="var(--ball)"></circle></svg>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 750; letter-spacing: -0.03em">rebound</span>
+        </span>
+        <nav aria-label="Main" style="display: flex; align-items: center; gap: 4px">
+          <a href="#body" style="min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; font-size: 15px; font-weight: 700"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"></circle><path d="m9 20 3-6 3 6"></path><path d="m6 8 6 2 6-2"></path><path d="M12 10v4"></path></svg>Body</a>
+          <a href="#settings" style="min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; font-size: 15px; font-weight: 700"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>Settings</a>
+          <button type="button" aria-label="Sign out" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; border: 0; background: transparent; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg></button>
+        </nav>
+      </div>
+    </header>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <p style="margin: 0; font-size: 15px; font-weight: 700; color: #566260">Desktop · on the Body screen · dark</p>
+    <header class="tb dark" style="width: 1200px; background: var(--bg); color: var(--fg); border-radius: 12px; border-bottom: 1px solid var(--border)">
+      <div style="height: 72px; padding: 0 32px; display: flex; align-items: center; justify-content: space-between">
+        <span style="display: flex; align-items: center; gap: 10px">
+          <svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--primary)"></rect><path d="M13 20c5 22 13 30 20 30s11-8 13-17" fill="none" stroke="var(--pfg)" stroke-width="6" stroke-linecap="round"></path><circle cx="48" cy="17" r="6.5" fill="var(--ball)"></circle></svg>
+          <span style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 750; letter-spacing: -0.03em">rebound</span>
+        </span>
+        <nav aria-label="Main" style="display: flex; align-items: center; gap: 4px">
+          <a href="#body" aria-current="page" style="min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; background: var(--sec); font-size: 15px; font-weight: 700"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="1"></circle><path d="m9 20 3-6 3 6"></path><path d="m6 8 6 2 6-2"></path><path d="M12 10v4"></path></svg>Body</a>
+          <a href="#settings" style="min-height: 48px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 12px; font-size: 15px; font-weight: 700"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>Settings</a>
+          <button type="button" aria-label="Sign out" style="width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; border: 0; background: transparent; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg></button>
+        </nav>
+      </div>
+    </header>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":700}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

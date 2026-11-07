@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Body figure</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&amp;family=Atkinson+Hyperlegible+Next:wght@400;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="position: relative; width: {{w}}px; height: {{h}}px; font-family: 'Atkinson Hyperlegible Next', system-ui, sans-serif">
+  <sc-if value="{{isFront}}" hint-placeholder-val="{{ true }}">
+    <svg viewBox="0 0 724 1448" width="{{w}}" height="{{h}}" role="img" aria-label="Body map, front. Every muscle is also in the list below." style="display: block">
+      <defs>
+        <clipPath id="rbf-side"><path d="M0,280 L245,280 C240,330 228,370 210,410 L0,410 Z"></path><path d="M724,280 L479,280 C484,330 496,370 514,410 L724,410 Z"></path></clipPath>
+        <clipPath id="rbf-front"><path d="M245,280 C240,330 228,370 210,410 L362,410 L362,280 Z"></path><path d="M479,280 C484,330 496,370 514,410 L362,410 L362,280 Z"></path></clipPath>
+        <clipPath id="rbf-up"><path d="M0,0 L362,0 L362,380 C330,372 290,360 255,340 L0,340 Z"></path><path d="M724,0 L362,0 L362,380 C394,372 434,360 469,340 L724,340 Z"></path></clipPath>
+        <clipPath id="rbf-low"><path d="M0,340 L255,340 C290,360 330,372 362,380 L362,1448 L0,1448 Z"></path><path d="M724,340 L469,340 C434,360 394,372 362,380 L362,1448 L724,1448 Z"></path></clipPath>
+      </defs>
+      <path d="{{neutral}}" fill="{{bodyFill}}"></path>
+      <path d="{{ends}}" fill="{{bodyFill}}"></path>
+      <path d="{{hair}}" fill="{{hairFill}}"></path>
+      <g style="cursor: pointer" stroke-linejoin="round">
+        <path d="{{m.neck.d}}" fill="{{m.neck.fill}}" stroke="{{m.neck.stroke}}" stroke-width="{{m.neck.sw}}" onClick="{{m.neck.pick}}"></path>
+        <path d="{{m.upperTraps.d}}" fill="{{m.upperTraps.fill}}" stroke="{{m.upperTraps.stroke}}" stroke-width="{{m.upperTraps.sw}}" onClick="{{m.upperTraps.pick}}"></path>
+        <path d="{{m.sideDelts.d}}" fill="{{m.sideDelts.fill}}" stroke="{{m.sideDelts.stroke}}" stroke-width="{{m.sideDelts.sw}}" onClick="{{m.sideDelts.pick}}" clip-path="url(#rbf-side)"></path>
+        <path d="{{m.frontDelts.d}}" fill="{{m.frontDelts.fill}}" stroke="{{m.frontDelts.stroke}}" stroke-width="{{m.frontDelts.sw}}" onClick="{{m.frontDelts.pick}}" clip-path="url(#rbf-front)"></path>
+        <path d="{{m.upperChest.d}}" fill="{{m.upperChest.fill}}" stroke="{{m.upperChest.stroke}}" stroke-width="{{m.upperChest.sw}}" onClick="{{m.upperChest.pick}}" clip-path="url(#rbf-up)"></path>
+        <path d="{{m.lowerChest.d}}" fill="{{m.lowerChest.fill}}" stroke="{{m.lowerChest.stroke}}" stroke-width="{{m.lowerChest.sw}}" onClick="{{m.lowerChest.pick}}" clip-path="url(#rbf-low)"></path>
+        <path d="{{m.biceps.d}}" fill="{{m.biceps.fill}}" stroke="{{m.biceps.stroke}}" stroke-width="{{m.biceps.sw}}" onClick="{{m.biceps.pick}}"></path>
+        <path d="{{m.triceps.d}}" fill="{{m.triceps.fill}}" stroke="{{m.triceps.stroke}}" stroke-width="{{m.triceps.sw}}" onClick="{{m.triceps.pick}}"></path>
+        <path d="{{m.forearms.d}}" fill="{{m.forearms.fill}}" stroke="{{m.forearms.stroke}}" stroke-width="{{m.forearms.sw}}" onClick="{{m.forearms.pick}}"></path>
+        <path d="{{m.abdominals.d}}" fill="{{m.abdominals.fill}}" stroke="{{m.abdominals.stroke}}" stroke-width="{{m.abdominals.sw}}" onClick="{{m.abdominals.pick}}"></path>
+        <path d="{{m.obliques.d}}" fill="{{m.obliques.fill}}" stroke="{{m.obliques.stroke}}" stroke-width="{{m.obliques.sw}}" onClick="{{m.obliques.pick}}"></path>
+        <path d="{{m.hipFlexors.d}}" fill="{{m.hipFlexors.fill}}" stroke="{{m.hipFlexors.stroke}}" stroke-width="{{m.hipFlexors.sw}}" onClick="{{m.hipFlexors.pick}}"></path>
+        <path d="{{m.adductors.d}}" fill="{{m.adductors.fill}}" stroke="{{m.adductors.stroke}}" stroke-width="{{m.adductors.sw}}" onClick="{{m.adductors.pick}}"></path>
+        <path d="{{m.quads.d}}" fill="{{m.quads.fill}}" stroke="{{m.quads.stroke}}" stroke-width="{{m.quads.sw}}" onClick="{{m.quads.pick}}"></path>
+        <path d="{{m.calves.d}}" fill="{{m.calves.fill}}" stroke="{{m.calves.stroke}}" stroke-width="{{m.calves.sw}}" onClick="{{m.calves.pick}}"></path>
+      </g>
+      <path d="M245,280 C240,330 228,370 210,410 M479,280 C484,330 496,370 514,410 M362,380 C330,372 290,360 255,340 M362,380 C394,372 434,360 469,340" stroke="{{c.halo}}" stroke-width="7" stroke-linecap="round" fill="none" pointer-events="none"></path>
+      <g fill="none" stroke-linejoin="round" pointer-events="none" clip-path="{{selClip}}">
+        <path d="{{selD}}" stroke="{{c.halo}}" stroke-width="7"></path>
+        <path d="{{selD}}" stroke="{{c.sel}}" stroke-width="3.5"></path>
+      </g>
+    </svg>
+  </sc-if>
+  <sc-if value="{{isBack}}" hint-placeholder-val="{{ false }}">
+    <svg viewBox="724 0 724 1448" width="{{w}}" height="{{h}}" role="img" aria-label="Body map, back. Every muscle is also in the list below." style="display: block">
+      <defs>
+        <clipPath id="rbb-up"><path d="M724,0 L1448,0 L1448,370 L1172,370 C1132,385 1102,392 1086,395 C1070,392 1040,385 1000,370 L724,370 Z"></path></clipPath>
+        <clipPath id="rbb-low"><path d="M724,370 L1000,370 C1040,385 1070,392 1086,395 C1102,392 1132,385 1172,370 L1448,370 L1448,1448 L724,1448 Z"></path></clipPath>
+        <clipPath id="rbb-side"><path d="M724,280 L950,280 C946,330 940,370 928,410 L724,410 Z"></path><path d="M1448,280 L1222,280 C1226,330 1232,370 1244,410 L1448,410 Z"></path></clipPath>
+        <clipPath id="rbb-rear"><path d="M950,280 C946,330 940,370 928,410 L1086,410 L1086,280 Z"></path><path d="M1222,280 C1226,330 1232,370 1244,410 L1086,410 L1086,280 Z"></path></clipPath>
+      </defs>
+      <path d="{{neutral}}" fill="{{bodyFill}}"></path>
+      <path d="{{ends}}" fill="{{bodyFill}}"></path>
+      <path d="{{hair}}" fill="{{hairFill}}"></path>
+      <g style="cursor: pointer" stroke-linejoin="round">
+        <path d="{{m.neck.d}}" fill="{{m.neck.fill}}" stroke="{{m.neck.stroke}}" stroke-width="{{m.neck.sw}}" onClick="{{m.neck.pick}}"></path>
+        <path d="{{m.upperTraps.d}}" fill="{{m.upperTraps.fill}}" stroke="{{m.upperTraps.stroke}}" stroke-width="{{m.upperTraps.sw}}" onClick="{{m.upperTraps.pick}}" clip-path="url(#rbb-up)"></path>
+        <path d="{{m.lowerTraps.d}}" fill="{{m.lowerTraps.fill}}" stroke="{{m.lowerTraps.stroke}}" stroke-width="{{m.lowerTraps.sw}}" onClick="{{m.lowerTraps.pick}}" clip-path="url(#rbb-low)"></path>
+        <path d="{{m.sideDelts.d}}" fill="{{m.sideDelts.fill}}" stroke="{{m.sideDelts.stroke}}" stroke-width="{{m.sideDelts.sw}}" onClick="{{m.sideDelts.pick}}" clip-path="url(#rbb-side)"></path>
+        <path d="{{m.rearDelts.d}}" fill="{{m.rearDelts.fill}}" stroke="{{m.rearDelts.stroke}}" stroke-width="{{m.rearDelts.sw}}" onClick="{{m.rearDelts.pick}}" clip-path="url(#rbb-rear)"></path>
+        <path d="{{m.rhomboids.d}}" fill="{{m.rhomboids.fill}}" stroke="{{m.rhomboids.stroke}}" stroke-width="{{m.rhomboids.sw}}" onClick="{{m.rhomboids.pick}}"></path>
+        <path d="{{m.lats.d}}" fill="{{m.lats.fill}}" stroke="{{m.lats.stroke}}" stroke-width="{{m.lats.sw}}" onClick="{{m.lats.pick}}"></path>
+        <path d="{{m.triceps.d}}" fill="{{m.triceps.fill}}" stroke="{{m.triceps.stroke}}" stroke-width="{{m.triceps.sw}}" onClick="{{m.triceps.pick}}"></path>
+        <path d="{{m.forearms.d}}" fill="{{m.forearms.fill}}" stroke="{{m.forearms.stroke}}" stroke-width="{{m.forearms.sw}}" onClick="{{m.forearms.pick}}"></path>
+        <path d="{{m.lowerBack.d}}" fill="{{m.lowerBack.fill}}" stroke="{{m.lowerBack.stroke}}" stroke-width="{{m.lowerBack.sw}}" onClick="{{m.lowerBack.pick}}"></path>
+        <path d="{{m.abductors.d}}" fill="{{m.abductors.fill}}" stroke="{{m.abductors.stroke}}" stroke-width="{{m.abductors.sw}}" onClick="{{m.abductors.pick}}"></path>
+        <path d="{{m.glutes.d}}" fill="{{m.glutes.fill}}" stroke="{{m.glutes.stroke}}" stroke-width="{{m.glutes.sw}}" onClick="{{m.glutes.pick}}"></path>
+        <path d="{{m.adductors.d}}" fill="{{m.adductors.fill}}" stroke="{{m.adductors.stroke}}" stroke-width="{{m.adductors.sw}}" onClick="{{m.adductors.pick}}"></path>
+        <path d="{{m.hamstrings.d}}" fill="{{m.hamstrings.fill}}" stroke="{{m.hamstrings.stroke}}" stroke-width="{{m.hamstrings.sw}}" onClick="{{m.hamstrings.pick}}"></path>
+        <path d="{{m.calves.d}}" fill="{{m.calves.fill}}" stroke="{{m.calves.stroke}}" stroke-width="{{m.calves.sw}}" onClick="{{m.calves.pick}}"></path>
+      </g>
+      <path d="M950,280 C946,330 940,370 928,410 M1222,280 C1226,330 1232,370 1244,410 M1000,370 C1040,385 1070,392 1086,395 C1102,392 1132,385 1172,370" stroke="{{c.halo}}" stroke-width="7" stroke-linecap="round" fill="none" pointer-events="none"></path>
+      <g fill="none" stroke-linejoin="round" pointer-events="none" clip-path="{{selClip}}">
+        <path d="{{selD}}" stroke="{{c.halo}}" stroke-width="7"></path>
+        <path d="{{selD}}" stroke="{{c.sel}}" stroke-width="3.5"></path>
+      </g>
+    </svg>
+  </sc-if>
+  <sc-for list="{{markers}}" as="mk" hint-placeholder-count="0">
+    <span aria-hidden="true" style="position: absolute; left: {{mk.left}}px; top: {{mk.top}}px; width: 24px; height: 24px; box-sizing: border-box; border-radius: 999px; background: {{mk.bg}}; border: 2px solid {{mk.color}}; display: grid; place-items: center; pointer-events: none; color: {{mk.color}}">
+      <sc-if value="{{mk.rest}}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg></sc-if>
+      <sc-if value="{{mk.rehab}}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path></svg></sc-if>
+    </span>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"side":{"editor":"enum","options":["front","back"],"default":"front"},"theme":{"editor":"enum","options":["light","dark"],"default":"light"},"size":{"editor":"int","default":240,"min":120,"max":400},"fills":{"editor":null},"selected":{"editor":null},"pickMuscle":{"editor":null},"loading":{"editor":null},"$preview":{"width":240,"height":480}}'>
+// Body outline and muscle shapes: react-muscle-highlighter (MIT License, Copyright (c) 2024 My Muscle Contributors),
+// regrouped into Rebound's muscles. Loaded once from the uploaded data file.
+const DATA_URL = '/_blob/8c0c8169b97f24de24798bada14a2868';
+let FIGURE = null;
+let FIGURE_LOAD = null;
+// Which data shape each muscle uses, and the clip that splits shared shapes (chest, delts, traps).
+const PARTS = {
+  front: { neck: ['neck'], upperTraps: ['upperTraps'], sideDelts: ['deltoids', 'rbf-side'], frontDelts: ['deltoids', 'rbf-front'], upperChest: ['chest', 'rbf-up'], lowerChest: ['chest', 'rbf-low'], biceps: ['biceps'], triceps: ['triceps'], forearms: ['forearms'], abdominals: ['abdominals'], obliques: ['obliques'], hipFlexors: ['hipFlexors'], adductors: ['adductors'], quads: ['quads'], calves: ['calves'] },
+  back: { neck: ['neck'], upperTraps: ['traps', 'rbb-up'], lowerTraps: ['traps', 'rbb-low'], sideDelts: ['deltoids', 'rbb-side'], rearDelts: ['deltoids', 'rbb-rear'], rhomboids: ['rhomboids'], lats: ['lats'], triceps: ['triceps'], forearms: ['forearms'], lowerBack: ['lowerBack'], abductors: ['abductors'], glutes: ['glutes'], adductors: ['adductors'], hamstrings: ['hamstrings'], calves: ['calves'] }
+};
+// Injury marker positions in the figure's own units.
+const MARK = {
+  front: { neck: [350, 280], upperTraps: [304, 296], sideDelts: [212, 345], frontDelts: [252, 345], upperChest: [307, 345], lowerChest: [307, 408], biceps: [202, 450], triceps: [228, 455], forearms: [170, 600], abdominals: [335, 520], obliques: [283, 500], hipFlexors: [312, 712], adductors: [318, 820], quads: [272, 820], calves: [266, 1100] },
+  back: { neck: [1050, 256], upperTraps: [1045, 340], lowerTraps: [1062, 435], sideDelts: [924, 350], rearDelts: [962, 350], rhomboids: [995, 370], lats: [1012, 500], triceps: [935, 460], forearms: [880, 610], lowerBack: [1045, 590], abductors: [1014, 644], glutes: [1028, 710], adductors: [1055, 822], hamstrings: [1005, 870], calves: [990, 1060] }
+};
+const THEMES = {
+  light: { injured: '#c4bdb0', body: '#dcd6cb', hair: '#c3bcae', halo: '#ffffff', fg: '#16211d', sel: '#1d6b56', card: '#ffffff', rest: '#b2365a', restMuted: '#fbe5ec', rehab: '#a8750a', rehabMuted: '#fbefd6', rested: '#ebe8ef', loading: '#e3dfd6' },
+  dark: { injured: '#5a6561', body: '#7d8884', hair: '#636e6a', halo: '#2b3633', fg: '#e8ede9', sel: '#5ec4a4', card: '#2b3633', rest: '#ee8aa8', restMuted: '#36161f', rehab: '#e9b44c', rehabMuted: '#2e2410', rested: '#686479', loading: '#45514d' }
+};
+class Component extends DCLogic {
+  componentDidMount() {
+    if (FIGURE) return;
+    if (!FIGURE_LOAD) FIGURE_LOAD = fetch(DATA_URL).then((r) => r.json()).then((j) => { FIGURE = j; return j; });
+    FIGURE_LOAD.then(() => this.setState({ loaded: true }));
+  }
+  renderVals() {
+    const side = this.props.side === 'back' ? 'back' : 'front';
+    const c = THEMES[this.props.theme === 'dark' ? 'dark' : 'light'];
+    const w = Number(this.props.size) || 240;
+    const scale = w / 724;
+    const x0 = side === 'back' ? 724 : 0;
+    const fills = this.props.fills || {};
+    const loading = this.props.loading === true;
+    const pickMuscle = this.props.pickMuscle;
+    const data = FIGURE ? FIGURE[side] : null;
+    const parts = PARTS[side];
+    const m = {};
+    const markers = [];
+    Object.keys(MARK.front).concat(Object.keys(MARK.back)).forEach((id) => {
+      const f = fills[id] || {};
+      const inj = loading ? null : f.inj;
+      // Injured muscles are off the fatigue scale: a quiet neutral fill; the icon marker says Resting or Rehab.
+      let fill = loading ? c.loading : (f.fill || c.rested);
+      const stroke = 'none';
+      if (inj === 'rest' || inj === 'rehab') fill = c.injured;
+      const part = parts[id];
+      m[id] = { d: data && part ? data.muscles[part[0]] : '', fill, stroke, sw: stroke === 'none' ? 0 : 6, pick: () => { if (pickMuscle) pickMuscle(id); } };
+      if (data && part && (inj === 'rest' || inj === 'rehab')) {
+        const p = MARK[side][id];
+        markers.push({ left: Math.round((p[0] - x0) * scale - 12), top: Math.round(p[1] * scale - 12), color: inj === 'rest' ? c.rest : c.rehab, bg: c.card, rest: inj === 'rest', rehab: inj === 'rehab' });
+      }
+    });
+    const sel = this.props.selected;
+    const selPart = !loading && data && sel ? parts[sel] : null;
+    return {
+      w, h: w * 2, c, m, markers,
+      neutral: data ? data.neutral : '', hair: data ? data.hair : '',
+      ends: data ? data.ends : '',
+      // Loading: the whole figure is one even skeleton tone, so it pulses as a single shape.
+      bodyFill: loading ? c.loading : c.body, hairFill: loading ? c.loading : c.hair,
+      isFront: side === 'front', isBack: side === 'back',
+      selD: selPart ? data.muscles[selPart[0]] : '',
+      selClip: selPart && selPart[1] ? 'url(#' + selPart[1] + ')' : ''
+    };
+  }
+}
+</script>
+</body>
+</html>
