@@ -138,7 +138,7 @@ export function BigLink({ href, children, secondary = false }: { href: string; c
     <Link
       href={href}
       className={cn(
-        "flex min-h-16 items-center justify-center gap-2 rounded-xl px-4 font-heading text-xl font-bold lg:flex-1 lg:whitespace-nowrap lg:px-3 lg:text-lg",
+        "flex min-h-16 items-center justify-center gap-2 rounded-xl px-4 font-heading text-xl font-bold lg:flex-1 lg:basis-56 lg:whitespace-nowrap lg:px-3 lg:text-lg",
         secondary ? "bg-secondary text-secondary-foreground" : "bg-primary text-primary-foreground",
       )}
     >
