@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowRightIcon, ChevronRightIcon, CircleCheckIcon, DumbbellIcon, LayoutGridIcon, PauseIcon } from "lucide-react";
-import { cn } from "cn";
 import { restedPhrase, splitName } from "@/lib/generator";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion, parseOptions } from "@/lib/suggestion";
@@ -172,7 +171,7 @@ async function Recommendation({
             </p>
           )}
         </div>
-        <div className={cn("flex flex-col gap-3 lg:flex-row")}>
+        <div className="flex flex-col gap-3 lg:flex-row lg:flex-wrap">
           <BigLink href={pathHref("/today", options)}>
             See {name.toLowerCase()} workout
             <ArrowRightIcon className="size-5" aria-hidden />
