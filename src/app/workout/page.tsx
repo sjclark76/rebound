@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { WorkoutClient } from "@/components/workout/workout-client";
-import { SPLIT_NAMES, type Split } from "@/lib/generator";
+import { splitName } from "@/lib/generator";
 import { requireSession } from "@/lib/session";
 import { getActiveWorkout, getInjuryChips } from "@/lib/workout-data";
 
@@ -22,7 +22,7 @@ async function Workout() {
   return (
     <WorkoutClient
       workoutId={w.id}
-      split={SPLIT_NAMES[w.split as Split]?.toLowerCase() ?? "workout"}
+      split={splitName(w.split).toLowerCase()}
       dateLabel={now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
       startedLabel={w.startedAt.toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit", hour12: true })}
       minutes={Math.max(0, Math.round((now.getTime() - w.startedAt.getTime()) / 60_000))}

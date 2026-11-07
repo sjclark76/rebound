@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type CatalogueExercise, type GeneratorInput, recoveryNote, SPLITS, type Split, suggestWorkout, TYPE_ORDER } from "./generator";
+import { AREAS, type CatalogueExercise, type GeneratorInput, makeSplit, normalizeSplit, recoveryNote, restedPhrase, SPLITS, type Split, splitName, splitParts, suggestWorkout } from "./generator";
 
 let n = 0;
 function ex(
@@ -57,7 +57,7 @@ describe("suggestWorkout", () => {
   });
 
   it("skips anything loading a resting muscle, even as a secondary", () => {
-    const presses = SPLITS.push.map((m) => ex(m, { secondaryMuscles: ["shoulders"] }));
+    const presses = SPLITS["upper-push"].map((m) => ex(m, { secondaryMuscles: ["shoulders"] }));
     const s = suggestWorkout({
       ...base,
       exercises: [...catalogue, ...presses],
@@ -75,9 +75,9 @@ describe("suggestWorkout", () => {
       ...base,
       exercises: [rows, ...catalogue.filter((e) => e.primaryMuscles[0] !== "lats")],
       injuries: [{ muscle: "biceps", mode: "rehab" }],
-      recent: [...SPLITS.push, ...SPLITS.legs].map((muscle) => ({ muscle, trainedAt: daysAgo(1) })),
+      recent: [...SPLITS["upper-push"], ...SPLITS.legs].map((muscle) => ({ muscle, trainedAt: daysAgo(1) })),
     })!;
-    expect(s.split).toBe("pull");
+    expect(s.split).toBe("upper-pull");
     expect(ids(s)).toContain("Rows");
     expect(s.exercises.some((e) => e.exercise.primaryMuscles[0] === "biceps")).toBe(false);
     expect(s.resting).toEqual([]);
@@ -87,23 +87,23 @@ describe("suggestWorkout", () => {
     const s = suggestWorkout({
       ...base,
       recent: [
-        ...SPLITS.push.map((muscle) => ({ muscle, trainedAt: daysAgo(1) })),
-        ...SPLITS.pull.map((muscle) => ({ muscle, trainedAt: daysAgo(3) })),
+        ...SPLITS["upper-push"].map((muscle) => ({ muscle, trainedAt: daysAgo(1) })),
+        ...SPLITS["upper-pull"].map((muscle) => ({ muscle, trainedAt: daysAgo(3) })),
         ...SPLITS.legs.map((muscle) => ({ muscle, trainedAt: daysAgo(5) })),
       ],
     })!;
     expect(s.split).toBe("legs");
     expect(s.lastTrainedDays).toBe(5);
-    expect(s.recovering).toEqual([...SPLITS.push].sort());
+    expect(s.recovering).toEqual([...SPLITS["upper-push"]].sort());
   });
 
   it("uses a chosen split even when it was trained recently", () => {
     const s = suggestWorkout({
       ...base,
-      split: "push",
-      recent: SPLITS.push.map((muscle) => ({ muscle, trainedAt: daysAgo(3) })),
+      split: "upper-push",
+      recent: SPLITS["upper-push"].map((muscle) => ({ muscle, trainedAt: daysAgo(3) })),
     })!;
-    expect(s.split).toBe("push");
+    expect(s.split).toBe("upper-push");
     expect(s.lastTrainedDays).toBe(3);
   });
 
@@ -115,9 +115,9 @@ describe("suggestWorkout", () => {
     const s = suggestWorkout({
       ...base,
       exercises: catalogue.filter((e) => !SPLITS.legs.includes(e.primaryMuscles[0] as never)),
-      recent: SPLITS.push.map((muscle) => ({ muscle, trainedAt: daysAgo(4) })),
+      recent: SPLITS["upper-push"].map((muscle) => ({ muscle, trainedAt: daysAgo(4) })),
     })!;
-    expect(s.split).toBe("pull");
+    expect(s.split).toBe("upper-pull");
   });
 
   it("returns null when nothing is safe", () => {
@@ -162,16 +162,56 @@ describe("gear with no weights", () => {
 describe("workout types", () => {
   const primary = (s: ReturnType<typeof suggestWorkout>) => s!.exercises.map((e) => e.exercise.primaryMuscles[0]);
   const choose = (split: Split, extra: Partial<GeneratorInput> = {}) => suggestWorkout({ ...base, split, ...extra });
+  const inOnly = (s: ReturnType<typeof suggestWorkout>, muscles: string[]) => primary(s).filter((m) => m !== "abdominals").every((m) => muscles.includes(m));
 
-  it("offers six types, in the order the picker shows them", () => expect(TYPE_ORDER).toEqual(["full", "upper", "push", "pull", "legs", "core"]));
+  it("offers four areas, and push or pull as a focus on three of them", () => {
+    expect(AREAS).toEqual(["full", "upper", "legs", "core"]);
+    expect(makeSplit("upper", "push")).toBe("upper-push");
+    expect(makeSplit("legs", "pull")).toBe("legs-pull");
+    expect(makeSplit("core", "push")).toBe("core"); // core has no push or pull
+    expect(splitParts("full-pull")).toEqual({ area: "full", movement: "pull" });
+    expect(splitParts("legs")).toEqual({ area: "legs", movement: undefined });
+  });
+
+  it("reads the old push and pull as upper body push and pull", () => {
+    expect(normalizeSplit("push")).toBe("upper-push");
+    expect(normalizeSplit("pull")).toBe("upper-pull");
+    expect(normalizeSplit("legs")).toBe("legs");
+    expect(normalizeSplit("nonsense")).toBeNull();
+  });
+
+  it("names each type", () => {
+    expect(splitName("upper-push")).toBe("Upper body push");
+    expect(splitName("legs-pull")).toBe("Legs pull");
+    expect(splitName("full")).toBe("Full body");
+    expect(splitName("push")).toBe("Upper body push"); // saved before push and pull became a focus
+    expect(splitName("unknown")).toBe("Workout");
+  });
+
+  it("splits each area's muscles into push and pull", () => {
+    expect(SPLITS["upper-push"]).toEqual(["chest", "shoulders", "triceps"]);
+    expect(SPLITS["upper-pull"]).toEqual(["lats", "middle back", "biceps", "traps"]);
+    expect(SPLITS["legs-push"]).toEqual(["quadriceps", "calves"]);
+    expect(SPLITS["legs-pull"]).toEqual(["hamstrings", "glutes"]);
+    expect(SPLITS["full-push"]).toEqual(["quadriceps", "chest", "shoulders"]);
+    expect(SPLITS["full-pull"]).toEqual(["lats", "hamstrings", "glutes"]);
+  });
 
   it("upper body works the push and pull muscles together", () => {
     const s = choose("upper");
     expect(s!.split).toBe("upper");
     const muscles = new Set(primary(s).filter((m) => m !== "abdominals"));
-    expect([...muscles].every((m) => [...SPLITS.push, ...SPLITS.pull].includes(m as never))).toBe(true);
+    expect(inOnly(s, SPLITS.upper)).toBe(true);
     expect(muscles.size).toBeGreaterThan(3);
     expect(s!.exercises.at(-1)!.exercise.primaryMuscles[0]).toBe("abdominals"); // core finisher
+  });
+
+  it("a focus narrows an area to its push or pull muscles", () => {
+    expect(inOnly(choose("upper-push"), SPLITS["upper-push"])).toBe(true);
+    expect(inOnly(choose("legs-pull"), SPLITS["legs-pull"])).toBe(true);
+    expect(inOnly(choose("legs-push"), SPLITS["legs-push"])).toBe(true);
+    expect(inOnly(choose("full-pull"), SPLITS["full-pull"])).toBe(true);
+    expect(choose("legs-pull")!.exercises.length).toBeGreaterThanOrEqual(4);
   });
 
   it("full body covers chest, back, shoulders and legs, with a core finisher", () => {
@@ -200,15 +240,22 @@ describe("workout types", () => {
     expect(primary(s).every((m) => m === "abdominals")).toBe(true);
   });
 
-  it("never recommends upper, full or core on its own", () => {
-    for (let d = 0; d < 6; d++) expect(["push", "pull", "legs"]).toContain(suggestWorkout({ ...base, today: daysAgo(-d) })!.split);
+  it("only ever recommends upper body push, upper body pull or legs", () => {
+    for (let d = 0; d < 6; d++) expect(["upper-push", "upper-pull", "legs"]).toContain(suggestWorkout({ ...base, today: daysAgo(-d) })!.split);
+  });
+
+  it("says why a recommendation was picked", () => {
+    expect(restedPhrase("upper-push")).toBe("Push muscles");
+    expect(restedPhrase("upper-pull")).toBe("Pull muscles");
+    expect(restedPhrase("legs")).toBe("Leg muscles");
   });
 });
 
 describe("recoveryNote", () => {
   it("says when a chosen type was trained within the recovery window", () => {
     expect(recoveryNote("legs", 1)).toBe("Legs were trained yesterday.");
-    expect(recoveryNote("push", 0)).toBe("Push muscles were trained today.");
+    expect(recoveryNote("upper-push", 0)).toBe("Upper body push muscles were trained today.");
+    expect(recoveryNote("legs-pull", 1)).toBe("Leg pull muscles were trained yesterday.");
     expect(recoveryNote("core", 1)).toBe("Core was trained yesterday.");
     expect(recoveryNote("upper", 1)).toBe("Upper body was trained yesterday.");
     expect(recoveryNote("full", 0)).toBe("Full body was trained today.");

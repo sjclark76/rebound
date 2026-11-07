@@ -6,7 +6,7 @@ import { cn } from "cn";
 import { ExerciseDetail } from "@/components/exercise-detail";
 import { Button } from "@/components/ui/button";
 import { startWorkout } from "@/app/workout/actions";
-import { recoveryNote, SPLIT_NAMES, SPLITS } from "@/lib/generator";
+import { recoveryNote, restedPhrase, splitName, SPLITS } from "@/lib/generator";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion, optionsQuery, parseOptions } from "@/lib/suggestion";
 import { formatWeight } from "@/lib/weights";
@@ -54,9 +54,9 @@ async function SuggestedWorkout({ mode, searchParams }: { mode: Mode; searchPara
     return (
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-4 pt-2 pb-8 lg:max-w-[560px] lg:pt-8">
         {kicker}
-        <TypePicker options={options} selected={options.split ?? "push"} recommended={recommended} />
+        <TypePicker options={options} selected={options.split ?? "upper-push"} recommended={recommended} />
         <p role="status" className="text-lg leading-[26px] text-muted-foreground">
-          Nothing safe to suggest for {SPLIT_NAMES[options.split ?? "push"].toLowerCase()} with your equipment and injuries. Try another type.
+          Nothing safe to suggest for {splitName(options.split ?? "upper-push").toLowerCase()} with your equipment and injuries. Try another type.
         </p>
         <Chips resting={resting} rehab={rehab} recovering={[]} />
       </main>
@@ -64,7 +64,7 @@ async function SuggestedWorkout({ mode, searchParams }: { mode: Mode; searchPara
   }
 
   const split = suggestion.split;
-  const name = SPLIT_NAMES[split];
+  const name = splitName(split);
   const main = suggestion.exercises.filter((e) => e.exercise.primaryMuscles[0] !== "abdominals" || split === "core");
   const core = split === "core" ? undefined : suggestion.exercises.find((e) => e.exercise.primaryMuscles[0] === "abdominals");
   const days = suggestion.lastTrainedDays;
@@ -74,7 +74,7 @@ async function SuggestedWorkout({ mode, searchParams }: { mode: Mode; searchPara
   const why = [
     options.split
       ? `You chose ${name.toLowerCase()} today.${split === "core" ? " Abdominals and lower back only." : ""}`
-      : `${name} muscles are the most rested.`,
+      : `${restedPhrase(split)} are the most rested.`,
     resting.length > 0 && `Nothing here loads your ${list(resting)}.`,
     rehab.length > 0 && `Your ${list(rehab)} only ${rehab.length > 1 ? "help" : "helps"} out, never leads.`,
   ].filter(Boolean);
