@@ -1,0 +1,44 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-11-07T10:00:00Z"},
+  "title": "Rebound Body Map",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 390, "h": 2640, "title": "1 · Body · Phone light", "is_interactive": true},
+    "PhoneDark.dc.html": {"x": 470, "y": 0, "w": 390, "h": 2640, "title": "1 · Body · Phone dark"},
+    "Desktop.dc.html": {"x": 940, "y": 0, "w": 1280, "h": 1560, "title": "1 · Body · Desktop light (quadriceps selected)", "is_interactive": true},
+    "DesktopDark.dc.html": {"x": 2300, "y": 0, "w": 1280, "h": 1560, "title": "1 · Body · Desktop dark"},
+    "Figure.dc.html": {"x": 3660, "y": 0, "w": 240, "h": 480, "title": "Figure component (front)"},
+
+    "TiredLight.dc.html": {"x": 0, "y": 3060, "w": 390, "h": 1260, "title": "2a · Quadriceps · Tired · light"},
+    "TiredDark.dc.html": {"x": 470, "y": 3060, "w": 390, "h": 1260, "title": "2a · Quadriceps · Tired · dark"},
+    "RestingLight.dc.html": {"x": 940, "y": 3060, "w": 390, "h": 1260, "title": "2b · Lower back · Resting · light"},
+    "RestingDark.dc.html": {"x": 1410, "y": 3060, "w": 390, "h": 1260, "title": "2b · Lower back · Resting · dark"},
+    "RehabLight.dc.html": {"x": 1880, "y": 3060, "w": 390, "h": 1260, "title": "2c · Front delts · Rehab · light"},
+    "RehabDark.dc.html": {"x": 2350, "y": 3060, "w": 390, "h": 1260, "title": "2c · Front delts · Rehab · dark"},
+
+    "EmptyLight.dc.html": {"x": 0, "y": 4740, "w": 390, "h": 1400, "title": "3 · Empty · light"},
+    "EmptyDark.dc.html": {"x": 470, "y": 4740, "w": 390, "h": 1400, "title": "3 · Empty · dark"},
+    "LoadingLight.dc.html": {"x": 940, "y": 4740, "w": 390, "h": 1400, "title": "4 · Loading · light"},
+    "LoadingDark.dc.html": {"x": 1410, "y": 4740, "w": 390, "h": 1400, "title": "4 · Loading · dark"},
+
+    "TopBar.dc.html": {"x": 0, "y": 6560, "w": 1280, "h": 700, "title": "5 · Top bar with Body"}
+  },
+  "order": [
+    "Main.dc.html", "PhoneDark.dc.html", "Desktop.dc.html", "DesktopDark.dc.html", "Figure.dc.html",
+    "TiredLight.dc.html", "TiredDark.dc.html", "RestingLight.dc.html", "RestingDark.dc.html", "RehabLight.dc.html", "RehabDark.dc.html",
+    "EmptyLight.dc.html", "EmptyDark.dc.html", "LoadingLight.dc.html", "LoadingDark.dc.html",
+    "TopBar.dc.html"
+  ],
+  "notes": {
+    "row1": {"x": 0, "y": -300, "text": "1 · Body screen", "kind": "title1", "maxW": 3580},
+    "row2": {"x": 0, "y": 2760, "text": "2 · A muscle selected", "kind": "title1", "maxW": 2740},
+    "row3": {"x": 0, "y": 4440, "text": "3 · Empty and 4 · Loading", "kind": "title1", "maxW": 1800},
+    "row4": {"x": 0, "y": 6260, "text": "5 · Top bar", "kind": "title1", "maxW": 1280},
+    "why": {"x": 3660, "y": 640, "w": 360, "text": "Phone: Front | Back toggle keeps the figure big enough to tap small muscles. The detail card sits under the figure (no sheet), so the outline and the card stay in view together. Tapping a list row selects the muscle, flips to the side it's on and scrolls up to the figure.", "fill": "green"}
+  },
+  "designSystems": [
+    {"title": "Rebound", "namespace": "rebound", "artifact": "https://claude.ai/code/artifact/b1121b33-8e57-4476-86f5-747dddd6dea0", "version": "1793846780-31b3", "copiedAt": "2026-11-07T10:00:00Z"}
+  ]
+}
