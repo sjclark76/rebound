@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgEnum,
   pgTable,
@@ -27,6 +28,11 @@ export const exercise = pgTable("exercise", {
   mechanic: text("mechanic"), // compound, isolation
   primaryMuscles: text("primary_muscles").array().notNull(),
   secondaryMuscles: text("secondary_muscles").array().notNull(),
+  /** The finer muscles (see FINE_MUSCLES) the body map uses; the group columns above stay for the generator. */
+  finePrimary: text("fine_primary").array().notNull().default([]),
+  fineSecondary: text("fine_secondary").array().notNull().default([]),
+  /** Loads the muscle stretched, or emphasises the lowering phase (Romanian deadlift, flyes). */
+  lengthened: boolean("lengthened").notNull().default(false),
   instructions: text("instructions").array().notNull(),
   images: text("images").array().notNull(),
 });
@@ -71,6 +77,23 @@ export const equipmentRange = pgTable(
     top: real("top").notNull(),
   },
   (t) => [primaryKey({ columns: [t.userId, t.equipment] })],
+);
+
+/** Each user's saved fatigue per fine muscle (and "whole" for the whole body), as of updated_at: the 0-100 value and its fast and slow parts. Rebuilt from the last weeks of sets whenever a set changes. */
+export const muscleFatigue = pgTable(
+  "muscle_fatigue",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    muscle: text("muscle").notNull(),
+    value: real("value").notNull(),
+    fast: real("fast").notNull(),
+    slow: real("slow").notNull(),
+    lastTrainedAt: timestamp("last_trained_at"),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.muscle] })],
 );
 
 /** Active or past injuries, expressed against the muscle vocabulary. */
