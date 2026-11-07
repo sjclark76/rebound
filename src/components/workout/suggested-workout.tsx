@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { startWorkout } from "@/app/workout/actions";
 import { recoveryNote, restedPhrase, splitName, SPLITS } from "@/lib/generator";
 import { requireSession } from "@/lib/session";
-import { loadSuggestion, optionsQuery, parseOptions } from "@/lib/suggestion";
+import { loadExerciseDetail, loadSuggestion, optionsQuery, parseOptions } from "@/lib/suggestion";
 import { formatWeight } from "@/lib/weights";
 import { Chips, lastTrainedText, list, pathHref, ExerciseRow, ScreenHeader, TypePicker } from "./suggestion-ui";
 
@@ -33,9 +33,8 @@ async function SuggestedWorkout({ mode, searchParams }: { mode: Mode; searchPara
   // The recommendation screen never carries a chosen type.
   const options = mode === "today" ? { ...parseOptions(params), split: undefined } : parseOptions(params);
   const path = mode === "today" ? "/today" : "/choose";
-  const { suggestion, injuries, weights } = await loadSuggestion(user.id, today, options);
-  // With a type chosen, the picker's way back is the type Rebound recommends.
-  const recommended = mode === "choose" && options.split ? (await loadSuggestion(user.id, today, { ...options, split: undefined })).suggestion?.split : suggestion?.split;
+  // `recommended` is the type Rebound would pick with none chosen: the picker's way back.
+  const { suggestion, recommended, injuries, weights } = await loadSuggestion(user.id, today, options);
 
   if (!suggestion && mode === "today") redirect(pathHref("/", options));
 
@@ -87,6 +86,7 @@ async function SuggestedWorkout({ mode, searchParams }: { mode: Mode; searchPara
   const onDetail = selected ? "max-lg:hidden" : "";
   const weightOf = (id: string) => weights[id];
   const detailWeight = weightOf(detail.exercise.id);
+  const detailExercise = (await loadExerciseDetail(detail.exercise.id))!;
 
   return (
     <main
@@ -170,7 +170,7 @@ async function SuggestedWorkout({ mode, searchParams }: { mode: Mode; searchPara
 
       <div className={cn("lg:col-start-3 lg:row-span-4 lg:row-start-1", !selected && "max-lg:hidden")}>
         <ExerciseDetail
-          exercise={detail.exercise}
+          exercise={detailExercise}
           dose={`${detail.sets} × ${detail.reps}${detail.exercise.force === "static" ? " s" : ""}${detailWeight ? ` · ${formatWeight(detailWeight.value)} ${detailWeight.unit}` : ""}`}
           context={detailIndex >= 0 ? `Exercise ${detailIndex + 1} of ${main.length} · ${name}` : `Core finisher · ${name}`}
           backHref={pathHref(path, options)}

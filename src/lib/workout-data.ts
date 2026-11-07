@@ -2,7 +2,7 @@ import { and, desc, eq, inArray, isNotNull, isNull, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { exercise, injury, startingWeight, workout, workoutExercise, workoutSet } from "@/db/schema";
 import type { Unit } from "@/db/vocab";
-import { getGear } from "./equipment-data";
+import { getGear, type Gear } from "./equipment-data";
 import { exerciseKind, isStale, prefill, type Kind, type LoggedSet, type Starting } from "./workout";
 import { equipmentLabel, FIXED_EQUIPMENT, isAdjustable, isFixed, poolItems, type Equipment, type FixedEquipment } from "@/db/vocab";
 import { poolFor, type Weight } from "./weights";
@@ -204,11 +204,11 @@ function snapLabelFor(equipment: string | null, owned: string[]): string | null 
 type Suggested = { id: string; equipment: string | null; force: string | null; reps: string };
 
 /** The weight each suggested weighted exercise starts at: what logging's first set would be prefilled with (last time's first set, else the starting weight), moved to a weight the user owns. Exercises with no weight are left out. */
-export async function suggestedWeights(userId: string, exercises: Suggested[]): Promise<Record<string, Weight>> {
+export async function suggestedWeights(userId: string, exercises: Suggested[], knownGear?: Gear): Promise<Record<string, Weight>> {
   const ids = exercises.map((e) => e.id);
   if (ids.length === 0) return {};
   const [gear, starts, history] = await Promise.all([
-    getGear(userId),
+    knownGear ?? getGear(userId),
     db.select().from(startingWeight).where(and(eq(startingWeight.userId, userId), inArray(startingWeight.exerciseId, ids))),
     db
       .select({ s: workoutSet })

@@ -41,11 +41,25 @@ export async function loadSuggestion(userId: string, today: Date, options: Sugge
       .where(
         and(eq(workout.userId, userId), gte(workout.startedAt, new Date(today.getTime() - LOOKBACK_MS))),
       ),
-    db.select().from(exercise).where(eq(exercise.category, "strength")),
+    // Only what the generator and the lists need. Photos and steps are many kilobytes per exercise, so the one shown in detail is fetched on its own.
+    db
+      .select({
+        id: exercise.id,
+        name: exercise.name,
+        equipment: exercise.equipment,
+        category: exercise.category,
+        level: exercise.level,
+        force: exercise.force,
+        mechanic: exercise.mechanic,
+        primaryMuscles: exercise.primaryMuscles,
+        secondaryMuscles: exercise.secondaryMuscles,
+      })
+      .from(exercise)
+      .where(eq(exercise.category, "strength")),
   ]);
 
   const recent = recentSets.flatMap((s) => s.muscles.map((muscle) => ({ muscle, trainedAt: s.trainedAt })));
-  const suggestion = suggestWorkout({
+  const input = {
     exercises,
     equipment: options.bodyweightOnly ? [] : suggestionEquipment(gear.owned),
     withoutWeights: gearWithoutWeights(gear.owned, Object.fromEntries(Object.entries(gear.weights).map(([k, v]) => [k, v.length]))),
@@ -53,9 +67,18 @@ export async function loadSuggestion(userId: string, today: Date, options: Sugge
     recent,
     today,
     split: options.split,
-  });
+  };
+  const suggestion = suggestWorkout(input);
+  // What Rebound would recommend with no type chosen, so the picker can offer a way back. Pure, so no second trip to the database.
+  const recommended = options.split ? suggestWorkout({ ...input, split: undefined })?.split : suggestion?.split;
   const weights = suggestion
-    ? await suggestedWeights(userId, suggestion.exercises.map((e) => ({ id: e.exercise.id, equipment: e.exercise.equipment, force: e.exercise.force ?? null, reps: e.reps })))
+    ? await suggestedWeights(userId, suggestion.exercises.map((e) => ({ id: e.exercise.id, equipment: e.exercise.equipment, force: e.exercise.force ?? null, reps: e.reps })), gear)
     : {};
-  return { suggestion, injuries, hasEquipment: gear.owned.length > 0, recovering: recoveringMuscles(recent, today), weights };
+  return { suggestion, recommended, injuries, hasEquipment: gear.owned.length > 0, recovering: recoveringMuscles(recent, today), weights };
+}
+
+/** One exercise in full, with its photos and steps, for the detail view. */
+export async function loadExerciseDetail(id: string) {
+  const [row] = await db.select().from(exercise).where(eq(exercise.id, id));
+  return row ?? null;
 }
