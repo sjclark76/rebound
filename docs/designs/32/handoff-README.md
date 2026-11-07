@@ -45,11 +45,13 @@ Figure
 Accessibility
 - Muscles on the figure are not keyboard-reachable; the list of real buttons is the keyboard and screen-reader route, and each SVG has role="img" with a label saying so.
 
-Departures from the #32 spec, to agree before `ready`
-- Muscle count: the spec says 24 but its lists name 23 distinct muscles; the design shows those 23.
-- Triceps and adductors also appear on the front view (the figure draws them there); the spec lists them on the back only.
-- Injured muscles on the figure are grey with a coloured marker, not filled in the rest and rehab colours.
-- Selected-row highlight uses the apricot accent; whole-body value averages uninjured muscles only; injured muscles show no fatigue number.
-- "Legs carry most of it, from Thursday's session." under the whole-body value is sample copy, not in the spec.
+Agreed in review (now in the #32 spec)
+- 23 muscles, not 24 (the spec's list always named 23).
+- Triceps and adductors appear on both views, as does the neck.
+- Injured muscles are grey on the figure with a Resting/Rehab marker, and show no fatigue number in the card or list.
+- The whole-body value is the model's whole-body pool, not an average; the "31" shown is sample data.
+- The detail card's fatigue bar is in scope.
+- The summary line is in scope: "<Area> carry most of it, from <day>'s session." Area is the body area with the highest average fatigue among uninjured muscles; day is the last session that trained it. Hidden when every muscle is Rested.
+- The figure uses react-muscle-highlighter's shapes; its MIT notice ships with the app.
 
 Sample data: legs trained Thursday (quadriceps 62, hamstrings 56, glutes 78), front delts in rehab, lower back resting.
