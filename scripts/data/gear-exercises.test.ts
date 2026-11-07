@@ -36,7 +36,7 @@ describe("suggestions", () => {
     }
   });
   it("prescribes fingerboard hangs in seconds", () => {
-    const s = suggestWorkout({ ...input, equipment: ["metolius wooden fingerboard"], split: "pull" });
+    const s = suggestWorkout({ ...input, equipment: ["metolius wooden fingerboard"], split: "upper-pull" });
     expect(s?.exercises[0].reps).toBe("30–45");
   });
 });

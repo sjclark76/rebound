@@ -48,39 +48,80 @@ export type Suggestion<E extends CatalogueExercise = CatalogueExercise> = {
   lastTrainedDays: number | null;
 };
 
-/** The types of workout. Only push, pull and legs are ever recommended; the rest are chosen. */
-export type Split = "push" | "pull" | "legs" | "upper" | "full" | "core";
+/** The areas of the body a workout can cover. */
+export type Area = "full" | "upper" | "legs" | "core";
+/** A focus within an area: the muscles that push, or the muscles that pull. Core has none. */
+export type Movement = "push" | "pull";
+/** A type of workout: an area, optionally narrowed to push or pull ("upper-push", "legs-pull", "full"). */
+export type Split = Area | `${Exclude<Area, "core">}-${Movement}`;
 
-/** The muscles each type works, in the order exercises are picked for them. */
-export const SPLITS: Record<Split, Muscle[]> = {
-  push: ["chest", "shoulders", "triceps"],
-  pull: ["lats", "middle back", "biceps", "traps"],
-  legs: ["quadriceps", "hamstrings", "glutes", "calves"],
+export const AREAS: Area[] = ["full", "upper", "legs", "core"];
+export const MOVEMENTS: Movement[] = ["push", "pull"];
+const AREA_NAMES: Record<Area, string> = { full: "Full body", upper: "Upper body", legs: "Legs", core: "Core" };
+
+const PUSH_MUSCLES: Muscle[] = ["chest", "shoulders", "triceps", "quadriceps", "calves"];
+/** The muscles each area works, in the order exercises are picked for them. */
+const AREA_MUSCLES: Record<Area, Muscle[]> = {
   upper: ["chest", "lats", "shoulders", "middle back", "triceps", "biceps", "traps"],
+  legs: ["quadriceps", "hamstrings", "glutes", "calves"],
   full: ["quadriceps", "chest", "lats", "shoulders", "hamstrings", "glutes"],
   core: ["abdominals", "lower back"],
 };
-export const SPLIT_NAMES: Record<Split, string> = {
-  push: "Push",
-  pull: "Pull",
-  legs: "Legs",
-  upper: "Upper body",
-  full: "Full body",
-  core: "Core",
-};
+
+export function splitParts(split: Split): { area: Area; movement: Movement | undefined } {
+  const [area, movement] = split.split("-") as [Area, Movement | undefined];
+  return { area, movement };
+}
+/** The type for an area and a focus. Core has no push or pull, so it ignores one. */
+export function makeSplit(area: Area, movement?: Movement): Split {
+  return area === "core" || !movement ? area : (`${area}-${movement}` as Split);
+}
+/** Reads a type from a URL or the database. "push" and "pull" were types of their own before they became a focus; they mean upper body push and pull. Null if it isn't a type. */
+export function normalizeSplit(s: unknown): Split | null {
+  if (s === "push" || s === "pull") return `upper-${s}`;
+  if (typeof s !== "string") return null;
+  const [area, movement] = s.split("-");
+  if (!(AREAS as string[]).includes(area) || (movement !== undefined && !(MOVEMENTS as string[]).includes(movement)) || (area === "core" && movement)) return null;
+  return s as Split;
+}
+export const isSplit = (s: unknown): s is Split => normalizeSplit(s) === s;
+
+function musclesOf(split: Split): Muscle[] {
+  const { area, movement } = splitParts(split);
+  const all = AREA_MUSCLES[area];
+  return movement ? all.filter((m) => PUSH_MUSCLES.includes(m) === (movement === "push")) : all;
+}
+/** The muscles each type works. */
+export const SPLITS = Object.fromEntries(
+  AREAS.flatMap((a) => (a === "core" ? [a] : [a, `${a}-push`, `${a}-pull`])).map((s) => [s, musclesOf(s as Split)]),
+) as Record<Split, Muscle[]>;
+
+/** What a type is called: "Upper body push", "Legs pull", "Full body". Also reads old saved types, and gives "Workout" for anything unknown. */
+export function splitName(split: string | null): string {
+  const s = normalizeSplit(split);
+  if (!s) return "Workout";
+  const { area, movement } = splitParts(s);
+  return movement ? `${AREA_NAMES[area]} ${movement}` : AREA_NAMES[area];
+}
+export const areaName = (a: Area) => AREA_NAMES[a];
+
+/** The phrase for "…are the most rested" when a type is recommended. */
+export function restedPhrase(split: Split): string {
+  const { area, movement } = splitParts(split);
+  if (area === "upper" && movement) return `${movement[0].toUpperCase()}${movement.slice(1)} muscles`;
+  return area === "legs" && !movement ? "Leg muscles" : `${splitName(split)} muscles`;
+}
+
 /** How a type is built: the most exercises, how many times round the muscles it goes, and whether a core finisher follows. */
-const SHAPE: Record<Split, { max: number; rounds: number; finisher: boolean }> = {
-  push: { max: 5, rounds: 1, finisher: true },
-  pull: { max: 5, rounds: 1, finisher: true },
-  legs: { max: 5, rounds: 1, finisher: true },
-  upper: { max: 6, rounds: 1, finisher: true },
-  full: { max: 6, rounds: 1, finisher: true },
-  core: { max: 5, rounds: 3, finisher: false },
-};
-/** The order the picker shows the types in. */
-export const TYPE_ORDER: Split[] = ["full", "upper", "push", "pull", "legs", "core"];
-export const isSplit = (s: unknown): s is Split => typeof s === "string" && s in SPLITS;
-const SPLIT_ORDER: Split[] = ["push", "pull", "legs"];
+function shapeOf(split: Split): { max: number; rounds: number; finisher: boolean } {
+  const { area, movement } = splitParts(split);
+  if (area === "core") return { max: 5, rounds: 3, finisher: false };
+  if (!movement) return { max: area === "legs" ? 5 : 6, rounds: 1, finisher: true };
+  // Legs split in two leaves only two muscles each, so go round twice to fill a session.
+  return { max: 5, rounds: area === "legs" ? 2 : 1, finisher: true };
+}
+/** Only these are ever recommended; every other type is chosen. */
+const SPLIT_ORDER: Split[] = ["upper-push", "upper-pull", "legs"];
 
 const DAY_MS = 86_400_000;
 export const RECOVERY_DAYS = 2;
@@ -122,7 +163,8 @@ function prescribe<E extends CatalogueExercise>(exercise: E, core = false): Sugg
 export function suggestWorkout<E extends CatalogueExercise>(
   input: Omit<GeneratorInput, "exercises"> & { exercises: E[] },
 ): Suggestion<E> | null {
-  const { equipment, injuries, recent, today, split: chosen } = input;
+  const { equipment, injuries, recent, today } = input;
+  const chosen = normalizeSplit(input.split) ?? undefined;
   const day = Math.floor(today.getTime() / DAY_MS);
 
   // Rest mode keeps any load off the muscle; rehab mode only avoids it as a primary mover.
@@ -161,7 +203,7 @@ export function suggestWorkout<E extends CatalogueExercise>(
   };
 
   function build(split: Split) {
-    const { max, rounds } = SHAPE[split];
+    const { max, rounds } = shapeOf(split);
     const muscles = SPLITS[split].filter(isFree);
     const taken = new Set<string>();
     const picked: E[] = [];
@@ -194,7 +236,7 @@ export function suggestWorkout<E extends CatalogueExercise>(
     const picked = build(split);
     if (picked.length < (chosen ? 1 : MIN_EXERCISES)) continue;
     const exercises = picked.map((e) => prescribe(e, split === "core"));
-    if (SHAPE[split].finisher && isFree("abdominals")) {
+    if (shapeOf(split).finisher && isFree("abdominals")) {
       const core = pick("abdominals", null, new Set(picked.map((e) => e.id)));
       if (core) exercises.push(prescribe(core, true));
     }
@@ -208,13 +250,11 @@ export function suggestWorkout<E extends CatalogueExercise>(
 /** The note shown when a chosen type was trained within the recovery window ("Legs were trained yesterday."), else null. */
 export function recoveryNote(split: Split, daysAgo: number | null): string | null {
   if (daysAgo === null || daysAgo >= RECOVERY_DAYS) return null;
-  const who: Record<Split, string> = {
-    push: "Push muscles were",
-    pull: "Pull muscles were",
-    legs: "Legs were",
-    upper: "Upper body was",
-    full: "Full body was",
-    core: "Core was",
-  };
-  return `${who[split]} trained ${daysAgo === 0 ? "today" : "yesterday"}.`;
+  const { area, movement } = splitParts(split);
+  const who = movement
+    ? `${area === "legs" ? "Leg" : AREA_NAMES[area]} ${movement} muscles were`
+    : area === "legs"
+      ? "Legs were"
+      : `${AREA_NAMES[area]} was`;
+  return `${who} trained ${daysAgo === 0 ? "today" : "yesterday"}.`;
 }

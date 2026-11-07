@@ -5,7 +5,7 @@ import { LogoMark } from "@/components/logo-mark";
 import { SignOutButton } from "@/components/sign-out-button";
 import { StatusChip } from "@/components/status-chip";
 import { EQUIPMENT, equipmentLabel, type Equipment } from "@/db/vocab";
-import { SPLIT_NAMES, TYPE_ORDER, type Split } from "@/lib/generator";
+import { AREAS, areaName, makeSplit, MOVEMENTS, splitName, splitParts, type Movement, type Split } from "@/lib/generator";
 import { optionsQuery, type SuggestionOptions } from "@/lib/suggestion";
 import { formatWeight, type Weight } from "@/lib/weights";
 
@@ -174,37 +174,56 @@ export function ExerciseRow({ href, number, item, weight, current }: { href: str
   );
 }
 
-/** The six workout types as a 3 × 2 grid of links. The selected one is filled with a check, so it is not colour alone. Once another type than the recommended one is chosen, "Back to" returns to it. */
+function Pill({ href, on, children }: { href: string; on: boolean; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      aria-current={on ? "true" : undefined}
+      className={cn(
+        "flex min-h-12 items-center justify-center gap-1 rounded-xl px-1 text-center font-bold outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring lg:whitespace-nowrap",
+        on ? "bg-primary text-primary-foreground" : "border-[1.5px] border-input bg-card",
+      )}
+    >
+      {on && <CheckIcon className="size-4 shrink-0" strokeWidth={3} aria-hidden />}
+      {children}
+    </Link>
+  );
+}
+
+/** The type picker: an area (full body, upper body, legs, core) and, for all but core, a focus on the muscles that push or the muscles that pull. The selected ones are filled with a check, so it is not colour alone. Once another type than the recommended one is chosen, "Back to" returns to it. */
 export function TypePicker({ options, selected, recommended }: { options: SuggestionOptions; selected: Split; recommended: Split | undefined }) {
+  const { area, movement } = splitParts(selected);
+  const go = (s: Split) => pathHref("/choose", { ...options, split: s });
+  const focus: { label: string; value: Movement | undefined }[] = [{ label: "All", value: undefined }, ...MOVEMENTS.map((m) => ({ label: capitalise(m), value: m }))];
   return (
     <section aria-labelledby="type-h" className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="type-h" className="font-heading text-lg font-bold">Workout type</h2>
         {options.split && recommended && options.split !== recommended && (
           <Link href={pathHref("/choose", { ...options, split: undefined })} className="text-base font-bold text-primary underline-offset-4 hover:underline">
-            Back to {SPLIT_NAMES[recommended]}
+            Back to {splitName(recommended).toLowerCase()}
           </Link>
         )}
       </div>
-      <div className="grid grid-cols-3 gap-2">
-        {TYPE_ORDER.map((t) => {
-          const on = t === selected;
-          return (
-            <Link
-              key={t}
-              href={pathHref("/choose", { ...options, split: t })}
-              aria-current={on ? "true" : undefined}
-              className={cn(
-                "flex min-h-12 items-center justify-center gap-1 rounded-xl px-1 text-center font-bold outline-none lg:whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                on ? "bg-primary text-primary-foreground" : "border-[1.5px] border-input bg-card",
-              )}
-            >
-              {on && <CheckIcon className="size-4 shrink-0" strokeWidth={3} aria-hidden />}
-              {SPLIT_NAMES[t]}
-            </Link>
-          );
-        })}
+      <div className="grid grid-cols-2 gap-2">
+        {AREAS.map((a) => (
+          <Pill key={a} href={go(makeSplit(a, movement))} on={a === area}>
+            {areaName(a)}
+          </Pill>
+        ))}
       </div>
+      {area !== "core" && (
+        <div role="group" aria-labelledby="focus-h" className="flex flex-col gap-2">
+          <h3 id="focus-h" className="text-base font-bold text-muted-foreground">Focus</h3>
+          <div className="grid grid-cols-3 gap-2">
+            {focus.map((f) => (
+              <Pill key={f.label} href={go(makeSplit(area, f.value))} on={f.value === movement}>
+                {f.label}
+              </Pill>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

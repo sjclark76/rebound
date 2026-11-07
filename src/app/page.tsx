@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowRightIcon, ChevronRightIcon, CircleCheckIcon, DumbbellIcon, LayoutGridIcon, PauseIcon } from "lucide-react";
 import { cn } from "cn";
-import { SPLIT_NAMES, type Split } from "@/lib/generator";
+import { restedPhrase, splitName } from "@/lib/generator";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion, parseOptions } from "@/lib/suggestion";
 import { AutoClosedNotice } from "@/components/workout/today-client";
@@ -53,7 +53,7 @@ const time = (d: Date) => d.toLocaleTimeString("en-GB", { hour: "numeric", minut
 
 /** A workout finished today, kept small above the next recommendation. */
 function DoneToday({ w }: { w: LoadedWorkout }) {
-  const name = SPLIT_NAMES[w.split as Split] ?? "Workout";
+  const name = splitName(w.split);
   return (
     <section aria-label="Done today" className="flex items-center gap-4 rounded-3xl bg-card p-4 shadow-sm ring-1 ring-border lg:w-full lg:max-w-[560px] dark:shadow-none">
       <span className="grid size-14 shrink-0 place-items-center rounded-full bg-secondary text-primary">
@@ -140,11 +140,11 @@ async function Recommendation({
     );
   }
 
-  const name = SPLIT_NAMES[suggestion.split];
+  const name = splitName(suggestion.split);
   const finisher = suggestion.exercises.some((e) => e.exercise.primaryMuscles[0] === "abdominals");
   const count = suggestion.exercises.length - (finisher ? 1 : 0);
   const why = [
-    `${name} muscles are the most rested.`,
+    `${restedPhrase(suggestion.split)} are the most rested.`,
     resting.length > 0 && `Nothing here loads your ${list(resting)}.`,
     rehab.length > 0 && `Your ${list(rehab)} only ${rehab.length > 1 ? "help" : "helps"} out, never leads.`,
   ].filter(Boolean);

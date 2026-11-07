@@ -5,7 +5,7 @@ import { CheckIcon, SkipForwardIcon } from "lucide-react";
 import { LogoMark } from "@/components/logo-mark";
 import { SignOutButton } from "@/components/sign-out-button";
 import { StatusChip } from "@/components/status-chip";
-import { SPLIT_NAMES, type Split } from "@/lib/generator";
+import { splitName } from "@/lib/generator";
 import type { Unit } from "@/db/vocab";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion } from "@/lib/suggestion";
@@ -54,7 +54,7 @@ async function Summary({ params }: Pick<PageProps<"/workout/[id]/summary">, "par
             <CheckIcon className="size-8 text-primary" aria-hidden />
           </span>
           <p className="text-[15px] font-bold text-muted-foreground">
-            {w.startedAt.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })} · {SPLIT_NAMES[w.split as Split]}
+            {w.startedAt.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })} · {splitName(w.split)}
           </p>
           <h1 className="font-heading text-4xl leading-10 font-bold tracking-tight">Workout done. Rest well.</h1>
         </div>

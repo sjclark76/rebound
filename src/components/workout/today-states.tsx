@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CheckIcon, ClockIcon, PlayIcon, SkipForwardIcon } from "lucide-react";
 import { cn } from "cn";
 import { StatusChip } from "@/components/status-chip";
-import { SPLIT_NAMES, type Split } from "@/lib/generator";
+import { splitName } from "@/lib/generator";
 import type { LoadedWorkout, PlanRow } from "@/lib/workout-data";
 import { DiscardButton } from "./today-client";
 
@@ -80,7 +80,7 @@ function Shell({ kicker, children, footer }: { kicker: React.ReactNode; children
 
 const Title = ({ split, sub }: { split: string | null; sub: string }) => (
   <div className="flex flex-col gap-1">
-    <h1 className="font-heading text-[44px] leading-12 font-bold tracking-tight lg:text-7xl lg:leading-[72px]">{SPLIT_NAMES[split as Split] ?? "Workout"}</h1>
+    <h1 className="font-heading text-[44px] leading-12 font-bold tracking-tight lg:text-7xl lg:leading-[72px]">{splitName(split)}</h1>
     <p className="text-base text-muted-foreground">{sub}</p>
   </div>
 );
