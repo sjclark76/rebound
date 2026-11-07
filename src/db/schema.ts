@@ -79,6 +79,23 @@ export const equipmentRange = pgTable(
   (t) => [primaryKey({ columns: [t.userId, t.equipment] })],
 );
 
+/** Each user's saved fatigue per fine muscle (and "whole" for the whole body), as of updated_at: the 0-100 value and its fast and slow parts. Rebuilt from the last weeks of sets whenever a set changes. */
+export const muscleFatigue = pgTable(
+  "muscle_fatigue",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    muscle: text("muscle").notNull(),
+    value: real("value").notNull(),
+    fast: real("fast").notNull(),
+    slow: real("slow").notNull(),
+    lastTrainedAt: timestamp("last_trained_at"),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.muscle] })],
+);
+
 /** Active or past injuries, expressed against the muscle vocabulary. */
 export const injury = pgTable("injury", {
   id: serial("id").primaryKey(),

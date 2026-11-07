@@ -9,6 +9,7 @@ import { workout, workoutExercise, workoutSet } from "@/db/schema";
 import { isUnit, type Unit } from "@/db/vocab";
 import { requireSession } from "@/lib/session";
 import { loadSuggestion, parseOptions } from "@/lib/suggestion";
+import { recomputeFatigue } from "@/lib/fatigue-data";
 import { closeStaleWorkouts } from "@/lib/workout-data";
 
 export type SetValues = { reps: number | null; weight: number | null; unit: Unit; durationSec: number | null };
@@ -27,7 +28,11 @@ async function ownOpenWorkout(workoutId: number) {
 const done = () => {
   revalidatePath("/workout");
   revalidatePath("/");
+  revalidatePath("/body");
 };
+
+/** Brings the saved muscle fatigue up to date after a set changes. */
+const refreshFatigue = async (userId: string) => recomputeFatigue(userId);
 
 /** Starts today's workout from the suggestion, saving its exercises so the plan can't shift. */
 export async function startWorkout(query: Record<string, string>) {
@@ -54,7 +59,7 @@ export async function startWorkout(query: Record<string, string>) {
 
 /** Saves a set when Complete is tapped, or replaces it if that set number is already logged. */
 export async function logSet(workoutId: number, exerciseId: string, setNumber: number, values: SetValues) {
-  await ownOpenWorkout(workoutId);
+  const w = await ownOpenWorkout(workoutId);
   if (!isUnit(values.unit)) throw new Error("Unknown unit");
   const [existing] = await db
     .select({ id: workoutSet.id })
@@ -67,19 +72,21 @@ export async function logSet(workoutId: number, exerciseId: string, setNumber: n
     .update(workoutExercise)
     .set({ skippedAt: null })
     .where(and(eq(workoutExercise.workoutId, workoutId), eq(workoutExercise.exerciseId, exerciseId)));
+  await refreshFatigue(w.userId);
   done();
 }
 
 export async function editSet(workoutId: number, setId: number, values: SetValues) {
-  await ownOpenWorkout(workoutId);
+  const w = await ownOpenWorkout(workoutId);
   if (!isUnit(values.unit)) throw new Error("Unknown unit");
   await db.update(workoutSet).set(values).where(and(eq(workoutSet.id, setId), eq(workoutSet.workoutId, workoutId)));
+  await refreshFatigue(w.userId);
   done();
 }
 
 /** Deletes a set and closes the gap so set numbers stay 1, 2, 3... */
 export async function deleteSet(workoutId: number, setId: number) {
-  await ownOpenWorkout(workoutId);
+  const w = await ownOpenWorkout(workoutId);
   const [s] = await db
     .select()
     .from(workoutSet)
@@ -90,6 +97,7 @@ export async function deleteSet(workoutId: number, setId: number) {
     .update(workoutSet)
     .set({ setNumber: sql`${workoutSet.setNumber} - 1` })
     .where(and(eq(workoutSet.workoutId, workoutId), eq(workoutSet.exerciseId, s.exerciseId), gt(workoutSet.setNumber, s.setNumber)));
+  await refreshFatigue(w.userId);
   done();
 }
 
@@ -129,8 +137,9 @@ export async function finishWorkout(workoutId: number) {
 }
 
 export async function discardWorkout(workoutId: number) {
-  await ownOpenWorkout(workoutId);
+  const w = await ownOpenWorkout(workoutId);
   await db.delete(workout).where(eq(workout.id, workoutId));
+  await refreshFatigue(w.userId);
   done();
   redirect("/");
 }
